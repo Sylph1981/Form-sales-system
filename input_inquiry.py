@@ -72,7 +72,7 @@ ws5 = wb.worksheet('SELECT')
 start = time.time()
 #ws1の行数を取得
 lastrow = len(ws1.col_values(1))
-for k in tqdm(range(25, 26)):
+for k in tqdm(range(27, 28)):
     
 #シートの初期化
    ws5.clear()
@@ -1882,14 +1882,16 @@ try:
                                         or "電話" in list_.getText() \
                                             or "連絡先" in list_.getText() \
                                                 or "メールアドレス" in list_.getText() \
-                                                    or "業種" in list_.getText() \
-                                                    or "題名" in list_.getText() \
-                                                        or "本文" in list_.getText() \
-                                                            or "詳細" in list_.getText() \
-                                                                or "連絡方法" in list_.getText() \
-                                                                    or "用件" in list_.getText() \
-                                                                        or "ご意見" in list_.getText() \
-                                                                            or "返信方法" in list_.getText():
+                                                    or "Email" in list_.getText() \
+                                                        or "種別" in list_.getText() \
+                                                            or "業種" in list_.getText() \
+                                                                or "題名" in list_.getText() \
+                                                                    or "本文" in list_.getText() \
+                                                                        or "詳細" in list_.getText() \
+                                                                            or "連絡方法" in list_.getText() \
+                                                                                or "用件" in list_.getText() \
+                                                                                    or "ご意見" in list_.getText() \
+                                                                                        or "返信方法" in list_.getText():
          list_1.append(re.sub("[\n]", "", list_.getText(), 3))
          print(list_1)
 
@@ -1911,6 +1913,7 @@ try:
       print(items_1)
       items_2 = []
       items_3 = []
+      items_4 = []
       
 #inputタグの各要素を取得
       element2 = soup.find_all("input",type="text")
@@ -1923,9 +1926,6 @@ try:
 
       element4 = soup.find_all("input",type="tel")
       list_4 = []
-
-      element5 = soup.find_all("input",type="radio")
-      list_5 = []
 
 
 #type属性：text
@@ -1962,6 +1962,12 @@ try:
       for name in element4:
        list_4.append(name.get("name"))
        print(list_4)
+       
+      for elem4 in element4:
+#       items_1.append(name.get("placeholder"))
+       items_4.append(elem4.get("id"))
+       print(items_4)
+
 
 #リストにNoneが含まれていると「TypeError: argument of type 'NoneType' is not iterable」
 #が発生するので、リスト内包表記で処理
@@ -1985,16 +1991,17 @@ try:
 #id値
       print(items_2)
       print(items_3)
-
+      print(items_4)
       
 #会社名
 #      try:
-      if not len([i for i in str(soup.find_all("form")) if "御社名" in i \
+      if not len([i for i in items_1 if "御社名" in i \
                or "企業名" in i \
                    or "会社名" in i]) == 0:
         Cell_list1 = [i for i in list_2 if "facility" in i \
                      or "your-company" in i \
-                         or "company-name" in i]
+                         or "company-name" in i \
+                             or "name" in i]
         print(Cell_list1)    
 #テキスト入力          
         driver.find_element_by_name(Cell_list1[0]).send_keys(ws2.cell(2, 2).value)
@@ -2042,14 +2049,23 @@ try:
        Cell_list3 = [i for i in list_2d if r"user_name" in i \
                      or r"your-name" in i \
                          or "名前" in i \
-                             or "name" == i]
+                                 or "name" == i]
        print(Cell_list3)
-       if len([i for i in Cell_list3 if "名前" in i]) > 0 \
-          and len(items_2) > 0:
-        driver.find_element_by_id(items_2[0]).send_keys(ws2.cell(6, 2).value)
-        lastcol = len(list(ws1.row_values(k)))
-        time.sleep(1) 
-        ws1.update_cell(k, lastcol+1, "氏名")
+       driver.find_element_by_id(items_2[0]).send_keys(ws2.cell(6, 2).value)
+       lastcol = len(list(ws1.row_values(k)))
+       time.sleep(1)
+       ws1.update_cell(k, lastcol+1, "氏名")
+      elif not len(list_2) == 0:
+       Cell_list3 = [i for i in items_2 if r"user_name" in i \
+                     or r"your-name" in i \
+                         or "名前" in i \
+                             or "f4a6f2b" in i \
+                                 or "name" == i]
+       print(Cell_list3)
+       driver.find_element_by_id(Cell_list3[0]).send_keys(ws2.cell(6, 2).value)
+       lastcol = len(list(ws1.row_values(k)))
+       time.sleep(1) 
+       ws1.update_cell(k, lastcol+1, "氏名") 
 #      except:
 #       pass
 
@@ -2230,13 +2246,26 @@ try:
          
 #電話番号
 #「type属性：tel」が存在する
-      if not len(list_2d) == 0:
+      if not len(list_4) == 0 :
+#       Cell_list7 = [i for i in list_4 if "tel" in i \
+#                     or "電話" in i \
+#                         or "your-phone" in i]
+#       print(Cell_list7)
+#       if len(Cell_list7) > 0 and len(items_3) > 0:
+
+        driver.find_element_by_id(items_4[0]).send_keys(ws2.cell(14, 2).value)
+        lastcol = len(list(ws1.row_values(k)))
+        time.sleep(1) 
+        ws1.update_cell(k, lastcol+1, "電話（ハイフンあり）")
+
+#「type属性：tel」が存在しない
+      elif not len(list_2d) == 0:
        Cell_list7 = [i for i in list_2d if "tel" in i \
                      or "電話" in i \
                          or "your-phone" in i]
        print(Cell_list7)
-       if len([i for i in Cell_list7 if "電話" in i]) > 0 \
-          and len(items_2) > 0:
+       if len(Cell_list7) > 0 and len(items_3) > 0:
+
         driver.find_element_by_id(items_2[1]).send_keys(ws2.cell(14, 2).value)
         lastcol = len(list(ws1.row_values(k)))
         time.sleep(1) 
@@ -2260,15 +2289,15 @@ try:
         lastcol = len(list(ws1.row_values(k)))
         ws1.update_cell(k, lastcol+1, "本文")        
 
-      if len(TEXTAREA_list) == 0:
-       for textarea in element3:
-        TEXTAREA_list.append(textarea.get("name"))   
-        print(textarea.get("name"))
+        if len(TEXTAREA_list) == 0:
+         for textarea in element3:
+          TEXTAREA_list.append(textarea.get("name"))   
+          print(textarea.get("name"))
        
-        driver.find_element_by_name(TEXTAREA_list[0]).send_keys(ws3.cell(1, 1).value)
-        print(TEXTAREA_list[0])
-        lastcol = len(list(ws1.row_values(k)))
-        ws1.update_cell(k, lastcol+1, "本文")        
+          driver.find_element_by_name(TEXTAREA_list[0]).send_keys(ws3.cell(1, 1).value)
+          print(TEXTAREA_list[0])
+          lastcol = len(list(ws1.row_values(k)))
+          ws1.update_cell(k, lastcol+1, "本文")        
 #      else:
 
   
@@ -2475,29 +2504,29 @@ try:
 
 
 #ラジオボタン（連絡方法）
-      try:
-       import select_type
-       Cell_11 = select_type.Cell_11
-       SELECT_list1 = []
-       SELECT_list2 = []
+#      try:
+      element5 = soup.find_all("input",type="radio")
+      print(element5)
+#       list_5 = []
+      SELECT_list1 = []
+#      SELECT_list2 = []
 #      element2 = soup.find("select")
 #      for element5 in soup.find_all("select"):
 #       print(element5.get("name"))
-       for elem in element5: 
+      for elem in element5: 
         SELECT_list1.append(elem.get("id"))
         print(SELECT_list1)
       
-       SELECT_list2 = [i for i in SELECT_list1 if "mail" in i \
-                      or "その他" in i]
-       print(SELECT_list2)
-       
-       for i in range(1, len(SELECT_list2)+1):
-        time.sleep(1)
-        ws4.update_cell(Cell_11.row, Cell_11.col+1, SELECT_list2[i-1])
-        radio = driver.find_element_by_id(ws4.cell(Cell_11.row, Cell_11.col+1).value)
-        driver.execute_script("arguments[0].click();", radio)
-      except:
-       pass
+      if "種別" in str(soup.find_all("form")):
+       radiobutton = driver.find_element_by_id(SELECT_list1[len(SELECT_list1)-1])
+       driver.execute_script("arguments[0].click();", radiobutton)
+       print(SELECT_list1[len(SELECT_list1)-1])
+       if radiobutton.is_selected() is True:
+          print(radiobutton.is_selected())
+          lastcol = len(list(ws1.row_values(k)))                
+          ws4.update_cell(k, lastcol+1, SELECT_list1[len(SELECT_list1)-1])
+#      except:
+#       pass
 
 
     else:
