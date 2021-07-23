@@ -69,7 +69,7 @@ start = time.time()
 #def scrape_contact_emails(link):
 #ws1の行数を取得
 lastrow1 = len(ws1.col_values(2))
-for k in tqdm(range(24, 25)):
+for k in tqdm(range(53, 54)):
 #  lastcol = len(list(ws1.row_values(k)))                      
    if not ws1.cell(k, 5).value == "-":    
     try:
@@ -90,6 +90,7 @@ for k in tqdm(range(24, 25)):
 #   print(res.status_code)
      soup = BeautifulSoup(html, 'html.parser')
 
+
 #エラー発生時に回避（①～⑤は実施されない）
     except TimeoutException:
      print("Time out!!")   
@@ -105,23 +106,23 @@ for k in tqdm(range(24, 25)):
     if not "このサイトにアクセスできません" in html:
      links_1 = []
      for link in soup.select('a[href]'):
-#      print(soup.find_all('a'))         
-      if "form2" in str(link.get("href")) \
-          and "inq" in str(link.get("href")) \
-        or "contact" in str(link.get("href")) \
+#      print(soup.find_all('a'))
+      if "contact" in str(link.get("href")) \
            and not "actover" in str(link.get("href")) \
                and not "projection" in str(link.get("href")) \
                   and not "consultation" in str(link.get("href")) \
                       and not "regist" in str(link.get("href")) \
                           and not "research" in str(link.get("href")) \
-            and not "mailto" in str(link.get("href")) \
-               and not "privacy" in str(link.get("href")) \
-                  and not "service" in str(link.get("href")) \
-                      and not "recruit" in str(link.get("href")) \
-                          and not "sdgs" in str(link.get("href")) \
-                               or "contact" in str(link.get("href")) \
-                                   and "salesmarketingservice" in str(link.get("href")) \
-                               or r"contact/inq" in str(link.get("href")) \
+                              and not "mailto" in str(link.get("href")) \
+                                  and not "privacy" in str(link.get("href")) \
+                                      and not "service" in str(link.get("href")) \
+                                          and not "recruit" in str(link.get("href")) \
+                                              and not "sdgs" in str(link.get("href")) \
+                                                  or "form2" in str(link.get("href")) \
+                                                      and "inq" in str(link.get("href")) \
+                                                  or "contact" in str(link.get("href")) \
+                                                     and "salesmarketingservice" in str(link.get("href")) \
+                                                          or r"contact/inq" in str(link.get("href")) \
           or "CONTACT" in str(link.get("href")) \
               and not "mailto" in str(link.get("href")) \
                   and not "privacy" in str(link.get("href")) \
@@ -153,31 +154,15 @@ for k in tqdm(range(24, 25)):
                           and not "recruit" in str(link.get("href")) \
                               and not "sdgs" in str(link.get("href")) \
             or r".info/" in str(link.get("href")) \
-             and "contact" in str(link.get("href")) \
                   and not "privacy" in str(link.get("href")) \
                       and not "service" in str(link.get("href")) \
                           and not "recruit" in str(link.get("href")) \
                               and not "sdgs" in str(link.get("href")) \
             or r"/info" in str(link.get("href")) \
-              and "contact" in str(link.get("href")) \
                   and not "privacy" in str(link.get("href")) \
                       and not "service" in str(link.get("href")) \
                           and not "recruit" in str(link.get("href")) \
                               and not "sdgs" in str(link.get("href")) \
-                    or "page_id=233" in str(link.get("href")) \
-                      or "page_id=39" in str(link.get("href")) \
-                        or "page_id=15" in str(link.get("href")) \
-                          or "page_id=3781" in str(link.get("href")) \
-                            or r"form.run" in str(link.get("href")) \
-                              or r"form.php" in str(link.get("href")) \
-                                or r"/form" in str(link.get("href")) \
-                                    or r"form.html" in str(link.get("href")) \
-                                        or r"%e3%81%8a%e5%95%8f%e3%81%84%e5%90%88%e3%82%8f%e3%81%9b" in str(link.get("href")) \
-                                            or r"ask.html" in str(link.get("href")) \
-                                              or r"/ask" in str(link.get("href")) \
-                                                or r"forms.gle" in str(link.get("href")) \
-                                                    or "toiawase" in str(link.get("href")) \
-                                                       and not "mailto" in str(link.get("href")) \
                       or "お問い合わせ" in str(link.get("href")) \
                           and not r"/よくある質問" in str(link.get("href")) \
                           or "お問合せ" in str(link.get("href")) \
@@ -197,99 +182,135 @@ for k in tqdm(range(24, 25)):
                                           and not "privacy" in str(link.get("href")) \
                                               and not "service" in str(link.get("href")) \
                                                   and not "recruit" in str(link.get("href")) \
-                                                      and not "sdgs" in str(link.get("href")):
+                                                      and not "sdgs" in str(link.get("href")) \
+                     or "page_id=233" in str(link.get("href")) \
+                         or "page_id=39" in str(link.get("href")) \
+                             or "page_id=93" in str(link.get("href")) \
+                        or "page_id=15" in str(link.get("href")) \
+                          or "page_id=3781" in str(link.get("href")) \
+                            or r"form.run" in str(link.get("href")) \
+                              or r"form.php" in str(link.get("href")) \
+                                or r"/form$" in str(link.get("href")) \
+                                    or r"form.html" in str(link.get("href")) \
+                                        or r"%e3%81%8a%e5%95%8f%e3%81%84%e5%90%88%e3%82%8f%e3%81%9b" in str(link.get("href")) \
+                                            or r"ask.html" in str(link.get("href")) \
+                                              or r"/ask" in str(link.get("href")) \
+                                                or r"forms.gle" in str(link.get("href")) \
+                                                    or "toiawase" in str(link.get("href")) \
+                                                       and not "mailto" in str(link.get("href")):
        links_1.append(link.get("href"))   
        print(links_1)
+       print(len(links_1))
 
-#「http」で始まる文字列のリスト       
-       links_2 = [i for i in links_1 if "http" in i and r".info/contact" in i \
+#「http」で始まる文字列のリスト
+#       if len([i for i in links_1 if r"^http" in i]) > 0:
+     links_2 = [i for i in links_1 if "http" in i and r".info/contact" in i \
                       or "http" in i and not r"/faq" in i or "http" in i and not r"/info" in i \
                           or "http" in i and not "recruit" in i or "http" in i and r"/ask" in i \
-                              or "http" in i and r"form2/B01" in i]
-       print(links_2)
+                              or "http" in i and r"form2/B01" in i \
+                                  or "http" in i and "contact" in i \
+                                      or "http" in i and "mail" in i]
+     print(len(links_2))
 #それ以外（"http"は含めない）
-       links_3 = [j for j in links_1 if r"/contact" in j and not "http" in j \
-                  or r"/CONTACT" in j and not "http" in j or r"/Contact" in j and not "http" in j \
-                          or r"Contact/" in j and not "http" in j or r"mail/" in j and not "http" in j \
-                          or r"#contact" in j and not "http" in j or r"#CONTACT" in j and not "http" in j \
-                              or r"#Contact" in j and not "http" in j \
-                                  or not "05contact" in j and not "http" in j or r"CONTACT" in j and not "http" in j \
+#       elif len([j for j in links_1 if r"^http" in j]) == 0:
+     links_3 = [j for j in links_1 if r"/contact" in j and not "http" in j \
+                  or r"/CONTACT" in j and not "http" in j \
+                      or r"/Contact" in j and not "http" in j \
+                          or r"Contact/" in j and not "http" in j \
+                              or r"mail/" in j and not "http" in j \
+                          or r"#contact" in j and not "http" in j \
+                              or r"#CONTACT" in j and not "http" in j \
+                                  or r"#Contact" in j and not "http" in j \
+                                      or not "05contact" in j and not "http" in j \
+                                          or r"CONTACT" in j and not "http" in j \
                           or r"Contact" in j and not "http" in j \
-                              or r"/お問い合わせ" in j and not "http" in j or r"/お問合せ" in j and not "http" in j \
-                                  or r"/お問い合せ" in j and not "http" in j or r"/お問合わせ" in j and not "http" in j \
-                                      or r"page_id" in j and not "http" in j or r"ask" in j and not "http" in j \
+                              or r"/お問い合わせ" in j and not "http" in j \
+                                  or r"/お問合せ" in j and not "http" in j \
+                                  or r"/お問い合せ" in j and not "http" in j \
+                                      or r"/お問合わせ" in j and not "http" in j \
+                                      or r"page_id" in j and not "http" in j \
+                                          or r"ask" in j and not "http" in j \
                                           or r".info/contact" in j and not "http" in j \
                                       or r"%e3%81%8a%e5%95%8f%e3%81%84%e5%90%88%e3%82%8f%e3%81%9b" in j and not "http" in j \
-                                          or r"contact.html" in j and not "http" in j or r"/contact.html" in j and not "http" in j \
-                                              or r"_contact" in j and not "http" in j or r"contact.php" in j and not "http" in j \
-                                                  or r"/mail" in j and not "http" in j or r"forms.gle" in j and not "http" in j \
-                                                      or r"form.run" in j and not "http" in j or r"section_contact" in j and not "http" in j \
+                                          or r"contact.html" in j and not "http" in j \
+                                              or r"/contact.html" in j and not "http" in j \
+                                              or r"_contact" in j and not "http" in j \
+                                                  or r"contact.php" in j and not "http" in j \
+                                                  or r"/mail" in j and not "http" in j \
+                                                      or r"forms.gle" in j and not "http" in j \
+                                                      or r"form.run" in j and not "http" in j \
+                                                          or r"section_contact" in j and not "http" in j \
                                                         or r"form.php" in j and not "http" in j \
-                                                          or r"/form" in j and not "http" in j \
+                                                          or r"/form$" in j and not "http" in j \
                                                             or "toiawase" in j and not "mailto" in j and not "http" in j \
                                                               or "inq" in j and not "mailto" in j and not "http" in j \
                                                                   or "INQ" in j and not "mailto" in j and not "http" in j \
                                                                       or "Inq" in j and not "mailto" in j and not "http" in j]
 
-       print(links_3)
+     print(len(links_3))
 #メールアドレス（今は使用しない）
-       links_4 = [l for l in links_1 if "mailto" in l]
-       print(links_4)
+     links_4 = [l for l in links_1 if "mailto" in l]
+     print(links_4)
            
 #       if "http" in link.get("href"):
     
 #リストlinks_3、且つリストlinks_2が空でない    
-       if not links_2 == [] and not links_3 == []:
+     if not links_2 == [] and not links_3 == []:
            if len(links_2) == 1 and len(links_3) == 1:
             ws1.update_cell(k, 8, links_2[0])
             print(ws1.cell(k, 8).value)                         
-            ws1.update_cell(k, 9, ws1.cell(k, 5).value + links_3[0])
-            print(ws1.cell(k, 9).value)                         
+#            ws1.update_cell(k, 9, ws1.cell(k, 5).value + links_3[0])
+#            print(ws1.cell(k, 9).value)                         
             
            elif len(links_2) > 1 and len(links_3) == 1:
-            for i in range(1,len(links_2)):    
+            for i in range(1,len(links_3)+1):    
              time.sleep(1)
-             ws1.update_cell(k, 8, links_2[i-1]) 
-             print(ws1.cell(k, 8).value)           
-            ws1.update_cell(k, 9, ws1.cell(k, 5).value + links_3[0])
-            print(ws1.cell(k, 9).value)                         
+             if r"//" in links_3[i-1]:
+              ws1.update_cell(k, 8, r"https:" + links_3[i-1])
+              print(ws1.cell(k, 8).value)
+             else:
+              ws1.update_cell(k, 8, ws1.cell(k, 5).value + links_3[i-1])
+              print(ws1.cell(k, 8).value)
             
-           elif len(links_2) == 1 and len(links_3) > 1:               
+           elif len(links_2) == 1 and len(links_3) > 1:
             ws1.update_cell(k, 8, links_2[0])
             print(ws1.cell(k, 8).value)                                        
-            for j in range(1,len(links_3)):    
-             time.sleep(1)
-             ws1.update_cell(k, 9, links_3[j-1]) 
-             print(ws1.cell(k, 9).value)           
-   
-           else:           
+#            for j in range(1,len(links_3)):    
+#             time.sleep(1)
+#             ws1.update_cell(k, 9, links_3[j-1]) 
+#             print(ws1.cell(k, 9).value)
+             
+           elif len(links_2) > 1 and len(links_3) > 1:           
             for i in range(1,len(links_2)):    
              time.sleep(1)
              ws1.update_cell(k, 8, links_2[i-1])
              print(ws1.cell(k, 8).value)           
-            for j in range(1,len(links_3)):    
-             time.sleep(1)            
-             ws1.update_cell(k, 9, ws1.cell(k, 5).value + links_3[j-1])
-             print(ws1.cell(k, 9).value)
+#            for j in range(1,len(links_3)):    
+#             time.sleep(1)            
+#             ws1.update_cell(k, 9, ws1.cell(k, 5).value + links_3[j-1])
+#             print(ws1.cell(k, 9).value)
+   
 #             if "contact" in ws1.cell(k, 9).value and not "http" in ws1.cell(k, 9).value:
 #              time.sleep(1)
 #              ws1.update_cell(k, 8, ws1.cell(k, 5).value + ws1.cell(k, 9).value)
 #              print(ws1.cell(k, 8).value)
               
 #リストlinks_3が空、且つリストlinks_2が空でない                   
-       elif not links_2 == [] and links_3 == []:
+     elif not links_2 == [] and links_3 == []:
            if len(links_2) == 1:
             ws1.update_cell(k, 8, links_2[0])
             print(ws1.cell(k, 8).value)
             break
            elif len(links_2) > 1:
-            for i in range(1,len(links_2)):    
+            links_2 = [i for i in links_2 if "contact" in i \
+                       or "page_id=93" in i]
+            for i in range(1,len(links_2)+1):
              time.sleep(1)            
              ws1.update_cell(k, 8, links_2[i-1])           
              print(ws1.cell(k, 8).value)
-           
+#             break
 #リストlinks_2が空、且つリストlinks_3が空でない        
-       elif links_2 == [] and not links_3 == []:
+     elif links_2 == [] and not links_3 == []:
            if len(links_3) == 1:
             ws1.update_cell(k, 8, ws1.cell(k, 5).value + links_3[0])
             print(ws1.cell(k, 8).value)                                 
@@ -297,16 +318,22 @@ for k in tqdm(range(24, 25)):
             for j in range(1,len(links_3)):
              time.sleep(3) 
              ws1.update_cell(k, 8, ws1.cell(k, 5).value + links_3[j])
-             print(ws1.cell(k, 8).value)                                 
-            
+             print(ws1.cell(k, 8).value)
+           elif len(links_3) > 5:
+            for j in range(1,len(links_3)):
+             time.sleep(3) 
+             ws1.update_cell(k, 8, ws1.cell(k, 5).value + links_3[j-1])
+             print(ws1.cell(k, 8).value)             
+             break
+         
 #リストlink_4が空でない
-       elif links_2 == [] and links_3 == [] and not links_4 == []:
+     elif links_2 == [] and links_3 == [] and not links_4 == []:
             ws1.update_cell(k, 8, links_4[0])
             print(ws1.cell(k, 8).value)                                 
            
-       elif links_2 == [] and links_3 == []:
+     elif links_2 == [] and links_3 == []:
             ws1.update_cell(k, 8, "-")                                 
-      else:
+     else:
         ws1.update_cell(k, 8, "-")
     else:
      ws1.update_cell(k, 8, "このサイトにアクセスできません")
