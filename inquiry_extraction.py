@@ -69,7 +69,7 @@ start = time.time()
 #def scrape_contact_emails(link):
 #ws1の行数を取得
 lastrow1 = len(ws1.col_values(2))
-for k in tqdm(range(53, 54)):
+for k in tqdm(range(66, 67)):
 #  lastcol = len(list(ws1.row_values(k)))                      
    if not ws1.cell(k, 5).value == "-":    
     try:
