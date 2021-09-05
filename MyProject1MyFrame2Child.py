@@ -7,54 +7,28 @@ import wx.grid
 import wx.adv
 #import sqlite3
 import gspread
-import time
-import re
-from bs4 import BeautifulSoup
-from tqdm import tqdm
-from selenium import webdriver
-from selenium.webdriver.chrome.options import Options
-
-#例外処理用のlibraryをimport
-from selenium.common.exceptions import NoSuchElementException
-from selenium.common.exceptions import WebDriverException
-
-#Selectモジュールをインポート
-#from selenium.webdriver.support.select import Select
-
-#オプションの作成
-option = Options()
-
-#起動オプション
-# ヘッドレスモードを有効にする（次の行をコメントアウトすると画面が表示される）。
-option.add_argument('--headless')
-
-#「unknown error: net::ERR_CONNECTION_CLOSED」の回避用
-option.add_argument('--disable-dev-shm-usage')
-
-# ChromeのWebDriverオブジェクトを作成する。
-driver = webdriver.Chrome("C:/Users/iorin/OneDrive/ドキュメント/Python Scripts/chromedriver.exe",options=option)
 
 #ServiceAccountCredentials：Googleの各サービスへアクセスできるservice変数を生成します。
 from oauth2client.service_account import ServiceAccountCredentials
 
+import time
+import re
+from bs4 import BeautifulSoup
+from tqdm import tqdm
+
 #2つのAPIを記述しないとリフレッシュトークンを3600秒毎に発行し続けなければならない
 scope = ['https://spreadsheets.google.com/feeds','https://www.googleapis.com/auth/drive']
 
-# 秘密鍵（JSONファイル）のファイル名を入力
-credentials = ServiceAccountCredentials.from_json_keyfile_name('inquiry-form-automatic-posting-6e2409a1cc4a.json', scope)
-
-#OAuth2の資格情報を使用してGoogle APIにログインします。
-gc = gspread.authorize(credentials)
 
 #「キー」で取得
-SPREADSHEET_KEY = '1BazsXmS9dW8oAOmvjMNVabvvw1dYAgW9SR-qbyAylEU'
-SPREADSHEET_KEY2 = '1FrygfVLHP8fMZh8HdBYboZtkg4fCH8lcDUsbQ58Hbqs'
+#SPREADSHEET_KEY = '1BazsXmS9dW8oAOmvjMNVabvvw1dYAgW9SR-qbyAylEU'
+#SPREADSHEET_KEY2 = '1FrygfVLHP8fMZh8HdBYboZtkg4fCH8lcDUsbQ58Hbqs'
 
-wb = gc.open_by_key(SPREADSHEET_KEY)
-wb2 = gc.open_by_key(SPREADSHEET_KEY2)
-ws1 = wb.worksheet('sheet1')
-ws2 = wb2.worksheet('imc-pager__item')
-ws3 = wb.worksheet('ターゲットリスト')
+#wb = gc.open_by_key(SPREADSHEET_KEY)
+#wb2 = gc.open_by_key(SPREADSHEET_KEY2)
+#ws1 = wb.worksheet('sheet1')
+#ws2 = wb2.worksheet('imc-pager__item')
+#ws3 = wb.worksheet('ターゲットリスト')
 
 #pyファイル「dbSqliteClass」の関数「db_sqlite」を参照
 #from dbSqliteClass import db_sqlite
@@ -84,31 +58,59 @@ class MyProject1MyFrame2( app.MyFrame2 ):
 		self.Bind(wx.EVT_CLOSE, self.quit_button)
  
 		self.btn1 = wx.xrc.XRCCTRL(self, 'btn1')
-#		self.btn1.Bind(wx.EVT_BUTTON, self.create_button)
-		self.btn2 = wx.xrc.XRCCTRL(self, 'btn2')
+#		self.btn2 = wx.xrc.XRCCTRL(self, 'btn2')
 #		self.btn2.Bind(wx.EVT_BUTTON, self.quit_button)
 		self.btn3 = wx.xrc.XRCCTRL(self, 'btn3')
 
- 
-#SetValue of SpinCtrl
-#		bSizer19 = wx.BoxSizer( wx.VERTICAL )
 
-#		self.m_panel6 = wx.Panel( self.main_panel, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, wx.TAB_TRAVERSAL )
-#		self.m_panel6.SetFont( wx.Font( 10, wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_NORMAL, False, "Meiryo UI" ) )
+		self.m_panel22.SetFont( wx.Font( 10, wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_NORMAL, False, "Meiryo UI" ) )
 
-#		self.m_panel16 = wx.Panel( self.main_panel, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, wx.TAB_TRAVERSAL )
+		sbSizer151 = wx.StaticBoxSizer( wx.StaticBox( self.m_panel22, wx.ID_ANY, u"List up" ), wx.VERTICAL )
+
+		self.m_panel161 = wx.Panel( sbSizer151.GetStaticBox(), wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, wx.TAB_TRAVERSAL )
+		self.m_panel161.SetFont( wx.Font( 10, wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_NORMAL, False, "Meiryo UI" ) )
+
+		sbSizer141 = wx.StaticBoxSizer( wx.StaticBox( self.m_panel161, wx.ID_ANY, u"Please enter the Google API service account Authentication key." ), wx.VERTICAL )
+
+		self.m_textCtrl11 = wx.TextCtrl( sbSizer141.GetStaticBox(), wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.Size( 400,-1 ), 0 )
+		sbSizer141.Add( self.m_textCtrl11, 0, wx.ALL, 5 )
+
+
+		self.m_panel161.SetSizer( sbSizer141 )
+		self.m_panel161.Layout()
+		sbSizer141.Fit( self.m_panel161 )
+		sbSizer151.Add( self.m_panel161, 1, wx.EXPAND |wx.ALL, 5 )
+
+		self.m_panel16 = wx.Panel( sbSizer151.GetStaticBox(), wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, wx.TAB_TRAVERSAL )
 		self.m_panel16.SetFont( wx.Font( 10, wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_NORMAL, False, "Meiryo UI" ) )
 
 		sbSizer14 = wx.StaticBoxSizer( wx.StaticBox( self.m_panel16, wx.ID_ANY, u"Please enter the spreadsheet key." ), wx.VERTICAL )
 
-		self.m_textCtrl1 = wx.TextCtrl( sbSizer14.GetStaticBox(), wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.Size( 400,-1 ), 0 )
-		self.m_textCtrl1.Bind(wx.EVT_TEXT, self.text_event)
-		sbSizer14.Add( self.m_textCtrl1, 0, wx.ALL, 5 )
+		m_comboBox6Choices = ['1BazsXmS9dW8oAOmvjMNVabvvw1dYAgW9SR-qbyAylEU']
+		self.m_comboBox6 = wx.ComboBox( sbSizer14.GetStaticBox(), wx.ID_ANY, u"選択して下さい", wx.DefaultPosition, wx.Size( 400,-1 ), m_comboBox6Choices, 0 )
 
+#コンボボックスの項目が選択されたときに処理するイベントをtext_event()メソッドに関連付けるバインダーを設定
+		self.m_comboBox6.Bind(wx.EVT_COMBOBOX, self.text_event)
+
+		sbSizer14.Add( self.m_comboBox6, 0, wx.ALL, 5 )
 
 		self.m_panel16.SetSizer( sbSizer14 )
 		self.m_panel16.Layout()
 		sbSizer14.Fit( self.m_panel16 )
+		sbSizer151.Add( self.m_panel16, 1, wx.EXPAND |wx.ALL, 5 )
+
+		self.btn1 = wx.Button( sbSizer151.GetStaticBox(), wx.ID_ANY, u"Create", wx.DefaultPosition, wx.DefaultSize, 0 )
+		self.btn1.SetFont( wx.Font( 10, wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_NORMAL, False, "Meiryo UI" ) )
+
+#EVT_TEXTにて、ボタンクリックイベントをtext_event()メソッドに関連付けるバインダーを設定
+		self.btn1.Bind(wx.EVT_BUTTON, self.create_button)
+
+		sbSizer151.Add( self.btn1, 0, wx.ALL, 5 )
+
+
+		self.m_panel22.SetSizer( sbSizer151 )
+		self.m_panel22.Layout()
+		sbSizer151.Fit( self.m_panel22 )
 
 #		bSizer19.Add( self.m_panel6, 1, wx.EXPAND |wx.ALL, 5 )
 
@@ -160,14 +162,19 @@ class MyProject1MyFrame2( app.MyFrame2 ):
 #		self.gridTable.AutoSize()
 
 	def text_event(self, event):
-	   if not self.m_textCtrl1.GetValue() == '1BazsXmS9dW8oAOmvjMNVabvvw1dYAgW9SR-qbyAylEU':
-	      self.m_textCtrl1.SetBackgroundColour('#ff0000')
-#	      self.m_textCtrl1.SetForegroundColour('#f56cbe')
-	      wx.MessageBox(u'Invalid sheet key!!', u'Setting value error', wx.ICON_ERROR)
-#	      self.m_textCtrl1.Clear()
-	   else:
-	      self.m_textCtrl1.SetBackgroundColour('#FFFFFF')
-	      sbSizer5 = wx.StaticBoxSizer( wx.StaticBox( self.m_panel6, wx.ID_ANY, u"Please set the value." ), wx.VERTICAL )
+	   if not self.m_comboBox6.GetValue() == '1BazsXmS9dW8oAOmvjMNVabvvw1dYAgW9SR-qbyAylEU' \
+           or not 'json' in self.m_textCtrl11.GetValue() \
+           or self.m_textCtrl11.GetValue() == '1BazsXmS9dW8oAOmvjMNVabvvw1dYAgW9SR-qbyAylEU':
+#           or not 'json' in self.m_textCtrl11.GetValue():
+	      self.m_comboBox6.SetBackgroundColour('#f56cbe')
+	      self.m_textCtrl11.SetBackgroundColour('#f56cbe')          
+#	      self.m_comboBox6.SetForegroundColour('#f56cbe')
+	      wx.MessageBox(u'The key is incorrect or does not exist!!', u'Setting value error', wx.ICON_ERROR)
+	   elif self.m_comboBox6.GetValue() == '1BazsXmS9dW8oAOmvjMNVabvvw1dYAgW9SR-qbyAylEU' \
+           and 'json' in self.m_textCtrl11.GetValue():
+	      self.m_comboBox6.SetBackgroundColour('#FFFFFF')
+	      self.m_textCtrl11.SetBackgroundColour('#FFFFFF')
+	      sbSizer5 = wx.StaticBoxSizer( wx.StaticBox( self.m_panel6, wx.ID_ANY, u"Extraction of inquiry page." ), wx.VERTICAL )
 
 	      self.m_panel5 = wx.Panel( sbSizer5.GetStaticBox(), wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, wx.TAB_TRAVERSAL )
 	      bSizer16 = wx.BoxSizer( wx.VERTICAL )
@@ -179,8 +186,14 @@ class MyProject1MyFrame2( app.MyFrame2 ):
 
 	      sbSizer15 = wx.StaticBoxSizer( wx.StaticBox( self.m_panel17, wx.ID_ANY, u"Worksheet title" ), wx.VERTICAL )
 
+#秘密鍵（JSONファイル）のファイル名を入力
+	      credentials = ServiceAccountCredentials.from_json_keyfile_name(self.m_textCtrl11.GetValue(), scope)
+
+#OAuth2の資格情報を使用してGoogle APIにログインします。
+	      gc = gspread.authorize(credentials)
+
 #存在するワークシートの情報を全て取得
-	      wb = gc.open_by_key(self.m_textCtrl1.GetValue())
+	      wb = gc.open_by_key(self.m_comboBox6.GetValue())
 	      worksheets = wb.worksheets()
         
 #現在のワークシートのタイトルをリストへ格納
@@ -203,7 +216,7 @@ class MyProject1MyFrame2( app.MyFrame2 ):
 
 	      gSizer6.Add( self.m_staticText5, 0, wx.ALL|wx.ALIGN_RIGHT, 5 )
 
-	      self.row1 = wx.SpinCtrl( self.m_panel5, wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.DefaultSize, wx.SP_ARROW_KEYS, 0, 1000, 0 )
+	      self.row1 = wx.SpinCtrl( self.m_panel5, wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.DefaultSize, wx.SP_ARROW_KEYS, 0, 10000, 0 )
 	      gSizer6.Add( self.row1, 0, wx.ALL, 5 )
 
 	      self.m_staticText6 = wx.StaticText( self.m_panel5, wx.ID_ANY, u"last", wx.DefaultPosition, wx.DefaultSize, 0 )
@@ -212,7 +225,7 @@ class MyProject1MyFrame2( app.MyFrame2 ):
 
 	      gSizer6.Add( self.m_staticText6, 0, wx.ALL|wx.ALIGN_RIGHT, 5 )
 
-	      self.row2 = wx.SpinCtrl( self.m_panel5, wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.DefaultSize, wx.SP_ARROW_KEYS, 0, 1000, 0 )
+	      self.row2 = wx.SpinCtrl( self.m_panel5, wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.DefaultSize, wx.SP_ARROW_KEYS, 0, 10000, 0 )
 	      gSizer6.Add( self.row2, 0, wx.ALL, 5 )
 
 
@@ -260,16 +273,21 @@ class MyProject1MyFrame2( app.MyFrame2 ):
 	# Handlers for MyFrame2 events.
 	def create_button( self, event ):
 		# TODO: Implement create_button
-	   if self.m_textCtrl1.GetValue() == '':
-	      self.m_textCtrl1.SetBackgroundColour('#ff0000')
-#	      self.m_textCtrl1.SetForegroundColour('#f56cbe')
-	      wx.MessageBox(u'Please enter the sheet key!!', u'Setting value error', wx.ICON_ERROR)
+	   if not self.m_comboBox6.GetValue() == '1BazsXmS9dW8oAOmvjMNVabvvw1dYAgW9SR-qbyAylEU' \
+           or self.m_textCtrl11.GetValue() == '1BazsXmS9dW8oAOmvjMNVabvvw1dYAgW9SR-qbyAylEU' \
+           or not 'json' in self.m_textCtrl11.GetValue():
+	      self.m_comboBox6.SetBackgroundColour('#f56cbe')
+	      self.m_textCtrl11.SetBackgroundColour('#f56cbe')          
+#	      self.m_comboBox6.SetForegroundColour('#f56cbe')
+	      wx.MessageBox(u'The key is incorrect or does not exist!!', u'Setting value error', wx.ICON_ERROR)
 	   else:
-	    self.m_textCtrl1.SetBackgroundColour('#FFFFFF')
+	    self.m_comboBox6.SetBackgroundColour('#FFFFFF')
+	    self.m_textCtrl11.SetBackgroundColour('#FFFFFF')
 	    adid = MyProject1MyDialog(self)
         
 #MyFrame2のテキストボックスに入力した値をMyDialogに受け渡し        
-	    adid.import_sheet_title(self.m_textCtrl1.GetValue())
+	    adid.import_json_file(self.m_textCtrl11.GetValue())        
+	    adid.import_sheet_title(self.m_comboBox6.GetValue())
 #		adid.select_sql(self.m_textCtrl1.GetValue())
 #		adid.page_list(self.m_textCtrl1.GetValue())
 	    adid.ShowModal()
@@ -284,25 +302,53 @@ class MyProject1MyFrame2( app.MyFrame2 ):
 		row2 = self.row2.GetValue()
 
 		if self.m_comboBox1.GetValue() == '選択して下さい':
-		 self.m_comboBox1.SetBackgroundColour("#ff0000")
+		 self.m_comboBox1.SetBackgroundColour("#f56cbe")
 		 wx.MessageBox(u'Please select the Worksheet title!!', u'Setting value error', wx.ICON_ERROR)
 		elif row1 == 0 and row2 == 0:
-		 self.row1.SetBackgroundColour('#ff0000')
-		 self.row2.SetBackgroundColour('#ff0000')
+		 self.row1.SetBackgroundColour('#f56cbe')
+		 self.row2.SetBackgroundColour('#f56cbe')
 		 self.m_comboBox1.SetBackgroundColour("#FFFFFF")
 		 wx.MessageBox(u'Please set the range!!', u'Setting value error', wx.ICON_ERROR)
-		elif row2 - row1 > 1000:
-		 self.row1.SetBackgroundColour('#ff0000')
-		 self.row2.SetBackgroundColour('#ff0000')
+		elif row2 - row1 > 10000:
+		 self.row1.SetBackgroundColour('#f56cbe')
+		 self.row2.SetBackgroundColour('#f56cbe')
 		 self.m_comboBox1.SetBackgroundColour("#FFFFFF")
 		 wx.MessageBox(u'The value exceeds the configurable range!!', u'Setting value error', wx.ICON_ERROR)
 		elif row2 - row1 < 0:
-		 self.row1.SetBackgroundColour('#ff0000')
-		 self.row2.SetBackgroundColour('#ff0000')
+		 self.row1.SetBackgroundColour('#f56cbe')
+		 self.row2.SetBackgroundColour('#f56cbe')
 		 self.m_comboBox1.SetBackgroundColour("#FFFFFF")
 		 wx.MessageBox(u'Illegal range!!', u'Setting value error', wx.ICON_ERROR)
 		# Set cell values.
 		else:
+		 from selenium import webdriver
+		 from selenium.webdriver.chrome.options import Options
+
+#例外処理用のlibraryをimport
+		 from selenium.common.exceptions import NoSuchElementException
+		 from selenium.common.exceptions import WebDriverException
+		 from selenium.common.exceptions import TimeoutException
+
+#Selectモジュールをインポート
+		 #from selenium.webdriver.support.select import Select
+
+#オプションの作成
+		 option = Options()
+
+#起動オプション
+# ヘッドレスモードを有効にする（次の行をコメントアウトすると画面が表示される）。
+		 option.add_argument('--headless')
+
+#「unknown error: net::ERR_CONNECTION_CLOSED」の回避用
+		 option.add_argument('--disable-dev-shm-usage')
+
+# ChromeのWebDriverオブジェクトを作成する。
+		 driver = webdriver.Chrome("C:/Users/iorin/OneDrive/ドキュメント/Python Scripts/chromedriver.exe",options=option)
+		 driver.set_page_load_timeout(60)
+                        
+		 credentials = ServiceAccountCredentials.from_json_keyfile_name(self.m_textCtrl11.GetValue(), scope)
+		 gc = gspread.authorize(credentials)
+		 wb = gc.open_by_key(self.m_comboBox6.GetValue())            
 		 ws3 = wb.worksheet(self.m_comboBox1.GetValue())
 		 self.row1.SetBackgroundColour('#FFFFFF')
 		 self.row2.SetBackgroundColour('#FFFFFF')
@@ -310,32 +356,391 @@ class MyProject1MyFrame2( app.MyFrame2 ):
 		 adid = MyProject1MyFrame5(self)
 		 adid.grid.ClearGrid()
 		 self.m_gauge2.SetValue( 0 )         
-		 self.m_gauge2.SetRange(row2-row1)         
-#		c = db_sqlite(DB_NAME)
-        
-#レコード取得SQL文
-#テーブル「sheet1」内の「法人名称」「サイトURL」「住所」を選択
-#		sql = (
-#		    'select 法人名称, サイトURL, 住所 from'
-#		    ' sheet1 as a'
-#		)
-#fetchallで結果リストを取得する        
-#		acc = c.db_execute_place(sql, (row1, row2)).fetchall()
-		 cell_list1 = ws3.range(row1, 2, row2, 2)
-		 cell_list2 = ws3.range(row1, 3, row2, 3)
-		 cell_list3 = ws3.range(row1, 4, row2, 4)
-		 cell_list4 = ws3.range(row1, 5, row2, 5)
+		 self.m_gauge2.SetRange(row2-row1)
+         
+		 dlg = wx.ProgressDialog(
+            title="お問い合わせページ抽出中",
+            message="0/100",
+            maximum=100,
+            style=wx.PD_AUTO_HIDE | wx.PD_ELAPSED_TIME | wx.PD_ESTIMATED_TIME | wx.PD_REMAINING_TIME )         
+         
+# ダイアログ表示
+		 dlg.Show()
+		 rate = 0
+
+#所要時間計測開始
+		 start = time.time()
+    
+#お問い合わせページのリンク
+#		 lastrow1 = len(ws3.col_values(1))
+		 for k in tqdm(range(row1, row2+1)):
+		    if not ws3.cell(k, 5).value == "-" \
+                or not ws3.cell(k, 5).value == "":
+		     try:
+		      driver.get(ws3.cell(k, 5).value)
+		      time.sleep(5)
+
+		      if 'Error 502 (Server Error)!!1' in driver.title:
+		        ws3.update_cell(k, 6, driver.title)		 		 		  
+		        continue
+		      elif 'Not Found' in driver.title:
+		        ws3.update_cell(k, 6, driver.title)		 		 		  
+		        continue   
+		      elif 'エラー' in driver.title:
+		        ws3.update_cell(k, 6, driver.title)
+		        continue
+
+		      html = driver.page_source  
+#   print(res.status_code)
+		      soup = BeautifulSoup(html, 'html.parser')
+#		      print(soup)
+
+#エラー発生時に回避（①～⑤は実施されない）
+		     except TimeoutException:
+		      print("Time out!!")   
+		      ws3.update_cell(k, 6, "Time out!!")
+		      continue
+
+		     except WebDriverException:
+		      print("unknown error!!")   
+		      ws3.update_cell(k, 6, "unknown error!!")
+		      continue   
+
+#抽出開始
+		     if not "このサイトにアクセスできません" in html:
+		      links_1 = []
+		      for link in soup.select('a[href]'):
+#		       print(soup.find_all('a'))
+		       if "contact" in str(link.get("href")) \
+		     		        and not "actover" in str(link.get("href")) \
+		     		     		        and not "projection" in str(link.get("href")) \
+		     		     		     		       and not "consultation" in str(link.get("href")) \
+		     		     		     		     		       and not "regist" in str(link.get("href")) \
+		     		     		     		     		     		       and not "research" in str(link.get("href")) \
+		     		     		     		     		     		     		       and not "mailto" in str(link.get("href")) \
+		     		     		     		     		     		     		     		       and not "privacy" in str(link.get("href")) \
+		     		     		     		     		     		     		     		     		       and not "service" in str(link.get("href")) \
+		     		     		     		     		     		     		     		     		     		       and not "recruit" in str(link.get("href")) \
+		     		     		     		     		     		     		     		     		     		     		       and not "sdgs" in str(link.get("href")) \
+		     		     		     		     		     		     		     		     		     		     		     		       or "form2" in str(link.get("href")) \
+		     		     		     		     		     		     		     		     		     		     		     		     		       and "inq" in str(link.get("href")) \
+		     		     		     		     		     		     		     		     		     		     		     		       or "contact" in str(link.get("href")) \
+		     		     		     		     		     		     		     		     		     		     		     		     		      and "salesmarketingservice" in str(link.get("href")) \
+		     		     		     		     		     		     		     		     		     		     		     		     		     		       or r"contact/inq" in str(link.get("href")) \
+		     		       or "CONTACT" in str(link.get("href")) \
+		     		     		       and not "mailto" in str(link.get("href")) \
+		     		     		     		       and not "privacy" in str(link.get("href")) \
+		     		     		     		     		       and not "service" in str(link.get("href")) \
+		     		     		     		     		     		       and not "recruit" in str(link.get("href")) \
+		     		     		     		     		     		     		       and not "sdgs" in str(link.get("href")) \
+		     		     		     or "Contact" in str(link.get("href")) \
+		     		     		       and not "mailto" in str(link.get("href")) \
+		     		     		     		       and not "privacy" in str(link.get("href")) \
+		     		     		     		     		       and not "service" in str(link.get("href")) \
+		     		     		     		     		     		       and not "recruit" in str(link.get("href")) \
+		     		     		     		     		     		     		       and not "sdgs" in str(link.get("href")) \
+		     		     		     or "INQ" in str(link.get("href")) \
+		     		     		       and not "mailto" in str(link.get("href")) \
+		     		     		     		       and not "privacy" in str(link.get("href")) \
+		     		     		     		     		       and not "service" in str(link.get("href")) \
+		     		     		     		     		     		       and not "recruit" in str(link.get("href")) \
+		     		     		     		     		     		     		       and not "sdgs" in str(link.get("href")) \
+		     		     		     or "Inq" in str(link.get("href")) \
+		     		     		       and not "mailto" in str(link.get("href")) \
+		     		     		     		       and not "privacy" in str(link.get("href")) \
+		     		     		     		     		       and not "service" in str(link.get("href")) \
+		     		     		     		     		     		       and not "recruit" in str(link.get("href")) \
+		     		     		     		     		     		     		       and not "sdgs" in str(link.get("href")) \
+		     		     		     or "inq" in str(link.get("href")) \
+		     		     		       and not "mailto" in str(link.get("href")) \
+		     		     		     		       and not "privacy" in str(link.get("href")) \
+		     		     		     		     		       and not "service" in str(link.get("href")) \
+		     		     		     		     		     		       and not "recruit" in str(link.get("href")) \
+		     		     		     		     		     		     		       and not "sdgs" in str(link.get("href")) \
+		     		     		     or r".info/" in str(link.get("href")) \
+		     		     		     		       and not "privacy" in str(link.get("href")) \
+		     		     		     		     		       and not "service" in str(link.get("href")) \
+		     		     		     		     		     		       and not "recruit" in str(link.get("href")) \
+		     		     		     		     		     		     		       and not "sdgs" in str(link.get("href")) \
+		     		     		     or r"/info" in str(link.get("href")) \
+		     		     		     		       and not "privacy" in str(link.get("href")) \
+		     		     		     		     		       and not "service" in str(link.get("href")) \
+		     		     		     		     		     		       and not "recruit" in str(link.get("href")) \
+		     		     		     		     		     		     		       and not "sdgs" in str(link.get("href")) \
+		     		     		     		     		       or "お問い合わせ" in str(link.get("href")) \
+		     		     		     		     		     		       and not r"/よくある質問" in str(link.get("href")) \
+		     		     		     		     		     		       or "お問合せ" in str(link.get("href")) \
+		     		     		     		     		     		     		       and not r"/よくある質問" in str(link.get("href")) \
+		     		     		     		     		     		     		       or "お問い合せ" in str(link.get("href")) \
+		     		     		     		     		     		     		     		       and not r"/よくある質問" in str(link.get("href")) \
+		     		     		     		     		     		     		     		       or "お問合わせ" in str(link.get("href")) \
+		     		     		     		     		     		     		     		     		       and not r"/よくある質問" in str(link.get("href")) \
+		     		     		     		     		     		     		     		       or "mail" in str(link.get("href")) \
+		     		     		     		     		     		     		     		     		       and not "download" in str(link.get("href")) \
+		     		     		     		     		     		     		     		     		     		       and not "mailto" in str(link.get("href")) \
+		     		     		     		     		     		     		     		     		     		     		       and not "privacy" in str(link.get("href")) \
+		     		     		     		     		     		     		     		     		     		     		     		       and not "service" in str(link.get("href")) \
+		     		     		     		     		     		     		     		     		     		     		     		     		       and not "recruit" in str(link.get("href")) \
+		     		     		     		     		     		     		     		     		     		     		     		     		     		       and not "sdgs" in str(link.get("href")) \
+		     		     		     		     		     		     		     		       or "mailto" in str(link.get("href")) \
+		     		     		     		     		     		     		     		     		     		       and not "privacy" in str(link.get("href")) \
+		     		     		     		     		     		     		     		     		     		     		       and not "service" in str(link.get("href")) \
+		     		     		     		     		     		     		     		     		     		     		     		       and not "recruit" in str(link.get("href")) \
+		     		     		     		     		     		     		     		     		     		     		     		     		       and not "sdgs" in str(link.get("href")) \
+		     		     		     		     		      or "page_id=233" in str(link.get("href")) \
+		     		     		     		     		     		      or "page_id=39" in str(link.get("href")) \
+		     		     		     		     		     		     		      or "page_id=93" in str(link.get("href")) \
+		     		     		     		     		     		     or "page_id=15" in str(link.get("href")) \
+		     		     		     		     		     		       or "page_id=3781" in str(link.get("href")) \
+		     		     		     		     		     		     		     or r"form.run" in str(link.get("href")) \
+		     		     		     		     		     		     		       or r"form.php" in str(link.get("href")) \
+		     		     		     		     		     		     		     		     or r"/form$" in str(link.get("href")) \
+		     		     		     		     		     		     		     		     		     or r"form.html" in str(link.get("href")) \
+		     		     		     		     		     		     		     		     		     		     or r"%e3%81%8a%e5%95%8f%e3%81%84%e5%90%88%e3%82%8f%e3%81%9b" in str(link.get("href")) \
+		     		     		     		     		     		     		     		     		     		     		     or r"ask.html" in str(link.get("href")) \
+		     		     		     		     		     		     		     		     		     		     		       or r"/ask" in str(link.get("href")) \
+		     		     		     		     		     		     		     		     		     		     		     		     or r"forms.gle" in str(link.get("href")) \
+		     		     		     		     		     		     		     		     		     		     		     		     		     or "toiawase" in str(link.get("href")) \
+		     		     		     		     		     		     		     		     		     		     		     		     		     		     or "faq" in str(link.get("href")) \
+		     		     		     		     		     		     		     		     		     		     		     		     		        and not "mailto" in str(link.get("href")):
+		        links_1.append(link.get("href"))   
+#		        print(links_1)
+		        print(len(links_1))
+
+#「http」で始まる文字列のリスト
+#		        if len([i for i in links_1 if r"^http" in i]) > 0:
+		      links_2 = [i for i in links_1 if "http" in i and r".info/contact" in i \
+		      		      		      		        or "http" in i and r"/faq" in i or "http" in i and not r"/info" in i \
+		      		      		      		      		       or "http" in i and not "recruit" in i or "http" in i and r"/ask" in i \
+		      		      		      		      		      		      or "http" in i and r"form2/B01" in i \
+		      		      		      		      		      		          or "http" in i and "contact" in i \
+		      		      		      		      		      		      		         or "http" in i and "mail" in i]
+		      print(len(links_2))
+#それ以外（"http"は含めない）
+#		        elif len([j for j in links_1 if r"^http" in j]) == 0:
+		      links_3 = [j for j in links_1 if r"/contact" in j and not "http" in j and not "mailto" in j \
+		      		      		         or r"/CONTACT" in j and not "http" in j and not "mailto" in j \
+		      		      		      		        or r"/Contact" in j and not "http" in j and not "mailto" in j \
+		      		      		      		      		       or r"Contact/" in j and not "http" in j and not "mailto" in j \
+		      		      		      		      		      		      or r"mail/" in j and not "http" in j and not "mailto" in j \
+		      		      		      		      		       or r"#contact" in j and not "http" in j and not "mailto" in j \
+		      		      		      		      		      		      or r"#CONTACT" in j and not "http" in j and not "mailto" in j \
+		      		      		      		      		      		          or r"#Contact" in j and not "http" in j and not "mailto" in j \
+		      		      		      		      		      		      		         or not "05contact" in j and not "http" in j and not "mailto" in j \
+		      		      		      		      		      		      		      		        or r"CONTACT" in j and not "http" in j and not "mailto" in j \
+		      		      		      		      		       or r"Contact" in j and not "http" in j and not "mailto" in j \
+		      		      		      		      		      		      or r"/お問い合わせ" in j and not "http" in j and not "mailto" in j \
+		      		      		      		      		      		          or r"/お問合せ" in j and not "http" in j and not "mailto" in j \
+		      		      		      		      		      		          or r"/お問い合せ" in j and not "http" in j and not "mailto" in j \
+		      		      		      		      		      		      		         or r"/お問合わせ" in j and not "http" in j and not "mailto" in j \
+		      		      		      		      		      		      		         or r"page_id" in j and not "http" in j and not "mailto" in j \
+		      		      		      		      		      		      		      		        or r"ask" in j and not "http" in j and not "mailto" in j \
+		      		      		      		      		      		      		      		        or r".info/contact" in j and not "http" in j and not "mailto" in j \
+		      		      		      		      		      		      		         or r"%e3%81%8a%e5%95%8f%e3%81%84%e5%90%88%e3%82%8f%e3%81%9b" in j and not "http" in j and not "mailto" in j \
+		      		      		      		      		      		      		      		        or r"contact.html" in j and not "http" in j and not "mailto" in j \
+		      		      		      		      		      		      		      		      		       or r"/contact.html" in j and not "http" in j and not "mailto" in j \
+		      		      		      		      		      		      		      		      		       or r"_contact" in j and not "http" in j and not "mailto" in j \
+		      		      		      		      		      		      		      		      		      		      or r"contact.php" in j and not "http" in j and not "mailto" in j \
+		      		      		      		      		      		      		      		      		      		      or r"/mail" in j and not "http" in j and not "mailto" in j \
+		      		      		      		      		      		      		      		      		      		          or r"forms.gle" in j and not "http" in j and not "mailto" in j \
+		      		      		      		      		      		      		      		      		      		          or r"form.run" in j and not "http" in j and not "mailto" in j \
+		      		      		      		      		      		      		      		      		      		      		         or r"section_contact" in j and not "http" in j and not "mailto" in j \
+		      		      		      		      		      		      		      		      		      		      		       or r"form.php" in j and not "http" in j and not "mailto" in j \
+		      		      		      		      		      		      		      		      		      		      		         or r"/form$" in j and not "http" in j and not "mailto" in j \
+		      		      		      		      		      		      		      		      		      		      		      		      or "toiawase" in j and not "mailto" in j and not "http" in j \
+		      		      		      		      		      		      		      		      		      		      		      		        or "inq" in j and not "mailto" in j and not "http" in j \
+		      		      		      		      		      		      		      		      		      		      		      		      		       or "INQ" in j and not "mailto" in j and not "http" in j \
+		      		      		      		      		      		      		      		      		      		      		      		      		      		      or "Inq" in j and not "mailto" in j and not "http" in j]
+		      print(links_3)
+		      print(len(links_3))
+              
+#メールアドレス（今は使用しない）
+		      links_4 = [l for l in links_1 if "mailto" in l]
+		      print(links_4)
+		      print(len(links_4))
+
+#リストlinks_4及びリストlinks_3が空でない、且つリストlinks_2が空である
+		      if links_2 == [] \
+		       and not links_3 == [] \
+               and not links_4 == []:
+		      		       if len(links_3) == 1:
+		      		        ws3.update_cell(k, 6, ws3.cell(k, 5).value + links_3[0])
+		      		        print(ws3.cell(k, 6).value)		      		      		      		      		      		         
+		      		       elif 1 <= len(links_3) <= 5:
+		      		        for j in range(1,len(links_3)):
+		      		         time.sleep(3) 
+		      		         ws3.update_cell(k, 6, ws3.cell(k, 5).value + links_3[j])
+		      		         print(ws3.cell(k, 6).value)
+		      		       elif len(links_3) > 5:
+		      		        for j in range(1,len(links_3)):
+		      		         time.sleep(3) 
+		      		         ws3.update_cell(k, 6, ws3.cell(k, 5).value + links_3[j-1])
+		      		         print(ws3.cell(k, 6).value)		      		         
+#		      		         break
+
+#リストlinks_4が空、リストlinks_3、且つリストlinks_2が空でない
+		      elif not links_2 == [] \
+		       and not links_3 == [] \
+               and links_4 == []:
+		       if len(links_2) == 1 and len(links_3) == 1:
+		        ws3.update_cell(k, 6, links_2[0])
+		        print(ws3.cell(k, 6).value)                         
+
+		       elif len(links_2) > 1 and len(links_3) == 1:
+		        for i in range(1,len(links_3)+1):    
+		         time.sleep(1)
+		         if r"//" in links_3[i-1]:
+		          ws3.update_cell(k, 6, r"https:" + links_3[i-1])
+		          print(ws3.cell(k, 6).value)
+		         else:
+		          ws3.update_cell(k, 6, ws3.cell(k, 5).value + links_3[i-1])
+		          print(ws3.cell(k, 6).value)
+		        
+		       elif len(links_2) == 1 and len(links_3) > 1:
+		        ws3.update_cell(k, 6, links_2[0])
+		        print(ws3.cell(k, 6).value)
+              
+		       elif len(links_2) == 1 and len(links_3) > 1:
+		        ws3.update_cell(k, 6, links_2[0])
+		        print(ws3.cell(k, 6).value)
+
+		       elif len(links_2) > 1 and len(links_3) > 1:
+		        links_2 =[i for i in links_2 if "contact" in i \
+		       		       and i is not None]
+		        links_3 =[i for i in links_3 if "contact" in i \
+		       		       and i is not None]
+		        if len(links_2) > 0:
+		         for i in range(1,len(links_2)):    
+		          time.sleep(1)
+		          ws3.update_cell(k, 6, links_2[i-1])
+		          print(ws3.cell(k, 6).value)
+		        elif len(links_3) > 0:
+		         for j in range(1,len(links_3)):    
+		          time.sleep(1)		        
+		          ws3.update_cell(k, 6, ws3.cell(k, 5).value + links_3[j-1])
+		          print(ws3.cell(k, 7).value)
+
+#リストlinks_4が空、リストlinks_3が空、且つリストlinks_2が空でない		      		      		          
+		      elif not links_2 == [] \
+                  and links_3 == [] \
+                      and links_4 == []:
+		      		       if len(links_2) == 1:
+		      		        ws3.update_cell(k, 6, links_2[0])
+		      		        print(ws3.cell(k, 6).value)
+#		      		        break
+		      		       elif len(links_2) > 1:
+		      		        links_2 = [i for i in links_2 if "contact" in i \
+		      		      		      		         or "page_id=93" in i \
+		      		      		      		      		        or "toiawase" in i]
+		      		        for i in range(1,len(links_2)+1):
+		      		         time.sleep(1)		      		        
+		      		         ws3.update_cell(k, 6, links_2[i-1])		      		       
+		      		         print(ws3.cell(k, 6).value)
+#		      		         break
+#リストlinks_4及びリストlinks_2が空、且つリストlinks_3が空でない		         
+		      elif links_2 == [] \
+                  and not links_3 == [] \
+                      and links_4 == []:
+		      		       if len(links_3) == 1:
+		      		        ws3.update_cell(k, 6, ws3.cell(k, 5).value + links_3[0])
+		      		        print(ws3.cell(k, 6).value)		      		      		      		      		      		         
+		      		       elif 1 <= len(links_3) <= 5:
+		      		        for j in range(1,len(links_3)):
+		      		         time.sleep(3) 
+		      		         ws3.update_cell(k, 6, ws3.cell(k, 5).value + links_3[j])
+		      		         print(ws3.cell(k, 6).value)
+		      		       elif len(links_3) > 5:
+		      		        for j in range(1,len(links_3)):
+		      		         time.sleep(3) 
+		      		         ws3.update_cell(k, 6, ws3.cell(k, 5).value + links_3[j-1])
+		      		         print(ws3.cell(k, 6).value)		      		         
+#		      		         break
+		          
+#リストlink_4が空でない
+		      elif links_2 == [] \
+                  and links_3 == [] \
+                      and not links_4 == []:
+		      		        ws3.update_cell(k, 6, links_4[0])
+		      		        print(ws3.cell(k, 6).value)
+		      		        
+#リストlink_2が空でない
+		      elif not links_2 == [] \
+                  and links_3 == [] \
+                      and links_4 == []:
+		      		        ws3.update_cell(k, 6, links_2[0])
+		      		        print(ws3.cell(k, 6).value)		      		      		      		      		      		         
+		      		        
+#リストlink_3が空でない
+		      elif links_2 == [] \
+                  and not links_3 == [] \
+                      and links_4 == []:
+		      		        ws3.update_cell(k, 6, ws3.cell(k, 5).value + links_3[0])
+		      		        print(ws3.cell(k, 6).value)		      		      		      		      		      		         
+
+#リストlink_2及びリストlinks_3が空でない
+		      elif not links_2 == [] \
+                  and not links_3 == [] \
+                      and links_4 == []:
+		      		        ws3.update_cell(k, 6, links_2[0])
+		      		        print(ws3.cell(k, 6).value)
+
+#links_4、links_3、links_2の何れにおいても空である
+		      elif links_2 == [] \
+                  and links_3 == [] \
+                      and links_4 == []:
+		      		        ws3.update_cell(k, 6, "-")
+
+		      else:
+		         ws3.update_cell(k, 6, "-")
+		     else:
+		      ws3.update_cell(k, 6, "このサイトにアクセスできません")
+		    else:
+		      ws3.update_cell(k, 6, "-")
+             
+		    rate += 1/((row2+1)-row1)*100
+            # 値の更新
+		    dlg.Update(value=rate, newmsg="%d/100" % rate + "%")
+           
+		 dlg.Destroy()
+
+#chromeドライバーの終了
+		 driver.quit()
+
+# calculate elapsed time
+		 elapsed_time = int(time.time() - start)
+
+# convert second to hour, minute and seconds
+		 elapsed_hour = elapsed_time // 3600
+		 elapsed_minute = (elapsed_time % 3600) // 60
+		 elapsed_second = (elapsed_time % 3600 % 60)
+
+# print as 00:00:00
+		 print("所要時間：" + str(elapsed_hour).zfill(2) + "h" \
+		       + str(elapsed_minute).zfill(2) + "m" + str(elapsed_second).zfill(2) + "s")
+
+		 cell_list1 = ws3.range(row1, 1, row2, 1)
+		 cell_list2 = ws3.range(row1, 2, row2, 2)
+		 cell_list3 = ws3.range(row1, 3, row2, 3)
+		 cell_list4 = ws3.range(row1, 4, row2, 4)
+		 cell_list5 = ws3.range(row1, 5, row2, 5)
+		 cell_list6 = ws3.range(row1, 6, row2, 6)
+         
 #		i = 0
 #		for row in range(row1, row2):
 		 i = 0
-		 for row in range(row2-row1):           
-		    print(cell_list1[i].value)
-		    print(cell_list2[i].value)
-		    print(cell_list3[i].value)
+		 for row in range((row2+1)-row1):           
 		    adid.grid.SetCellValue(row, 0, cell_list1[i].value)
 		    adid.grid.SetCellValue(row, 1, cell_list2[i].value)
 		    adid.grid.SetCellValue(row, 2, cell_list3[i].value)
 		    adid.grid.SetCellValue(row, 3, cell_list4[i].value)
+		    adid.grid.SetCellValue(row, 4, cell_list5[i].value)
+		    adid.grid.SetCellValue(row, 5, cell_list6[i].value)
+		    print(cell_list1[i].value)
+		    print(cell_list2[i].value)
+		    print(cell_list3[i].value)
+		    print(cell_list4[i].value)
+		    print(cell_list5[i].value)
+		    print(cell_list6[i].value)
 #		    self.gridTable.SetCellValue(i, 1, ws1.cell(row1, 3).value)
 #		    am = f"{acc[i]['amount']:,}"
 #		    self.gridTable.SetCellValue(i, 2, ws1.cell(row1, 7).value)
@@ -344,39 +749,13 @@ class MyProject1MyFrame2( app.MyFrame2 ):
 #		    print(ws1.cell(row1, 7).value)
 		    i += 1
 		    count = self.m_gauge2.GetValue() + 1
-		    if count > row2-row1:
+		    if count > (row2+1)-row1:
 		     count = 0
 		    else:
 		     self.m_gauge2.SetValue(count)            
 #		    row1 += 1
 		 adid.grid.AutoSize()
 		 adid.Show()
-
-class MyProject1MyFrame5( app.MyFrame5 ):
-	def __init__( self, parent ):
-		app.MyFrame5.__init__( self, parent )
-		self.InitializeComponents()
-
-	def InitializeComponents(self):
-		self.grid = wx.grid.Grid( self, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, 0 )        
-#		grid = wx.grid.Grid(self)
-		self.grid.CreateGrid(1000, 4)
-
-		# Set column labels.
-		self.grid.SetColLabelValue(0, "法人名称")
-		self.grid.SetColLabelValue(1, "住所")
-		self.grid.SetColLabelValue(2, "電話番号")
-		self.grid.SetColLabelValue(3, "ホームページ")        
-        
-		main_sizer = wx.BoxSizer(wx.VERTICAL)
-		main_sizer.Add(self.grid, 0, wx.EXPAND)
-#		main_sizer.Add(bsizer, 1, wx.EXPAND | wx.TOP, 5)
-		self.SetSizer(main_sizer)
-        
-		self.tableShow()
-        
-	def tableShow(self):
-		self.grid.AutoSize()
         
 
 class MyProject1MyDialog( app.MyDialog ):
@@ -407,27 +786,35 @@ class MyProject1MyDialog( app.MyDialog ):
 
 
 #値を渡す関数
-    def import_sheet_title(self, key):
-        print(key)
+    def import_json_file(self, key):
+#        print(key)
         
-        self.m_panel22.SetFont( wx.Font( 10, wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_NORMAL, False, "Meiryo UI" ) )
+        sbSizer161 = wx.StaticBoxSizer( wx.StaticBox( self.m_panel22, wx.ID_ANY, u"Authentication key:" ), wx.VERTICAL )
 
-        gSizer21 = wx.GridSizer( 0, 2, 0, 0 )
+        self.m_textCtrl5 = wx.TextCtrl( sbSizer161.GetStaticBox(), wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.Size( 400,-1 ), 0 )
+        sbSizer161.Add( self.m_textCtrl5, 0, wx.ALL, 5 )
+        self.m_textCtrl5.SetValue(key)
+        self.m_textCtrl5.Disable()
 
-        self.m_staticText22 = wx.StaticText( self.m_panel22, wx.ID_ANY, u"SHEET KEY：", wx.DefaultPosition, wx.DefaultSize, 0 )
-        self.m_staticText22.Wrap( -1 )
+        self.m_panel22.SetSizer( sbSizer161 )
+        self.m_panel22.Layout()
+        sbSizer161.Fit( self.m_panel22 )
 
-        gSizer21.Add( self.m_staticText22, 0, wx.ALL|wx.ALIGN_CENTER_VERTICAL, 5 )
 
-        self.m_textCtrl3 = wx.TextCtrl( self.m_panel22, wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.Size( 350,-1 ), 0 )
-        gSizer21.Add( self.m_textCtrl3, 0, wx.ALL|wx.ALIGN_CENTER_VERTICAL|wx.ALIGN_RIGHT, 5 )
+#値を渡す関数
+    def import_sheet_title(self, key):
+#        print(key)
+#        self.m_panel20 = wx.Panel( self.main_panel, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, wx.TAB_TRAVERSAL )
+        sbSizer20 = wx.StaticBoxSizer( wx.StaticBox( self.m_panel20, wx.ID_ANY, u"Sheet key:" ), wx.VERTICAL )
+
+        self.m_textCtrl3 = wx.TextCtrl( sbSizer20.GetStaticBox(), wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.Size( 400,-1 ), 0 )
+        sbSizer20.Add( self.m_textCtrl3, 0, wx.ALL, 5 )
         self.m_textCtrl3.SetValue(key)
         self.m_textCtrl3.Disable()
 
-        self.m_panel22.SetSizer( gSizer21 )
-        self.m_panel22.Layout()
-        gSizer21.Fit( self.m_panel22 )
-        
+        self.m_panel20.SetSizer( sbSizer20 )
+        self.m_panel20.Layout()
+        sbSizer20.Fit( self.m_panel20 )
         
         self.m_panel6.SetFont( wx.Font( 10, wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_NORMAL, False, "Meiryo UI" ) )
 
@@ -446,6 +833,12 @@ class MyProject1MyDialog( app.MyDialog ):
 #        m_comboBox1Choices = []
 #        self.m_comboBox1 = wx.ComboBox( sbSizer15.GetStaticBox(), wx.ID_ANY, u"Combo!", wx.DefaultPosition, wx.DefaultSize, m_comboBox1Choices, wx.CB_DROPDOWN )
                 
+#秘密鍵（JSONファイル）のファイル名を入力
+        credentials = ServiceAccountCredentials.from_json_keyfile_name(self.m_textCtrl5.GetValue(), scope)
+
+#OAuth2の資格情報を使用してGoogle APIにログインします。
+        gc = gspread.authorize(credentials)
+
 #存在するワークシートの情報を全て取得
         wb = gc.open_by_key(key)
         worksheets = wb.worksheets()
@@ -453,7 +846,7 @@ class MyProject1MyDialog( app.MyDialog ):
 #現在のワークシートのタイトルをリストへ格納
         m_comboBox1Choices = [worksheet.title for worksheet in worksheets]
         print(m_comboBox1Choices)
-        self.m_comboBox1 = wx.ComboBox( sbSizer15.GetStaticBox(), wx.ID_ANY, u"選択して下さい", wx.DefaultPosition, wx.DefaultSize, m_comboBox1Choices, wx.CB_DROPDOWN )
+        self.m_comboBox1 = wx.ComboBox( sbSizer15.GetStaticBox(), wx.ID_ANY, u"選択して下さい", wx.DefaultPosition, wx.Size( 100,-1 ), m_comboBox1Choices, wx.CB_DROPDOWN )
         
         sbSizer15.Add( self.m_comboBox1, 0, wx.ALL, 5 )
 
@@ -482,7 +875,7 @@ class MyProject1MyDialog( app.MyDialog ):
 
         gSizer6.Add( self.m_staticText5, 0, wx.ALL|wx.ALIGN_RIGHT, 5 )
 
-        self.row1 = wx.SpinCtrl( sbSizer18.GetStaticBox(), wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.Size( 100,-1 ), wx.SP_ARROW_KEYS, 0, 10000, 0 )
+        self.row1 = wx.SpinCtrl( sbSizer18.GetStaticBox(), wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.Size( 50,-1 ), wx.SP_ARROW_KEYS, 0, 10000, 0 )
         gSizer6.Add( self.row1, 0, wx.ALL, 5 )
 
         self.m_staticText6 = wx.StaticText( sbSizer18.GetStaticBox(), wx.ID_ANY, u"last", wx.DefaultPosition, wx.DefaultSize, 0 )
@@ -490,11 +883,11 @@ class MyProject1MyDialog( app.MyDialog ):
 
         gSizer6.Add( self.m_staticText6, 0, wx.ALL|wx.ALIGN_RIGHT, 5 )
 
-        self.row2 = wx.SpinCtrl( sbSizer18.GetStaticBox(), wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.Size( 100,-1 ), wx.SP_ARROW_KEYS, 0, 10000, 0 )
+        self.row2 = wx.SpinCtrl( sbSizer18.GetStaticBox(), wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.Size( 50,-1 ), wx.SP_ARROW_KEYS, 0, 10000, 0 )
         gSizer6.Add( self.row2, 0, wx.ALL, 5 )
 
         m_comboBox3Choices = [worksheet.title for worksheet in worksheets]
-        self.m_comboBox3 = wx.ComboBox( sbSizer18.GetStaticBox(), wx.ID_ANY, u"選択して下さい", wx.DefaultPosition, wx.DefaultSize, m_comboBox3Choices, 0 )
+        self.m_comboBox3 = wx.ComboBox( sbSizer18.GetStaticBox(), wx.ID_ANY, u"選択して下さい", wx.DefaultPosition, wx.Size( 100,-1 ), m_comboBox3Choices, 0 )
         gSizer6.Add( self.m_comboBox3, 0, wx.ALL, 5 )
 
         self.btn3 = wx.Button( sbSizer18.GetStaticBox(), wx.ID_ANY, u"Get", wx.DefaultPosition, wx.DefaultSize, 0 )
@@ -541,33 +934,68 @@ class MyProject1MyDialog( app.MyDialog ):
 
         gSizer51 = wx.GridSizer( 0, 2, 0, 0 )
 
+        self.m_panel151 = wx.Panel( self.m_panel14, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, wx.TAB_TRAVERSAL )
+        sbSizer151 = wx.StaticBoxSizer( wx.StaticBox( self.m_panel151, wx.ID_ANY, u"Confirmation of result." ), wx.VERTICAL )
+
+#現在のワークシートのタイトルをリストへ格納
+        m_comboBox11Choices = [worksheet.title for worksheet in worksheets]
+        print(m_comboBox11Choices)
+        self.m_comboBox11 = wx.ComboBox( sbSizer151.GetStaticBox(), wx.ID_ANY, u"選択して下さい", wx.DefaultPosition, wx.Size( 100,-1 ), m_comboBox11Choices, wx.CB_DROPDOWN )
+        sbSizer151.Add( self.m_comboBox11, 0, wx.ALL, 5 )
+
+        self.dbtn21 = wx.Button( sbSizer151.GetStaticBox(), wx.ID_ANY, u"Confirm", wx.DefaultPosition, wx.DefaultSize, 0 )
+        self.dbtn21.SetFont( wx.Font( 10, wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_NORMAL, False, "Meiryo UI" ) )
+
+        sbSizer151.Add( self.dbtn21, 0, wx.ALL, 5 )
+
+
+        self.m_panel151.SetSizer( sbSizer151 )
+        self.m_panel151.Layout()
+        sbSizer151.Fit( self.m_panel151 )
+        gSizer51.Add( self.m_panel151, 1, wx.EXPAND |wx.ALL, 5 )
+
+        self.m_panel16 = wx.Panel( self.m_panel14, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, wx.TAB_TRAVERSAL )
+        sbSizer16 = wx.StaticBoxSizer( wx.StaticBox( self.m_panel16, wx.ID_ANY, u"Get detailed information." ), wx.VERTICAL )
+
         gSizer61 = wx.GridSizer( 0, 2, 0, 0 )
 
-        self.m_staticText51 = wx.StaticText( self.m_panel14, wx.ID_ANY, u"start", wx.DefaultPosition, wx.DefaultSize, 0 )
+        self.m_staticText51 = wx.StaticText( sbSizer16.GetStaticBox(), wx.ID_ANY, u"start", wx.DefaultPosition, wx.DefaultSize, 0 )
         self.m_staticText51.Wrap( -1 )
 
         self.m_staticText51.SetFont( wx.Font( 10, wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_NORMAL, False, "Meiryo UI" ) )
 
         gSizer61.Add( self.m_staticText51, 0, wx.ALL|wx.ALIGN_RIGHT, 5 )
 
-        self.row3 = wx.SpinCtrl( self.m_panel14, wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.DefaultSize, wx.SP_ARROW_KEYS, 0, 10000, 0 )
+        self.row3 = wx.SpinCtrl( sbSizer16.GetStaticBox(), wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.Size( 50,-1 ), wx.SP_ARROW_KEYS, 0, 10000, 0 )
         gSizer61.Add( self.row3, 0, wx.ALL, 5 )
 
-        self.m_staticText61 = wx.StaticText( self.m_panel14, wx.ID_ANY, u"last", wx.DefaultPosition, wx.DefaultSize, 0 )
+        self.m_staticText61 = wx.StaticText( sbSizer16.GetStaticBox(), wx.ID_ANY, u"last", wx.DefaultPosition, wx.DefaultSize, 0 )
         self.m_staticText61.Wrap( -1 )
 
         gSizer61.Add( self.m_staticText61, 0, wx.ALL|wx.ALIGN_RIGHT, 5 )
 
-        self.row4 = wx.SpinCtrl( self.m_panel14, wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.DefaultSize, wx.SP_ARROW_KEYS, 0, 10000, 0 )
+        self.row4 = wx.SpinCtrl( sbSizer16.GetStaticBox(), wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.Size( 50,-1 ), wx.SP_ARROW_KEYS, 0, 10000, 0 )
         gSizer61.Add( self.row4, 0, wx.ALL, 5 )
 
-        self.btn4 = wx.Button( self.m_panel14, wx.ID_ANY, u"Get", wx.DefaultPosition, wx.DefaultSize, 0 )
+#現在のワークシートのタイトルをリストへ格納
+        m_comboBox31Choices = [worksheet.title for worksheet in worksheets]
+        print(m_comboBox31Choices)
+        self.m_comboBox31 = wx.ComboBox( sbSizer16.GetStaticBox(), wx.ID_ANY, u"選択して下さい", wx.DefaultPosition, wx.Size( 100,-1 ), m_comboBox31Choices, 0 )
+        gSizer61.Add( self.m_comboBox31, 0, wx.ALL, 5 )
+
+        self.btn4 = wx.Button( sbSizer16.GetStaticBox(), wx.ID_ANY, u"Get", wx.DefaultPosition, wx.DefaultSize, 0 )
         self.btn4.SetFont( wx.Font( 10, wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_NORMAL, False, "Meiryo UI" ) )
 
-        gSizer61.Add( self.btn4, 0, wx.ALL, 5 )
+        gSizer61.Add( self.btn4, 0, wx.ALL|wx.ALIGN_RIGHT, 5 )
 
 
-        gSizer51.Add( gSizer61, 1, wx.EXPAND, 5 )
+        sbSizer16.Add( gSizer61, 1, wx.EXPAND, 5 )
+
+
+        self.m_panel16.SetSizer( sbSizer16 )
+        self.m_panel16.Layout()
+        sbSizer16.Fit( self.m_panel16 )
+        gSizer51.Add( self.m_panel16, 1, wx.EXPAND |wx.ALL, 5 )
 
 
         bSizer161.Add( gSizer51, 1, wx.EXPAND, 5 )
@@ -597,10 +1025,13 @@ class MyProject1MyDialog( app.MyDialog ):
         self.btn3.Bind( wx.EVT_BUTTON, self.select_sql )
         self.btn4.Bind( wx.EVT_BUTTON, self.Get_details )
         self.dbtn2.Bind( wx.EVT_BUTTON, self.page_list )
+        self.dbtn21.Bind( wx.EVT_BUTTON, self.list_view )
 
 
     def select_sql( self, event ):
 		# TODO: Implement select_sql
+        credentials = ServiceAccountCredentials.from_json_keyfile_name(self.m_textCtrl5.GetValue(), scope)
+        gc = gspread.authorize(credentials)                   
         row1 = self.row1.GetValue()
         row2 = self.row2.GetValue()
 #        print(row1)
@@ -636,6 +1067,31 @@ class MyProject1MyDialog( app.MyDialog ):
          wx.MessageBox(u'Illegal range!!', u'Setting value error', wx.ICON_ERROR)
 		# Set cell values.
         else:
+         from selenium import webdriver
+         from selenium.webdriver.chrome.options import Options
+
+#例外処理用のlibraryをimport
+         from selenium.common.exceptions import NoSuchElementException
+         from selenium.common.exceptions import WebDriverException
+         from selenium.common.exceptions import TimeoutException
+
+#Selectモジュールをインポート
+		 #from selenium.webdriver.support.select import Select
+
+#オプションの作成
+         option = Options()
+
+#起動オプション
+# ヘッドレスモードを有効にする（次の行をコメントアウトすると画面が表示される）。
+         option.add_argument('--headless')
+
+#「unknown error: net::ERR_CONNECTION_CLOSED」の回避用
+         option.add_argument('--disable-dev-shm-usage')
+
+# ChromeのWebDriverオブジェクトを作成する。
+         driver = webdriver.Chrome("C:/Users/iorin/OneDrive/ドキュメント/Python Scripts/chromedriver.exe",options=option)
+         driver.set_page_load_timeout(60)
+            
          wb = gc.open_by_key(self.m_textCtrl3.GetValue())
          print(self.m_textCtrl3.GetValue())
          ws2 = wb.worksheet(self.m_comboBox1.GetValue())
@@ -665,7 +1121,7 @@ class MyProject1MyDialog( app.MyDialog ):
           start = time.time()
 
 #全国のホームページ制作会社一覧
-          for j in tqdm(range(row1, row2)): #49ページで終わってしまわないよう「50+1」としている       
+          for j in tqdm(range(row1, row2+1)):
            driver.get(ws2.cell(j,1).value)
            time.sleep(8)
      
@@ -710,7 +1166,7 @@ class MyProject1MyDialog( app.MyDialog ):
 #          while rate < 100:
             # 0.5秒待つ
 #            time.sleep(0.5)
-           rate += 1/(row2-row1)*100
+           rate += 1/((row2+1)-row1)*100
             # 値の更新
            dlg.Update(value=rate, newmsg="%d/100" % rate + "%")
            
@@ -734,21 +1190,70 @@ class MyProject1MyDialog( app.MyDialog ):
 
     def Get_details( self, event ):
 		# TODO: Implement select_sql
-        wb = gc.open_by_key(MyProject1MyFrame2(self).m_textCtrl1.GetValue())
-        ws3 = wb.worksheet(MyProject1MyFrame2(self).m_comboBox1.GetValue())
+        credentials = ServiceAccountCredentials.from_json_keyfile_name(self.m_textCtrl5.GetValue(), scope)
+        gc = gspread.authorize(credentials)        
         row3 = self.row3.GetValue()
         row4 = self.row4.GetValue()
         print(row3)
         print(row4)                
 
-        if row3 == 0 or row4 == 0:
+        if self.m_comboBox31.GetValue() == '選択して下さい':
+         self.m_comboBox31.SetBackgroundColour("#ff0000")      
+         wx.MessageBox(u'Please select the Worksheet title!!', u'Setting value error', wx.ICON_ERROR)
+        elif not 'リスト' in self.m_comboBox31.GetValue():
+         self.m_comboBox31.SetBackgroundColour("#ff0000")         
+         wx.MessageBox(u'Not a valid sheet name.!!', u'Setting value error', wx.ICON_ERROR)            
+        elif row3 == 0 or row4 == 0:
+         self.row3.SetBackgroundColour('#ff0000')
+         self.row4.SetBackgroundColour('#ff0000')
+         self.m_comboBox31.SetBackgroundColour("#FFFFFF")        
          wx.MessageBox(u'Please set the range!!', u'Setting value error', wx.ICON_ERROR)
         elif row4 - row3 > 10000:
+         self.row3.SetBackgroundColour('#ff0000')
+         self.row4.SetBackgroundColour('#ff0000')
+         self.m_comboBox31.SetBackgroundColour("#FFFFFF")        
          wx.MessageBox(u'The value exceeds the configurable range!!', u'Setting value error', wx.ICON_ERROR)
         elif row4 - row3 < 0:
+         self.row3.SetBackgroundColour('#ff0000')
+         self.row4.SetBackgroundColour('#ff0000')
+         self.m_comboBox31.SetBackgroundColour("#FFFFFF")        
          wx.MessageBox(u'Illegal range!!', u'Setting value error', wx.ICON_ERROR)
-        # Set cell values.
+		# Set cell values.
         else:
+         from selenium import webdriver
+         from selenium.webdriver.chrome.options import Options
+
+#例外処理用のlibraryをimport
+         from selenium.common.exceptions import NoSuchElementException
+         from selenium.common.exceptions import WebDriverException
+         from selenium.common.exceptions import TimeoutException
+
+#Selectモジュールをインポート
+		 #from selenium.webdriver.support.select import Select
+
+#オプションの作成
+         option = Options()
+
+#起動オプション
+# ヘッドレスモードを有効にする（次の行をコメントアウトすると画面が表示される）。
+         option.add_argument('--headless')
+
+#「unknown error: net::ERR_CONNECTION_CLOSED」の回避用
+         option.add_argument('--disable-dev-shm-usage')
+
+# ChromeのWebDriverオブジェクトを作成する。
+         driver = webdriver.Chrome("C:/Users/iorin/OneDrive/ドキュメント/Python Scripts/chromedriver.exe",options=option)
+         driver.set_page_load_timeout(60)
+            
+         wb = gc.open_by_key(self.m_textCtrl3.GetValue())
+         print(self.m_textCtrl3.GetValue())
+         ws3 = wb.worksheet(self.m_comboBox31.GetStringSelection())
+         print(self.m_comboBox3.GetStringSelection())
+         self.row3.SetBackgroundColour('#FFFFFF')
+         self.row4.SetBackgroundColour('#FFFFFF')
+         self.m_comboBox31.SetBackgroundColour("#FFFFFF")        
+
+        # Set cell values.
 #         ws3.clear()
          dlg = wx.ProgressDialog(
             title="会社概要取得中",
@@ -767,7 +1272,7 @@ class MyProject1MyDialog( app.MyDialog ):
 #ws1の行数を取得
          lastrow1 = len(ws3.col_values(1))
          print(lastrow1)       
-         for k in tqdm(range(row3, row4)):
+         for k in tqdm(range(row3, row4+1)):
               try:
                driver.get('https://imitsu.jp' + ws3.cell(k,1).value)
                time.sleep(5)
@@ -779,13 +1284,12 @@ class MyProject1MyDialog( app.MyDialog ):
                 break
 
                html = driver.page_source
-#      print(html)
                soup = BeautifulSoup(html, 'html.parser')
+#               print(soup)
 
 #エラー発生時に回避（①～⑤は実施されない）
               except WebDriverException:
                break
-
 
 #①各詳細データ
 
@@ -800,7 +1304,8 @@ class MyProject1MyDialog( app.MyDialog ):
 #     for i in range(1,len(Contents)):
                lastcol = len(list(ws3.row_values(k)))                  
 #       ws3.update_cell(k, lastcol+1, Contents[i-1])
-               ws3.update_cell(k, lastcol+1, re.sub("[\n]", "", Content.getText(), 4))
+               Content1 = re.sub("[\n]", "", Content.getText(), 4)
+               ws3.update_cell(k, lastcol+1, Content1)
 
               for Content in soup.select("body > div:nth-of-type(3) > div \
 > article > section:nth-of-type(2) > div:nth-of-type(2) > dl:nth-of-type(1) > dd"):
@@ -812,7 +1317,8 @@ class MyProject1MyDialog( app.MyDialog ):
 #     for i in range(1,len(Contents)):
                lastcol = len(list(ws3.row_values(k)))                  
 #       ws3.update_cell(k, lastcol+1, Contents[i-1])
-               ws3.update_cell(k, lastcol+1, re.sub("[\n]", "", Content.getText(), 4))
+               Content1 = re.sub("[\n]", "", Content.getText(), 4)
+               ws3.update_cell(k, lastcol+1, Content1)
 
               for Content in soup.select("body > div:nth-of-type(3) > div \
 > article > section:nth-of-type(4) > div:nth-of-type(2) > dl:nth-of-type(1) > dd"):
@@ -824,7 +1330,8 @@ class MyProject1MyDialog( app.MyDialog ):
 #     for i in range(1,len(Contents)):
                lastcol = len(list(ws3.row_values(k)))                  
 #       ws3.update_cell(k, lastcol+1, Contents[i-1])
-               ws3.update_cell(k, lastcol+1, re.sub("[\n]", "", Content.getText(), 4))
+               Content1 = re.sub("[\n]", "", Content.getText(), 4)
+               ws3.update_cell(k, lastcol+1, Content1)
 
 
 #（テキストパターン１）
@@ -843,11 +1350,11 @@ class MyProject1MyDialog( app.MyDialog ):
                 for Content in soup.select("body > div:nth-of-type(3) > div \
 > article > section:nth-of-type(4) > div:nth-of-type(2) > dl:nth-of-type(2) > dd"):
                  print(Content.getText())
-                 time.sleep(3)               
+                 time.sleep(3)
+                 Content2 = re.sub("[\n]", "", Content.getText(), 4)
+                 Content2 = re.sub("[\s]", "", Content2, 34)
                  lastcol = len(list(ws3.row_values(k)))                                  
-                 ws3.update_cell(k, lastcol+1, re.sub("[\n]", "", Content.getText(), 4))
-                 lastcol = len(list(ws3.row_values(k)))                                  
-                 ws3.update_cell(k, lastcol, re.sub("[\s]", "", ws3.cell(k, lastcol).value, 34))
+                 ws3.update_cell(k, lastcol+1, Content2)
 
                elif "会社URL" in Content.getText():
                  lastcol = len(list(ws3.row_values(k)))                                  
@@ -860,7 +1367,8 @@ class MyProject1MyDialog( app.MyDialog ):
                   print(Content.getText())
                   time.sleep(3)               
                   lastcol = len(list(ws3.row_values(k)))                                  
-                  ws3.update_cell(k, lastcol+1, re.sub("[\n]", "", Content.getText(), 4))
+                  Content4 = re.sub("[\n]", "", Content.getText(), 4)
+                  ws3.update_cell(k, lastcol+1, Content4)
 
 #３列目
               for Content in soup.select("body > div:nth-of-type(3) > div \
@@ -876,10 +1384,10 @@ class MyProject1MyDialog( app.MyDialog ):
 > article > section:nth-of-type(4) > div:nth-of-type(2) > dl:nth-of-type(3) > dd"):
                  print(Content.getText())
                  time.sleep(3)               
+                 Content2 = re.sub("[\n]", "", Content.getText(), 4)
+                 Content2 = re.sub("[\s]", "", Content2, 34)
                  lastcol = len(list(ws3.row_values(k)))                                  
-                 ws3.update_cell(k, lastcol+1, re.sub("[\n]", "", Content.getText(), 4))
-                 lastcol = len(list(ws3.row_values(k)))                                  
-                 ws3.update_cell(k, lastcol, re.sub("[\s]", "", ws3.cell(k, lastcol).value, 34))
+                 ws3.update_cell(k, lastcol+1, Content2)
                  
                elif "電話番号" in Content.getText():
                  for Content in soup.select("body > div:nth-of-type(3) > div \
@@ -887,7 +1395,8 @@ class MyProject1MyDialog( app.MyDialog ):
                   print(Content.getText())
                   time.sleep(3)               
                   lastcol = len(list(ws3.row_values(k)))                                  
-                  ws3.update_cell(k, lastcol+1, re.sub("[\n]", "", Content.getText(), 4))
+                  Content3 = re.sub("[\n]", "", Content.getText(), 4)
+                  ws3.update_cell(k, lastcol+1, Content3)
                   
                elif "会社URL" in Content.getText():
                  lastcol = len(list(ws3.row_values(k)))                                  
@@ -897,8 +1406,8 @@ class MyProject1MyDialog( app.MyDialog ):
                   print(Content.getText())
                   time.sleep(3)               
                   lastcol = len(list(ws3.row_values(k)))                                  
-                  ws3.update_cell(k, lastcol+1, re.sub("[\n]", "", Content.getText(), 4))
-
+                  Content4 = re.sub("[\n]", "", Content.getText(), 4)
+                  ws3.update_cell(k, lastcol+1, Content4)
 
 #４列目
               for Content in soup.select("body > div:nth-of-type(3) > div \
@@ -912,10 +1421,10 @@ class MyProject1MyDialog( app.MyDialog ):
 > article > section:nth-of-type(4) > div:nth-of-type(2) > dl:nth-of-type(4) > dd"):
                  print(Content.getText())
                  time.sleep(3)               
+                 Content2 = re.sub("[\n]", "", Content.getText(), 4)
+                 Content2 = re.sub("[\s]", "", Content2, 34)
                  lastcol = len(list(ws3.row_values(k)))                                  
-                 ws3.update_cell(k, lastcol+1, re.sub("[\n]", "", Content.getText(), 4))
-                 lastcol = len(list(ws3.row_values(k)))                                  
-                 ws3.update_cell(k, lastcol, re.sub("[\s]", "", ws3.cell(k, lastcol).value, 34))
+                 ws3.update_cell(k, lastcol+1, Content2)
                  
                elif "電話番号" in Content.getText():
                  for Content in soup.select("body > div:nth-of-type(3) > div \
@@ -923,7 +1432,8 @@ class MyProject1MyDialog( app.MyDialog ):
                   print(Content.getText())
                   time.sleep(3)               
                   lastcol = len(list(ws3.row_values(k)))                                  
-                  ws3.update_cell(k, lastcol+1, re.sub("[\n]", "", Content.getText(), 4))
+                  Content3 = re.sub("[\n]", "", Content.getText(), 4)
+                  ws3.update_cell(k, lastcol+1, Content3)
                   
                elif "会社URL" in Content.getText():
                  for Content in soup.select("body > div:nth-of-type(3) > div \
@@ -931,7 +1441,8 @@ class MyProject1MyDialog( app.MyDialog ):
                   print(Content.getText())
                   time.sleep(3)               
 #                  lastcol = len(list(ws3.row_values(k)))                                  
-                  ws3.update_cell(k, 5, re.sub("[\n]", "", Content.getText(), 4))
+                  Content4 = re.sub("[\n]", "", Content.getText(), 4)
+                  ws3.update_cell(k, 5, Content4)
 
 #５列目
               for Content in soup.select("body > div:nth-of-type(3) > div \
@@ -945,10 +1456,10 @@ class MyProject1MyDialog( app.MyDialog ):
 > article > section:nth-of-type(4) > div:nth-of-type(2) > dl:nth-of-type(5) > dd"):
                  print(Content.getText())
                  time.sleep(3)               
+                 Content2 = re.sub("[\n]", "", Content.getText(), 4)
+                 Content2 = re.sub("[\s]", "", Content2, 34)
                  lastcol = len(list(ws3.row_values(k)))                                  
-                 ws3.update_cell(k, lastcol+1, re.sub("[\n]", "", Content.getText(), 4))
-                 lastcol = len(list(ws3.row_values(k)))                                  
-                 ws3.update_cell(k, lastcol, re.sub("[\s]", "", ws3.cell(k, lastcol).value, 34))
+                 ws3.update_cell(k, lastcol+1, Content2)
                  
                elif "電話番号" in Content.getText():
                  for Content in soup.select("body > div:nth-of-type(3) > div \
@@ -956,7 +1467,8 @@ class MyProject1MyDialog( app.MyDialog ):
                   print(Content.getText())
                   time.sleep(3)               
                   lastcol = len(list(ws3.row_values(k)))                                  
-                  ws3.update_cell(k, lastcol+1, re.sub("[\n]", "", Content.getText(), 4))
+                  Content3 = re.sub("[\n]", "", Content.getText(), 4)
+                  ws3.update_cell(k, lastcol+1, Content3)
                   
                elif "会社URL" in Content.getText():
                  for Content in soup.select("body > div:nth-of-type(3) > div \
@@ -964,7 +1476,8 @@ class MyProject1MyDialog( app.MyDialog ):
                   print(Content.getText())
                   time.sleep(3)               
 #                  lastcol = len(list(ws3.row_values(k)))                                  
-                  ws3.update_cell(k, 5, re.sub("[\n]", "", Content.getText(), 4))
+                  Content4 = re.sub("[\n]", "", Content.getText(), 4)
+                  ws3.update_cell(k, 5, Content4)
 
 #６列目
               for Content in soup.select("body > div:nth-of-type(3) > div \
@@ -978,10 +1491,10 @@ class MyProject1MyDialog( app.MyDialog ):
 > article > section:nth-of-type(4) > div:nth-of-type(2) > dl:nth-of-type(6) > dd"):
                  print(Content.getText())
                  time.sleep(3)               
+                 Content2 = re.sub("[\n]", "", Content.getText(), 4)
+                 Content2 = re.sub("[\s]", "", Content2, 34)
                  lastcol = len(list(ws3.row_values(k)))                                  
-                 ws3.update_cell(k, lastcol+1, re.sub("[\n]", "", Content.getText(), 4))
-                 lastcol = len(list(ws3.row_values(k)))                                  
-                 ws3.update_cell(k, lastcol, re.sub("[\s]", "", ws3.cell(k, lastcol).value, 34))
+                 ws3.update_cell(k, lastcol+1, Content2)
                  
                elif "電話番号" in Content.getText():
                  for Content in soup.select("body > div:nth-of-type(3) > div \
@@ -989,7 +1502,8 @@ class MyProject1MyDialog( app.MyDialog ):
                   print(Content.getText())
                   time.sleep(3)               
                   lastcol = len(list(ws3.row_values(k)))                                  
-                  ws3.update_cell(k, lastcol+1, re.sub("[\n]", "", Content.getText(), 4))
+                  Content3 = re.sub("[\n]", "", Content.getText(), 4)
+                  ws3.update_cell(k, lastcol+1, Content3)
                   
                elif "会社URL" in Content.getText():
                  for Content in soup.select("body > div:nth-of-type(3) > div \
@@ -997,7 +1511,8 @@ class MyProject1MyDialog( app.MyDialog ):
                   print(Content.getText())
                   time.sleep(3)               
 #                  lastcol = len(list(ws3.row_values(k)))                                  
-                  ws3.update_cell(k, 5, re.sub("[\n]", "", Content.getText(), 4))
+                  Content4 = re.sub("[\n]", "", Content.getText(), 4)
+                  ws3.update_cell(k, 5, Content4)
 
 #７列目
               for Content in soup.select("body > div:nth-of-type(3) > div \
@@ -1011,10 +1526,10 @@ class MyProject1MyDialog( app.MyDialog ):
 > article > section:nth-of-type(4) > div:nth-of-type(2) > dl:nth-of-type(7) > dd"):
                  print(Content.getText())
                  time.sleep(3)               
+                 Content2 = re.sub("[\n]", "", Content.getText(), 4)
+                 Content2 = re.sub("[\s]", "", Content2, 34)
                  lastcol = len(list(ws3.row_values(k)))                                  
-                 ws3.update_cell(k, lastcol+1, re.sub("[\n]", "", Content.getText(), 4))
-                 lastcol = len(list(ws3.row_values(k)))                                  
-                 ws3.update_cell(k, lastcol, re.sub("[\s]", "", ws3.cell(k, lastcol).value, 34))
+                 ws3.update_cell(k, lastcol+1, Content2)
                  
                elif "電話番号" in Content.getText():
                  for Content in soup.select("body > div:nth-of-type(3) > div \
@@ -1022,7 +1537,8 @@ class MyProject1MyDialog( app.MyDialog ):
                   print(Content.getText())
                   time.sleep(3)               
                   lastcol = len(list(ws3.row_values(k)))                                  
-                  ws3.update_cell(k, lastcol+1, re.sub("[\n]", "", Content.getText(), 4))
+                  Content3 = re.sub("[\n]", "", Content.getText(), 4)
+                  ws3.update_cell(k, lastcol+1, Content3)
                   
                elif "会社URL" in Content.getText():
                  for Content in soup.select("body > div:nth-of-type(3) > div \
@@ -1030,7 +1546,8 @@ class MyProject1MyDialog( app.MyDialog ):
                   print(Content.getText())
                   time.sleep(3)               
                   lastcol = len(list(ws3.row_values(k)))                                  
-                  ws3.update_cell(k, lastcol+1, re.sub("[\n]", "", Content.getText(), 4))
+                  Content4 = re.sub("[\n]", "", Content.getText(), 4)
+                  ws3.update_cell(k, lastcol+1, Content4)
 
 #８列目
               for Content in soup.select("body > div:nth-of-type(3) > div \
@@ -1044,10 +1561,10 @@ class MyProject1MyDialog( app.MyDialog ):
 > article > section:nth-of-type(4) > div:nth-of-type(2) > dl:nth-of-type(8) > dd"):
                  print(Content.getText())
                  time.sleep(3)               
+                 Content2 = re.sub("[\n]", "", Content.getText(), 4)
+                 Content2 = re.sub("[\s]", "", Content2, 34)
                  lastcol = len(list(ws3.row_values(k)))                                  
-                 ws3.update_cell(k, lastcol+1, re.sub("[\n]", "", Content.getText(), 4))
-                 lastcol = len(list(ws3.row_values(k)))                                  
-                 ws3.update_cell(k, lastcol, re.sub("[\s]", "", ws3.cell(k, lastcol).value, 34))
+                 ws3.update_cell(k, lastcol+1, Content2)
                  
                elif "電話番号" in Content.getText():
                  for Content in soup.select("body > div:nth-of-type(3) > div \
@@ -1055,7 +1572,8 @@ class MyProject1MyDialog( app.MyDialog ):
                   print(Content.getText())
                   time.sleep(3)               
                   lastcol = len(list(ws3.row_values(k)))                                  
-                  ws3.update_cell(k, lastcol+1, re.sub("[\n]", "", Content.getText(), 4))
+                  Content3 = re.sub("[\n]", "", Content.getText(), 4)
+                  ws3.update_cell(k, lastcol+1, Content3)
                   
                elif "会社URL" in Content.getText():
                  for Content in soup.select("body > div:nth-of-type(3) > div \
@@ -1063,7 +1581,8 @@ class MyProject1MyDialog( app.MyDialog ):
                   print(Content.getText())
                   time.sleep(3)               
                   lastcol = len(list(ws3.row_values(k)))                                  
-                  ws3.update_cell(k, lastcol+1, re.sub("[\n]", "", Content.getText(), 4))
+                  Content4 = re.sub("[\n]", "", Content.getText(), 4)
+                  ws3.update_cell(k, lastcol+1, Content4)
 
                 
 #（テキストパターン２）
@@ -1071,7 +1590,7 @@ class MyProject1MyDialog( app.MyDialog ):
               for Content in soup.select("body > div:nth-of-type(3) > div \
 > article > section:nth-of-type(3) > div:nth-of-type(2) > dl:nth-of-type(2) > dt"):
                print(Content.getText())
-               
+       
                if "設立年" in Content.getText():
                 pass
                elif "資本金" in Content.getText():
@@ -1082,11 +1601,11 @@ class MyProject1MyDialog( app.MyDialog ):
                 for Content in soup.select("body > div:nth-of-type(3) > div \
 > article > section:nth-of-type(3) > div:nth-of-type(2) > dl:nth-of-type(2) > dd"):
                  print(Content.getText())
-                 time.sleep(3)               
+                 time.sleep(3)
+                 Content2 = re.sub("[\n]", "", Content.getText(), 4)
+                 Content2 = re.sub("[\s]", "", Content2, 34)
                  lastcol = len(list(ws3.row_values(k)))                                  
-                 ws3.update_cell(k, lastcol+1, re.sub("[\n]", "", Content.getText(), 4))
-                 lastcol = len(list(ws3.row_values(k)))                                  
-                 ws3.update_cell(k, lastcol, re.sub("[\s]", "", ws3.cell(k, lastcol).value, 34))
+                 ws3.update_cell(k, lastcol+1, Content2)
 
                elif "会社URL" in Content.getText():
                  lastcol = len(list(ws3.row_values(k)))                                  
@@ -1099,7 +1618,8 @@ class MyProject1MyDialog( app.MyDialog ):
                   print(Content.getText())
                   time.sleep(3)               
                   lastcol = len(list(ws3.row_values(k)))                                  
-                  ws3.update_cell(k, lastcol+1, re.sub("[\n]", "", Content.getText(), 4))
+                  Content4 = re.sub("[\n]", "", Content.getText(), 4)
+                  ws3.update_cell(k, lastcol+1, Content4)
 
 #３列目
               for Content in soup.select("body > div:nth-of-type(3) > div \
@@ -1115,10 +1635,10 @@ class MyProject1MyDialog( app.MyDialog ):
 > article > section:nth-of-type(3) > div:nth-of-type(2) > dl:nth-of-type(3) > dd"):
                  print(Content.getText())
                  time.sleep(3)               
+                 Content2 = re.sub("[\n]", "", Content.getText(), 4)
+                 Content2 = re.sub("[\s]", "", Content2, 34)
                  lastcol = len(list(ws3.row_values(k)))                                  
-                 ws3.update_cell(k, lastcol+1, re.sub("[\n]", "", Content.getText(), 4))
-                 lastcol = len(list(ws3.row_values(k)))                                  
-                 ws3.update_cell(k, lastcol, re.sub("[\s]", "", ws3.cell(k, lastcol).value, 34))
+                 ws3.update_cell(k, lastcol+1, Content2)
                  
                elif "電話番号" in Content.getText():
                  for Content in soup.select("body > div:nth-of-type(3) > div \
@@ -1126,7 +1646,8 @@ class MyProject1MyDialog( app.MyDialog ):
                   print(Content.getText())
                   time.sleep(3)               
                   lastcol = len(list(ws3.row_values(k)))                                  
-                  ws3.update_cell(k, lastcol+1, re.sub("[\n]", "", Content.getText(), 4))
+                  Content3 = re.sub("[\n]", "", Content.getText(), 4)
+                  ws3.update_cell(k, lastcol+1, Content3)
                   
                elif "会社URL" in Content.getText():
                  lastcol = len(list(ws3.row_values(k)))                                  
@@ -1136,8 +1657,8 @@ class MyProject1MyDialog( app.MyDialog ):
                   print(Content.getText())
                   time.sleep(3)               
                   lastcol = len(list(ws3.row_values(k)))                                  
-                  ws3.update_cell(k, lastcol+1, re.sub("[\n]", "", Content.getText(), 4))
-
+                  Content4 = re.sub("[\n]", "", Content.getText(), 4)
+                  ws3.update_cell(k, lastcol+1, Content4)
 
 #４列目
               for Content in soup.select("body > div:nth-of-type(3) > div \
@@ -1151,10 +1672,10 @@ class MyProject1MyDialog( app.MyDialog ):
 > article > section:nth-of-type(3) > div:nth-of-type(2) > dl:nth-of-type(4) > dd"):
                  print(Content.getText())
                  time.sleep(3)               
+                 Content2 = re.sub("[\n]", "", Content.getText(), 4)
+                 Content2 = re.sub("[\s]", "", Content2, 34)
                  lastcol = len(list(ws3.row_values(k)))                                  
-                 ws3.update_cell(k, lastcol+1, re.sub("[\n]", "", Content.getText(), 4))
-                 lastcol = len(list(ws3.row_values(k)))                                  
-                 ws3.update_cell(k, lastcol, re.sub("[\s]", "", ws3.cell(k, lastcol).value, 34))
+                 ws3.update_cell(k, lastcol+1, Content2)
                  
                elif "電話番号" in Content.getText():
                  for Content in soup.select("body > div:nth-of-type(3) > div \
@@ -1162,17 +1683,17 @@ class MyProject1MyDialog( app.MyDialog ):
                   print(Content.getText())
                   time.sleep(3)               
                   lastcol = len(list(ws3.row_values(k)))                                  
-                  ws3.update_cell(k, lastcol+1, re.sub("[\n]", "", Content.getText(), 4))
+                  Content3 = re.sub("[\n]", "", Content.getText(), 4)
+                  ws3.update_cell(k, lastcol+1, Content3)
                   
                elif "会社URL" in Content.getText():
-#                 lastcol = len(list(ws3.row_values(k)))                                  
-#                 ws3.update_cell(k, lastcol+1, "-")                                                                 
                  for Content in soup.select("body > div:nth-of-type(3) > div \
 > article > section:nth-of-type(3) > div:nth-of-type(2) > dl:nth-of-type(4) > dd"):
                   print(Content.getText())
                   time.sleep(3)               
 #                  lastcol = len(list(ws3.row_values(k)))                                  
-                  ws3.update_cell(k, 5, re.sub("[\n]", "", Content.getText(), 4))
+                  Content4 = re.sub("[\n]", "", Content.getText(), 4)
+                  ws3.update_cell(k, 5, Content4)
 
 #５列目
               for Content in soup.select("body > div:nth-of-type(3) > div \
@@ -1186,10 +1707,10 @@ class MyProject1MyDialog( app.MyDialog ):
 > article > section:nth-of-type(3) > div:nth-of-type(2) > dl:nth-of-type(5) > dd"):
                  print(Content.getText())
                  time.sleep(3)               
+                 Content2 = re.sub("[\n]", "", Content.getText(), 4)
+                 Content2 = re.sub("[\s]", "", Content2, 34)
                  lastcol = len(list(ws3.row_values(k)))                                  
-                 ws3.update_cell(k, lastcol+1, re.sub("[\n]", "", Content.getText(), 4))
-                 lastcol = len(list(ws3.row_values(k)))                                  
-                 ws3.update_cell(k, lastcol, re.sub("[\s]", "", ws3.cell(k, lastcol).value, 34))
+                 ws3.update_cell(k, lastcol+1, Content2)
                  
                elif "電話番号" in Content.getText():
                  for Content in soup.select("body > div:nth-of-type(3) > div \
@@ -1197,7 +1718,8 @@ class MyProject1MyDialog( app.MyDialog ):
                   print(Content.getText())
                   time.sleep(3)               
                   lastcol = len(list(ws3.row_values(k)))                                  
-                  ws3.update_cell(k, lastcol+1, re.sub("[\n]", "", Content.getText(), 4))
+                  Content3 = re.sub("[\n]", "", Content.getText(), 4)
+                  ws3.update_cell(k, lastcol+1, Content3)
                   
                elif "会社URL" in Content.getText():
                  for Content in soup.select("body > div:nth-of-type(3) > div \
@@ -1205,7 +1727,8 @@ class MyProject1MyDialog( app.MyDialog ):
                   print(Content.getText())
                   time.sleep(3)               
 #                  lastcol = len(list(ws3.row_values(k)))                                  
-                  ws3.update_cell(k, 5, re.sub("[\n]", "", Content.getText(), 4))
+                  Content4 = re.sub("[\n]", "", Content.getText(), 4)
+                  ws3.update_cell(k, 5, Content4)
 
 #６列目
               for Content in soup.select("body > div:nth-of-type(3) > div \
@@ -1219,10 +1742,10 @@ class MyProject1MyDialog( app.MyDialog ):
 > article > section:nth-of-type(3) > div:nth-of-type(2) > dl:nth-of-type(6) > dd"):
                  print(Content.getText())
                  time.sleep(3)               
+                 Content2 = re.sub("[\n]", "", Content.getText(), 4)
+                 Content2 = re.sub("[\s]", "", Content2, 34)
                  lastcol = len(list(ws3.row_values(k)))                                  
-                 ws3.update_cell(k, lastcol+1, re.sub("[\n]", "", Content.getText(), 4))
-                 lastcol = len(list(ws3.row_values(k)))                                  
-                 ws3.update_cell(k, lastcol, re.sub("[\s]", "", ws3.cell(k, lastcol).value, 34))
+                 ws3.update_cell(k, lastcol+1, Content2)
                  
                elif "電話番号" in Content.getText():
                  for Content in soup.select("body > div:nth-of-type(3) > div \
@@ -1230,7 +1753,8 @@ class MyProject1MyDialog( app.MyDialog ):
                   print(Content.getText())
                   time.sleep(3)               
                   lastcol = len(list(ws3.row_values(k)))                                  
-                  ws3.update_cell(k, lastcol+1, re.sub("[\n]", "", Content.getText(), 4))
+                  Content3 = re.sub("[\n]", "", Content.getText(), 4)
+                  ws3.update_cell(k, lastcol+1, Content3)
                   
                elif "会社URL" in Content.getText():
                  for Content in soup.select("body > div:nth-of-type(3) > div \
@@ -1238,7 +1762,8 @@ class MyProject1MyDialog( app.MyDialog ):
                   print(Content.getText())
                   time.sleep(3)               
 #                  lastcol = len(list(ws3.row_values(k)))                                  
-                  ws3.update_cell(k, 5, re.sub("[\n]", "", Content.getText(), 4))
+                  Content4 = re.sub("[\n]", "", Content.getText(), 4)
+                  ws3.update_cell(k, 5, Content4)
 
 #７列目
               for Content in soup.select("body > div:nth-of-type(3) > div \
@@ -1252,10 +1777,10 @@ class MyProject1MyDialog( app.MyDialog ):
 > article > section:nth-of-type(3) > div:nth-of-type(2) > dl:nth-of-type(7) > dd"):
                  print(Content.getText())
                  time.sleep(3)               
+                 Content2 = re.sub("[\n]", "", Content.getText(), 4)
+                 Content2 = re.sub("[\s]", "", Content2, 34)
                  lastcol = len(list(ws3.row_values(k)))                                  
-                 ws3.update_cell(k, lastcol+1, re.sub("[\n]", "", Content.getText(), 4))
-                 lastcol = len(list(ws3.row_values(k)))                                  
-                 ws3.update_cell(k, lastcol, re.sub("[\s]", "", ws3.cell(k, lastcol).value, 34))
+                 ws3.update_cell(k, lastcol+1, Content2)
                  
                elif "電話番号" in Content.getText():
                  for Content in soup.select("body > div:nth-of-type(3) > div \
@@ -1263,7 +1788,8 @@ class MyProject1MyDialog( app.MyDialog ):
                   print(Content.getText())
                   time.sleep(3)               
                   lastcol = len(list(ws3.row_values(k)))                                  
-                  ws3.update_cell(k, lastcol+1, re.sub("[\n]", "", Content.getText(), 4))
+                  Content3 = re.sub("[\n]", "", Content.getText(), 4)
+                  ws3.update_cell(k, lastcol+1, Content3)
                   
                elif "会社URL" in Content.getText():
                  for Content in soup.select("body > div:nth-of-type(3) > div \
@@ -1271,7 +1797,8 @@ class MyProject1MyDialog( app.MyDialog ):
                   print(Content.getText())
                   time.sleep(3)               
                   lastcol = len(list(ws3.row_values(k)))                                  
-                  ws3.update_cell(k, lastcol+1, re.sub("[\n]", "", Content.getText(), 4))
+                  Content4 = re.sub("[\n]", "", Content.getText(), 4)
+                  ws3.update_cell(k, lastcol+1, Content4)
 
 #８列目
               for Content in soup.select("body > div:nth-of-type(3) > div \
@@ -1285,10 +1812,10 @@ class MyProject1MyDialog( app.MyDialog ):
 > article > section:nth-of-type(3) > div:nth-of-type(2) > dl:nth-of-type(8) > dd"):
                  print(Content.getText())
                  time.sleep(3)               
+                 Content2 = re.sub("[\n]", "", Content.getText(), 4)
+                 Content2 = re.sub("[\s]", "", Content2, 34)
                  lastcol = len(list(ws3.row_values(k)))                                  
-                 ws3.update_cell(k, lastcol+1, re.sub("[\n]", "", Content.getText(), 4))
-                 lastcol = len(list(ws3.row_values(k)))                                  
-                 ws3.update_cell(k, lastcol, re.sub("[\s]", "", ws3.cell(k, lastcol).value, 34))
+                 ws3.update_cell(k, lastcol+1, Content2)
                  
                elif "電話番号" in Content.getText():
                  for Content in soup.select("body > div:nth-of-type(3) > div \
@@ -1296,7 +1823,8 @@ class MyProject1MyDialog( app.MyDialog ):
                   print(Content.getText())
                   time.sleep(3)               
                   lastcol = len(list(ws3.row_values(k)))                                  
-                  ws3.update_cell(k, lastcol+1, re.sub("[\n]", "", Content.getText(), 4))
+                  Content3 = re.sub("[\n]", "", Content.getText(), 4)
+                  ws3.update_cell(k, lastcol+1, Content3)
                   
                elif "会社URL" in Content.getText():
                  for Content in soup.select("body > div:nth-of-type(3) > div \
@@ -1304,7 +1832,8 @@ class MyProject1MyDialog( app.MyDialog ):
                   print(Content.getText())
                   time.sleep(3)               
                   lastcol = len(list(ws3.row_values(k)))                                  
-                  ws3.update_cell(k, lastcol+1, re.sub("[\n]", "", Content.getText(), 4))
+                  Content4 = re.sub("[\n]", "", Content.getText(), 4)
+                  ws3.update_cell(k, lastcol+1, Content4)
 
 
 #（テキストパターン３）
@@ -1312,7 +1841,7 @@ class MyProject1MyDialog( app.MyDialog ):
               for Content in soup.select("body > div:nth-of-type(3) > div \
 > article > section:nth-of-type(2) > div:nth-of-type(2) > dl:nth-of-type(2) > dt"):
                print(Content.getText())
-               
+       
                if "設立年" in Content.getText():
                 pass
                elif "資本金" in Content.getText():
@@ -1323,11 +1852,11 @@ class MyProject1MyDialog( app.MyDialog ):
                 for Content in soup.select("body > div:nth-of-type(3) > div \
 > article > section:nth-of-type(2) > div:nth-of-type(2) > dl:nth-of-type(2) > dd"):
                  print(Content.getText())
-                 time.sleep(3)               
+                 time.sleep(3)
+                 Content2 = re.sub("[\n]", "", Content.getText(), 4)
+                 Content2 = re.sub("[\s]", "", Content2, 34)
                  lastcol = len(list(ws3.row_values(k)))                                  
-                 ws3.update_cell(k, lastcol+1, re.sub("[\n]", "", Content.getText(), 4))
-                 lastcol = len(list(ws3.row_values(k)))                                  
-                 ws3.update_cell(k, lastcol, re.sub("[\s]", "", ws3.cell(k, lastcol).value, 34))
+                 ws3.update_cell(k, lastcol+1, Content2)
 
                elif "会社URL" in Content.getText():
                  lastcol = len(list(ws3.row_values(k)))                                  
@@ -1340,7 +1869,8 @@ class MyProject1MyDialog( app.MyDialog ):
                   print(Content.getText())
                   time.sleep(3)               
                   lastcol = len(list(ws3.row_values(k)))                                  
-                  ws3.update_cell(k, lastcol+1, re.sub("[\n]", "", Content.getText(), 4))
+                  Content4 = re.sub("[\n]", "", Content.getText(), 4)
+                  ws3.update_cell(k, lastcol+1, Content4)
 
 #３列目
               for Content in soup.select("body > div:nth-of-type(3) > div \
@@ -1356,10 +1886,10 @@ class MyProject1MyDialog( app.MyDialog ):
 > article > section:nth-of-type(2) > div:nth-of-type(2) > dl:nth-of-type(3) > dd"):
                  print(Content.getText())
                  time.sleep(3)               
+                 Content2 = re.sub("[\n]", "", Content.getText(), 4)
+                 Content2 = re.sub("[\s]", "", Content2, 34)
                  lastcol = len(list(ws3.row_values(k)))                                  
-                 ws3.update_cell(k, lastcol+1, re.sub("[\n]", "", Content.getText(), 4))
-                 lastcol = len(list(ws3.row_values(k)))                                  
-                 ws3.update_cell(k, lastcol, re.sub("[\s]", "", ws3.cell(k, lastcol).value, 34))
+                 ws3.update_cell(k, lastcol+1, Content2)
                  
                elif "電話番号" in Content.getText():
                  for Content in soup.select("body > div:nth-of-type(3) > div \
@@ -1367,7 +1897,8 @@ class MyProject1MyDialog( app.MyDialog ):
                   print(Content.getText())
                   time.sleep(3)               
                   lastcol = len(list(ws3.row_values(k)))                                  
-                  ws3.update_cell(k, lastcol+1, re.sub("[\n]", "", Content.getText(), 4))
+                  Content3 = re.sub("[\n]", "", Content.getText(), 4)
+                  ws3.update_cell(k, lastcol+1, Content3)
                   
                elif "会社URL" in Content.getText():
                  lastcol = len(list(ws3.row_values(k)))                                  
@@ -1376,9 +1907,9 @@ class MyProject1MyDialog( app.MyDialog ):
 > article > section:nth-of-type(2) > div:nth-of-type(2) > dl:nth-of-type(3) > dd"):
                   print(Content.getText())
                   time.sleep(3)               
-#                  lastcol = len(list(ws3.row_values(k)))                                  
-                  ws3.update_cell(k, 5, re.sub("[\n]", "", Content.getText(), 4))
-
+                  lastcol = len(list(ws3.row_values(k)))                                  
+                  Content4 = re.sub("[\n]", "", Content.getText(), 4)
+                  ws3.update_cell(k, lastcol+1, Content4)
 
 #４列目
               for Content in soup.select("body > div:nth-of-type(3) > div \
@@ -1392,10 +1923,10 @@ class MyProject1MyDialog( app.MyDialog ):
 > article > section:nth-of-type(2) > div:nth-of-type(2) > dl:nth-of-type(4) > dd"):
                  print(Content.getText())
                  time.sleep(3)               
+                 Content2 = re.sub("[\n]", "", Content.getText(), 4)
+                 Content2 = re.sub("[\s]", "", Content2, 34)
                  lastcol = len(list(ws3.row_values(k)))                                  
-                 ws3.update_cell(k, lastcol+1, re.sub("[\n]", "", Content.getText(), 4))
-                 lastcol = len(list(ws3.row_values(k)))                                  
-                 ws3.update_cell(k, lastcol, re.sub("[\s]", "", ws3.cell(k, lastcol).value, 34))
+                 ws3.update_cell(k, lastcol+1, Content2)
                  
                elif "電話番号" in Content.getText():
                  for Content in soup.select("body > div:nth-of-type(3) > div \
@@ -1403,7 +1934,8 @@ class MyProject1MyDialog( app.MyDialog ):
                   print(Content.getText())
                   time.sleep(3)               
                   lastcol = len(list(ws3.row_values(k)))                                  
-                  ws3.update_cell(k, lastcol+1, re.sub("[\n]", "", Content.getText(), 4))
+                  Content3 = re.sub("[\n]", "", Content.getText(), 4)
+                  ws3.update_cell(k, lastcol+1, Content3)
                   
                elif "会社URL" in Content.getText():
                  for Content in soup.select("body > div:nth-of-type(3) > div \
@@ -1411,7 +1943,8 @@ class MyProject1MyDialog( app.MyDialog ):
                   print(Content.getText())
                   time.sleep(3)               
 #                  lastcol = len(list(ws3.row_values(k)))                                  
-                  ws3.update_cell(k, 5, re.sub("[\n]", "", Content.getText(), 4))
+                  Content4 = re.sub("[\n]", "", Content.getText(), 4)
+                  ws3.update_cell(k, 5, Content4)
 
 #５列目
               for Content in soup.select("body > div:nth-of-type(3) > div \
@@ -1425,10 +1958,10 @@ class MyProject1MyDialog( app.MyDialog ):
 > article > section:nth-of-type(2) > div:nth-of-type(2) > dl:nth-of-type(5) > dd"):
                  print(Content.getText())
                  time.sleep(3)               
+                 Content2 = re.sub("[\n]", "", Content.getText(), 4)
+                 Content2 = re.sub("[\s]", "", Content2, 34)
                  lastcol = len(list(ws3.row_values(k)))                                  
-                 ws3.update_cell(k, lastcol+1, re.sub("[\n]", "", Content.getText(), 4))
-                 lastcol = len(list(ws3.row_values(k)))                                  
-                 ws3.update_cell(k, lastcol, re.sub("[\s]", "", ws3.cell(k, lastcol).value, 34))
+                 ws3.update_cell(k, lastcol+1, Content2)
                  
                elif "電話番号" in Content.getText():
                  for Content in soup.select("body > div:nth-of-type(3) > div \
@@ -1436,7 +1969,8 @@ class MyProject1MyDialog( app.MyDialog ):
                   print(Content.getText())
                   time.sleep(3)               
                   lastcol = len(list(ws3.row_values(k)))                                  
-                  ws3.update_cell(k, lastcol+1, re.sub("[\n]", "", Content.getText(), 4))
+                  Content3 = re.sub("[\n]", "", Content.getText(), 4)
+                  ws3.update_cell(k, lastcol+1, Content3)
                   
                elif "会社URL" in Content.getText():
                  for Content in soup.select("body > div:nth-of-type(3) > div \
@@ -1444,7 +1978,8 @@ class MyProject1MyDialog( app.MyDialog ):
                   print(Content.getText())
                   time.sleep(3)               
 #                  lastcol = len(list(ws3.row_values(k)))                                  
-                  ws3.update_cell(k, 5, re.sub("[\n]", "", Content.getText(), 4))
+                  Content4 = re.sub("[\n]", "", Content.getText(), 4)
+                  ws3.update_cell(k, 5, Content4)
 
 #６列目
               for Content in soup.select("body > div:nth-of-type(3) > div \
@@ -1458,10 +1993,10 @@ class MyProject1MyDialog( app.MyDialog ):
 > article > section:nth-of-type(2) > div:nth-of-type(2) > dl:nth-of-type(6) > dd"):
                  print(Content.getText())
                  time.sleep(3)               
+                 Content2 = re.sub("[\n]", "", Content.getText(), 4)
+                 Content2 = re.sub("[\s]", "", Content2, 34)
                  lastcol = len(list(ws3.row_values(k)))                                  
-                 ws3.update_cell(k, lastcol+1, re.sub("[\n]", "", Content.getText(), 4))
-                 lastcol = len(list(ws3.row_values(k)))                                  
-                 ws3.update_cell(k, lastcol, re.sub("[\s]", "", ws3.cell(k, lastcol).value, 34))
+                 ws3.update_cell(k, lastcol+1, Content2)
                  
                elif "電話番号" in Content.getText():
                  for Content in soup.select("body > div:nth-of-type(3) > div \
@@ -1469,7 +2004,8 @@ class MyProject1MyDialog( app.MyDialog ):
                   print(Content.getText())
                   time.sleep(3)               
                   lastcol = len(list(ws3.row_values(k)))                                  
-                  ws3.update_cell(k, lastcol+1, re.sub("[\n]", "", Content.getText(), 4))
+                  Content3 = re.sub("[\n]", "", Content.getText(), 4)
+                  ws3.update_cell(k, lastcol+1, Content3)
                   
                elif "会社URL" in Content.getText():
                  for Content in soup.select("body > div:nth-of-type(3) > div \
@@ -1477,8 +2013,9 @@ class MyProject1MyDialog( app.MyDialog ):
                   print(Content.getText())
                   time.sleep(3)               
 #                  lastcol = len(list(ws3.row_values(k)))                                  
-                  ws3.update_cell(k, 5, re.sub("[\n]", "", Content.getText(), 4))
-                  
+                  Content4 = re.sub("[\n]", "", Content.getText(), 4)
+                  ws3.update_cell(k, 5, Content4)
+
 #７列目
               for Content in soup.select("body > div:nth-of-type(3) > div \
 > article > section:nth-of-type(2) > div:nth-of-type(2) > dl:nth-of-type(7) > dt"):
@@ -1491,10 +2028,10 @@ class MyProject1MyDialog( app.MyDialog ):
 > article > section:nth-of-type(2) > div:nth-of-type(2) > dl:nth-of-type(7) > dd"):
                  print(Content.getText())
                  time.sleep(3)               
+                 Content2 = re.sub("[\n]", "", Content.getText(), 4)
+                 Content2 = re.sub("[\s]", "", Content2, 34)
                  lastcol = len(list(ws3.row_values(k)))                                  
-                 ws3.update_cell(k, lastcol+1, re.sub("[\n]", "", Content.getText(), 4))
-                 lastcol = len(list(ws3.row_values(k)))                                  
-                 ws3.update_cell(k, lastcol, re.sub("[\s]", "", ws3.cell(k, lastcol).value, 34))
+                 ws3.update_cell(k, lastcol+1, Content2)
                  
                elif "電話番号" in Content.getText():
                  for Content in soup.select("body > div:nth-of-type(3) > div \
@@ -1502,7 +2039,8 @@ class MyProject1MyDialog( app.MyDialog ):
                   print(Content.getText())
                   time.sleep(3)               
                   lastcol = len(list(ws3.row_values(k)))                                  
-                  ws3.update_cell(k, lastcol+1, re.sub("[\n]", "", Content.getText(), 4))
+                  Content3 = re.sub("[\n]", "", Content.getText(), 4)
+                  ws3.update_cell(k, lastcol+1, Content3)
                   
                elif "会社URL" in Content.getText():
                  for Content in soup.select("body > div:nth-of-type(3) > div \
@@ -1510,7 +2048,8 @@ class MyProject1MyDialog( app.MyDialog ):
                   print(Content.getText())
                   time.sleep(3)               
                   lastcol = len(list(ws3.row_values(k)))                                  
-                  ws3.update_cell(k, lastcol+1, re.sub("[\n]", "", Content.getText(), 4))
+                  Content4 = re.sub("[\n]", "", Content.getText(), 4)
+                  ws3.update_cell(k, lastcol+1, Content4)
 
 #８列目
               for Content in soup.select("body > div:nth-of-type(3) > div \
@@ -1524,10 +2063,10 @@ class MyProject1MyDialog( app.MyDialog ):
 > article > section:nth-of-type(2) > div:nth-of-type(2) > dl:nth-of-type(8) > dd"):
                  print(Content.getText())
                  time.sleep(3)               
+                 Content2 = re.sub("[\n]", "", Content.getText(), 4)
+                 Content2 = re.sub("[\s]", "", Content2, 34)
                  lastcol = len(list(ws3.row_values(k)))                                  
-                 ws3.update_cell(k, lastcol+1, re.sub("[\n]", "", Content.getText(), 4))
-                 lastcol = len(list(ws3.row_values(k)))                                  
-                 ws3.update_cell(k, lastcol, re.sub("[\s]", "", ws3.cell(k, lastcol).value, 34))
+                 ws3.update_cell(k, lastcol+1, Content2)
                  
                elif "電話番号" in Content.getText():
                  for Content in soup.select("body > div:nth-of-type(3) > div \
@@ -1535,7 +2074,8 @@ class MyProject1MyDialog( app.MyDialog ):
                   print(Content.getText())
                   time.sleep(3)               
                   lastcol = len(list(ws3.row_values(k)))                                  
-                  ws3.update_cell(k, lastcol+1, re.sub("[\n]", "", Content.getText(), 4))
+                  Content3 = re.sub("[\n]", "", Content.getText(), 4)
+                  ws3.update_cell(k, lastcol+1, Content3)
                   
                elif "会社URL" in Content.getText():
                  for Content in soup.select("body > div:nth-of-type(3) > div \
@@ -1543,10 +2083,11 @@ class MyProject1MyDialog( app.MyDialog ):
                   print(Content.getText())
                   time.sleep(3)               
                   lastcol = len(list(ws3.row_values(k)))                                  
-                  ws3.update_cell(k, lastcol+1, re.sub("[\n]", "", Content.getText(), 4))
+                  Content4 = re.sub("[\n]", "", Content.getText(), 4)
+                  ws3.update_cell(k, lastcol+1, Content4)
 
-
-              rate += 1/(row4-row3)*100
+#Progressbar                
+              rate += 1/((row4+1)-row3)*100
             # 値の更新
               dlg.Update(value=rate, newmsg="%d/100" % rate + "%")
            
@@ -1574,11 +2115,9 @@ class MyProject1MyDialog( app.MyDialog ):
 	    self.Destroy()
 
     def page_list( self, event ):
-         adid = MyProject1MyFrame4(self)
-         adid.grid.ClearGrid()
-         wb = gc.open_by_key(self.m_textCtrl3.GetValue())
-         print(self.m_textCtrl3.GetValue())
-         print(self.m_comboBox1.GetValue())
+         credentials = ServiceAccountCredentials.from_json_keyfile_name(self.m_textCtrl5.GetValue(), scope)
+         gc = gspread.authorize(credentials)           
+        
          if self.m_comboBox1.GetValue() == '選択して下さい':
           self.m_comboBox1.SetBackgroundColour("#ff0000")
           wx.MessageBox(u'Please select the Worksheet title!!', u'Setting value error', wx.ICON_ERROR)
@@ -1587,9 +2126,18 @@ class MyProject1MyDialog( app.MyDialog ):
           wx.MessageBox(u'The selected sheet name is not valid.!!', u'Setting value error', wx.ICON_ERROR)
          else:
           self.m_comboBox1.SetBackgroundColour("#FFFFFF")
+          print(self.m_textCtrl3.GetValue())
+          print(self.m_comboBox1.GetValue())          
+          wb = gc.open_by_key(self.m_textCtrl3.GetValue())
           ws2 = wb.worksheet(self.m_comboBox1.GetValue())          
           lastrow = len(ws2.col_values(1))
           cell_list1 = ws2.range(1, 1, lastrow, 1)
+
+#MyDialogの各設定値をMyFrame4に受け渡し
+          adid = MyProject1MyFrame4(self)
+#          adid.InitializeComponents(self.m_textCtrl3.GetValue())
+#          adid.InitializeComponents(self.m_comboBox1.GetValue())
+          adid.grid.ClearGrid()
           i = 0
           for row in range(lastrow):
             print(cell_list1[i].value)
@@ -1597,21 +2145,129 @@ class MyProject1MyDialog( app.MyDialog ):
             i += 1
           adid.grid.AutoSize()
           adid.Show()
+          
+    def list_view( self, event ):
+		# TODO: Implement select_sql
+        credentials = ServiceAccountCredentials.from_json_keyfile_name(self.m_textCtrl5.GetValue(), scope)
+        gc = gspread.authorize(credentials)                   
+
+        if self.m_comboBox11.GetValue() == '選択して下さい':
+         self.m_comboBox11.SetBackgroundColour("#ff0000")
+         wx.MessageBox(u'Please select the Worksheet title!!', u'Setting value error', wx.ICON_ERROR)
+        elif not 'リスト' in self.m_comboBox11.GetValue():
+         self.m_comboBox11.SetBackgroundColour("#FFFFFF")
+         wx.MessageBox(u'The selected sheet name is not valid.!!', u'Setting value error', wx.ICON_ERROR)
+		# Set cell values.
+        else:
+         wb = gc.open_by_key(self.m_textCtrl3.GetValue())            
+         ws3 = wb.worksheet(self.m_comboBox11.GetValue())
+         lastrow = len(ws3.col_values(1))         
+         self.m_comboBox11.SetBackgroundColour("#FFFFFF")
          
+#MyDialogの各設定値をMyFrame5に受け渡し
+         adid = MyProject1MyFrame5(self)
+#         adid.InitializeComponents(self.m_textCtrl3.GetValue())
+#         adid.InitializeComponents(self.m_comboBox11.GetValue())
+         adid.grid.ClearGrid()
+#         self.m_gauge2.SetValue( 0 )         
+#         self.m_gauge2.SetRange(row2-row1) 
+         dlg = wx.ProgressDialog(
+            title="リスト取得中",
+            message="0/100",
+            maximum=100,
+            style=wx.PD_AUTO_HIDE | wx.PD_ELAPSED_TIME | wx.PD_ESTIMATED_TIME | wx.PD_REMAINING_TIME )         
+         
+# ダイアログ表示
+         dlg.Show()
+         rate = 0
+
+         cell_list1 = ws3.range(1, 1, lastrow, 1)
+         cell_list2 = ws3.range(1, 2, lastrow, 2)
+         cell_list3 = ws3.range(1, 3, lastrow, 3)
+         cell_list4 = ws3.range(1, 4, lastrow, 4)
+         cell_list5 = ws3.range(1, 5, lastrow, 5)
+         cell_list6 = ws3.range(1, 6, lastrow, 6)         
+#		i = 0
+#		for row in range(row1, row2):
+         i = 0
+         for row in range(lastrow):
+            adid.grid.SetCellValue(row, 0, cell_list1[i].value)
+            adid.grid.SetCellValue(row, 1, cell_list2[i].value)
+            adid.grid.SetCellValue(row, 2, cell_list3[i].value)
+            adid.grid.SetCellValue(row, 3, cell_list4[i].value)
+            adid.grid.SetCellValue(row, 4, cell_list5[i].value)
+            adid.grid.SetCellValue(row, 5, cell_list6[i].value)
+            print(cell_list1[i].value)
+            print(cell_list2[i].value)
+            print(cell_list3[i].value)
+            print(cell_list4[i].value)
+            print(cell_list5[i].value)
+            print(cell_list6[i].value)
+            i += 1
+            rate += 1/(lastrow-1)*100
+            # 値の更新
+            dlg.Update(value=rate, newmsg="%d/100" % rate + "%")
+           
+         dlg.Destroy()
             
+#            count = self.m_gauge2.GetValue() + 1
+#            if count > row2-row1:
+#             count = 0
+#            else:
+#             self.m_gauge2.SetValue(count)
+#		    row1 += 1
+         adid.grid.AutoSize()
+         adid.Show()
+          
+                     
 class MyProject1MyFrame4( app.MyFrame4 ):
 	def __init__( self, parent ):
 		app.MyFrame4.__init__( self, parent )
 		self.InitializeComponents()
 
 	def InitializeComponents(self):
-		lastrow = len(ws2.col_values(1))
+#		wb = gc.open_by_key(key)
+#		ws2 = wb.worksheet(title)
+#		lastrow = len(ws2.col_values(1))
 		self.grid = wx.grid.Grid( self, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, 0 )        
 #		grid = wx.grid.Grid(self)
-		self.grid.CreateGrid(lastrow, 1)
+		self.grid.CreateGrid(10000, 1)
 
 		# Set column labels.
 		self.grid.SetColLabelValue(0, "ページURL")
+        
+		main_sizer = wx.BoxSizer(wx.VERTICAL)
+		main_sizer.Add(self.grid, 0, wx.EXPAND)
+#		main_sizer.Add(bsizer, 1, wx.EXPAND | wx.TOP, 5)
+		self.SetSizer(main_sizer)
+        
+		self.tableShow()
+        
+	def tableShow(self):
+		self.grid.AutoSize()
+
+
+class MyProject1MyFrame5( app.MyFrame5 ):
+	def __init__( self, parent ):
+		app.MyFrame5.__init__( self, parent )
+		self.InitializeComponents()
+
+	def InitializeComponents(self):
+#		wb = gc.open_by_key(key)
+#		ws3 = wb.worksheet(title)        
+#		lastrow = len(ws3.col_values(1))        
+		self.grid = wx.grid.Grid( self, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, 0 )        
+#		grid = wx.grid.Grid(self)
+		self.grid.CreateGrid(10000, 6)
+		self.grid.EnableEditing( True )
+
+		# Set column labels.
+		self.grid.SetColLabelValue(0, "リスト元リンク")        
+		self.grid.SetColLabelValue(1, "法人名称")
+		self.grid.SetColLabelValue(2, "住所")
+		self.grid.SetColLabelValue(3, "電話番号")
+		self.grid.SetColLabelValue(4, "ホームページ")
+		self.grid.SetColLabelValue(5, "お問い合わせ")        
         
 		main_sizer = wx.BoxSizer(wx.VERTICAL)
 		main_sizer.Add(self.grid, 0, wx.EXPAND)
