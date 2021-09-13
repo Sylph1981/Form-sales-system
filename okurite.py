@@ -49,8 +49,8 @@ credentials = ServiceAccountCredentials.from_json_keyfile_name('inquiry-form-aut
 gc = gspread.authorize(credentials)
 
 #「キー」で取得
-SPREADSHEET_KEY = '1BazsXmS9dW8oAOmvjMNVabvvw1dYAgW9SR-qbyAylEU'
-#SPREADSHEET_KEY2 = '1FrygfVLHP8fMZh8HdBYboZtkg4fCH8lcDUsbQ58Hbqs'
+SPREADSHEET_KEY = '1FrygfVLHP8fMZh8HdBYboZtkg4fCH8lcDUsbQ58Hbqs'
+#SPREADSHEET_KEY2 = '1BazsXmS9dW8oAOmvjMNVabvvw1dYAgW9SR-qbyAylEU'
 
 wb = gc.open_by_key(SPREADSHEET_KEY)
 #wb2 = gc.open_by_key(SPREADSHEET_KEY2)
@@ -73,7 +73,7 @@ time.sleep(2)
 start = time.time()
 
 td_urls = []
-for k in tqdm(range(1, 1001)):
+for k in tqdm(range(1, 101)):
   try:  
     driver.get("https://tcare.pro/okurite?page=" + str(k))
     time.sleep(3)
@@ -104,6 +104,11 @@ for k in tqdm(range(1, 1001)):
 
 #ヘッダを除くtrタグ数
   print(len(soup.find_all('tr'))-1)
+
+#①trタグに含まれるtdタグは8個なのでその分の積算を行う。
+#②増分を「8」に設定（「URL1」「URL2」「ステータス」「Created at」「編集/削除」を含めない為）
+#③lenにはヘッダー分とインデックスが0番目から始めることに注意し、取得データ数合わせの為に「-2」を行っている。
+#（参考リンク）https://atmarkit.itmedia.co.jp/ait/articles/1904/19/news027.html
   for l in range(1, (len(soup.find_all('tr'))-2)*8, 8):
         for td in soup.find_all('td')[l]:
             print(td.get('href'))
@@ -117,17 +122,19 @@ for k in tqdm(range(1, 1001)):
            
   if lastrow1 == 0:
             cell_list2 = ws3.range(1, 1, str(len(td_urls)), 1)
-            time.sleep(5)
+
 #スプレッドシートに入力
             for v2,c2 in zip(td_urls,cell_list2):
              c2.value = v2
+             time.sleep(1)
              ws3.update_cells(cell_list2)
             
   elif lastrow1 > 0:
             cell_list2 = ws3.range(lastrow1+1, 1, lastrow1+1+len(td_urls), 1)
+            time.sleep(5)
             for v2,c2 in zip(td_urls,cell_list2):
              c2.value = v2
-             time.sleep(5)
+             time.sleep(1)
              ws3.update_cells(cell_list2)
 
 # calculate elapsed time
@@ -200,8 +207,16 @@ for k in tqdm(range(1, lastrow1+1)):
                     
 #Webサイト
               for td4 in soup.find_all('td')[6]:
-                ws3.update_cell(k, 5, td4.get('href'))
-                print(td4.get('href'))
+                  if "townpage" in td4.get('href') \
+                      or "map.goo.ne.jp" in td4.get('href') \
+                          or "google.com/search" in td4.get('href') \
+                              or "mapion" in td4.get('href') \
+                                  or "itp.ne.jp" in td4.get('href') \
+                                      or "navitime" in td4.get('href'):
+                   ws3.delete_row(k)
+                  else:
+                   ws3.update_cell(k, 5, td4.get('href'))
+                   print(td4.get('href'))
 
 #chromeドライバーの終了
 driver.quit()

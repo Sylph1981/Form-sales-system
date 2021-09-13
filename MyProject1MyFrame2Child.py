@@ -203,6 +203,9 @@ class MyProject1MyFrame2( app.MyFrame2 ):
         
 	      sbSizer15.Add( self.m_comboBox1, 0, wx.ALL, 5 )
 
+#（お問い合わせページの抽出：機能未完成によりドロップボックスを無効）        
+	      self.m_comboBox1.Enable(False)
+
 	      self.m_panel17.SetSizer( sbSizer15 )
 	      self.m_panel17.Layout()
 	      sbSizer15.Fit( self.m_panel17 )
@@ -218,6 +221,7 @@ class MyProject1MyFrame2( app.MyFrame2 ):
 
 	      self.row1 = wx.SpinCtrl( self.m_panel5, wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.DefaultSize, wx.SP_ARROW_KEYS, 0, 10000, 0 )
 	      gSizer6.Add( self.row1, 0, wx.ALL, 5 )
+	      self.row1.Disable()
 
 	      self.m_staticText6 = wx.StaticText( self.m_panel5, wx.ID_ANY, u"last", wx.DefaultPosition, wx.DefaultSize, 0 )
 	      self.m_staticText6.Wrap( -1 )
@@ -227,7 +231,7 @@ class MyProject1MyFrame2( app.MyFrame2 ):
 
 	      self.row2 = wx.SpinCtrl( self.m_panel5, wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.DefaultSize, wx.SP_ARROW_KEYS, 0, 10000, 0 )
 	      gSizer6.Add( self.row2, 0, wx.ALL, 5 )
-
+	      self.row2.Disable()
 
 	      gSizer5.Add( gSizer6, 1, wx.EXPAND, 5 )
 
@@ -246,7 +250,7 @@ class MyProject1MyFrame2( app.MyFrame2 ):
 	      self.btn3.SetFont( wx.Font( 10, wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_NORMAL, False, "Meiryo UI" ) )
 
 	      bSizer15.Add( self.btn3, 0, wx.ALL, 5 )
-
+	      self.btn3.Disable()
 
 	      sbSizer5.Add( bSizer15, 1, wx.EXPAND, 5 )
 
@@ -849,6 +853,9 @@ class MyProject1MyDialog( app.MyDialog ):
         self.m_comboBox1 = wx.ComboBox( sbSizer15.GetStaticBox(), wx.ID_ANY, u"選択して下さい", wx.DefaultPosition, wx.Size( 100,-1 ), m_comboBox1Choices, wx.CB_DROPDOWN )
         
         sbSizer15.Add( self.m_comboBox1, 0, wx.ALL, 5 )
+        
+#（ページ一覧：スプレッドシート参照不要によりドロップボックスを無効）        
+        self.m_comboBox1.Enable(False)
 
         self.dbtn2 = wx.Button( sbSizer15.GetStaticBox(), wx.ID_ANY, u"View index", wx.DefaultPosition, wx.DefaultSize, 0 )
         self.dbtn2.SetFont( wx.Font( 10, wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_NORMAL, False, "Meiryo UI" ) )
@@ -1022,13 +1029,13 @@ class MyProject1MyDialog( app.MyDialog ):
 #        self.m_comboBox1 = wx.ComboBox( sbSizer15.GetStaticBox(), wx.ID_ANY, u"選択して下さい", wx.DefaultPosition, wx.DefaultSize, m_comboBox1Choices, wx.CB_DROPDOWN )
 
 
-        self.btn3.Bind( wx.EVT_BUTTON, self.select_sql )
+        self.btn3.Bind( wx.EVT_BUTTON, self.header )
         self.btn4.Bind( wx.EVT_BUTTON, self.Get_details )
         self.dbtn2.Bind( wx.EVT_BUTTON, self.page_list )
         self.dbtn21.Bind( wx.EVT_BUTTON, self.list_view )
 
 
-    def select_sql( self, event ):
+    def header( self, event ):
 		# TODO: Implement select_sql
         credentials = ServiceAccountCredentials.from_json_keyfile_name(self.m_textCtrl5.GetValue(), scope)
         gc = gspread.authorize(credentials)                   
@@ -1037,34 +1044,41 @@ class MyProject1MyDialog( app.MyDialog ):
 #        print(row1)
 #        print(row2)        
 
-        if self.m_comboBox1.GetValue() == '選択して下さい' \
-            or self.m_comboBox3.GetValue() == '選択して下さい':
-         self.m_comboBox1.SetBackgroundColour("#ff0000")
-         self.m_comboBox3.SetBackgroundColour("#ff0000")         
-         wx.MessageBox(u'Please select the Worksheet title!!', u'Setting value error', wx.ICON_ERROR)
-        elif not 'page' in self.m_comboBox1.GetValue() \
-            or not 'リスト' in self.m_comboBox3.GetValue():
-         self.m_comboBox1.SetBackgroundColour("#ff0000")
-         self.m_comboBox3.SetBackgroundColour("#ff0000")         
-         wx.MessageBox(u'Not a valid sheet name.!!', u'Setting value error', wx.ICON_ERROR)            
-        elif row1 == 0 or row2 == 0:
+#        if self.m_comboBox1.GetValue() == '選択して下さい' \
+#            or self.m_comboBox3.GetValue() == '選択して下さい':
+#         self.m_comboBox1.SetBackgroundColour("#ff0000")
+#         self.m_comboBox3.SetBackgroundColour("#ff0000")         
+#         wx.MessageBox(u'Please select the Worksheet title!!', u'Setting value error', wx.ICON_ERROR)
+#        elif not 'page' in self.m_comboBox1.GetValue() \
+#            or not 'リスト' in self.m_comboBox3.GetValue():
+#         self.m_comboBox1.SetBackgroundColour("#ff0000")
+#         self.m_comboBox3.SetBackgroundColour("#ff0000")         
+#         wx.MessageBox(u'Not a valid sheet name.!!', u'Setting value error', wx.ICON_ERROR)            
+        if row1 == 0 or row2 == 0:
          self.row1.SetBackgroundColour('#ff0000')
          self.row2.SetBackgroundColour('#ff0000')
-         self.m_comboBox1.SetBackgroundColour("#FFFFFF")
+#         self.m_comboBox1.SetBackgroundColour("#FFFFFF")
          self.m_comboBox3.SetBackgroundColour("#FFFFFF")         
          wx.MessageBox(u'Please set the range!!', u'Setting value error', wx.ICON_ERROR)
-        elif row2 - row1 > 10000:
+        elif row2 - row1 > 391:
          self.row1.SetBackgroundColour('#ff0000')
          self.row2.SetBackgroundColour('#ff0000')
-         self.m_comboBox1.SetBackgroundColour("#FFFFFF")
+#         self.m_comboBox1.SetBackgroundColour("#FFFFFF")
          self.m_comboBox3.SetBackgroundColour("#FFFFFF")         
          wx.MessageBox(u'The value exceeds the configurable range!!', u'Setting value error', wx.ICON_ERROR)
         elif row2 - row1 < 0:
          self.row1.SetBackgroundColour('#ff0000')
          self.row2.SetBackgroundColour('#ff0000')
-         self.m_comboBox1.SetBackgroundColour("#FFFFFF")
+#         self.m_comboBox1.SetBackgroundColour("#FFFFFF")
          self.m_comboBox3.SetBackgroundColour("#FFFFFF")         
          wx.MessageBox(u'Illegal range!!', u'Setting value error', wx.ICON_ERROR)
+        elif self.m_comboBox3.GetValue() == '選択して下さい':
+         self.m_comboBox3.SetBackgroundColour("#ff0000")      
+         wx.MessageBox(u'Please select the Worksheet title!!', u'Setting value error', wx.ICON_ERROR)
+        elif not 'リスト' in self.m_comboBox3.GetValue():
+         self.m_comboBox3.SetBackgroundColour("#ff0000")         
+         wx.MessageBox(u'Not a valid sheet name.!!', u'Setting value error', wx.ICON_ERROR)            
+         
 		# Set cell values.
         else:
          from selenium import webdriver
@@ -1094,13 +1108,13 @@ class MyProject1MyDialog( app.MyDialog ):
             
          wb = gc.open_by_key(self.m_textCtrl3.GetValue())
          print(self.m_textCtrl3.GetValue())
-         ws2 = wb.worksheet(self.m_comboBox1.GetValue())
-         print(self.m_comboBox1.GetValue())
+#         ws2 = wb.worksheet(self.m_comboBox1.GetValue())
+#         print(self.m_comboBox1.GetValue())
          ws3 = wb.worksheet(self.m_comboBox3.GetStringSelection())
          print(self.m_comboBox3.GetStringSelection())
          self.row1.SetBackgroundColour('#FFFFFF')
          self.row2.SetBackgroundColour('#FFFFFF')
-         self.m_comboBox1.SetBackgroundColour("#FFFFFF")
+#         self.m_comboBox1.SetBackgroundColour("#FFFFFF")
          self.m_comboBox3.SetBackgroundColour("#FFFFFF")         
          answer = wx.MessageBox(u'All the data on the selected sheet will be cleared, is that okay?', u'Verification', wx.YES_NO | wx.ICON_EXCLAMATION)
          if answer == wx.NO:
@@ -1122,7 +1136,8 @@ class MyProject1MyDialog( app.MyDialog ):
 
 #全国のホームページ制作会社一覧
           for j in tqdm(range(row1, row2+1)):
-           driver.get(ws2.cell(j,1).value)
+           driver.get("https://imitsu.jp/ct-hp-design/search/?pn=" + str(j))
+#           driver.get(ws2.cell(j,1).value)
            time.sleep(8)
      
            html = driver.page_source
@@ -2115,36 +2130,54 @@ class MyProject1MyDialog( app.MyDialog ):
 	    self.Destroy()
 
     def page_list( self, event ):
-         credentials = ServiceAccountCredentials.from_json_keyfile_name(self.m_textCtrl5.GetValue(), scope)
-         gc = gspread.authorize(credentials)           
+#         credentials = ServiceAccountCredentials.from_json_keyfile_name(self.m_textCtrl5.GetValue(), scope)
+#         gc = gspread.authorize(credentials)           
         
-         if self.m_comboBox1.GetValue() == '選択して下さい':
-          self.m_comboBox1.SetBackgroundColour("#ff0000")
-          wx.MessageBox(u'Please select the Worksheet title!!', u'Setting value error', wx.ICON_ERROR)
-         elif not 'page' in self.m_comboBox1.GetValue():
-          self.m_comboBox1.SetBackgroundColour("#ff0000")
-          wx.MessageBox(u'The selected sheet name is not valid.!!', u'Setting value error', wx.ICON_ERROR)
-         else:
-          self.m_comboBox1.SetBackgroundColour("#FFFFFF")
-          print(self.m_textCtrl3.GetValue())
-          print(self.m_comboBox1.GetValue())          
-          wb = gc.open_by_key(self.m_textCtrl3.GetValue())
-          ws2 = wb.worksheet(self.m_comboBox1.GetValue())          
-          lastrow = len(ws2.col_values(1))
-          cell_list1 = ws2.range(1, 1, lastrow, 1)
+#         if self.m_comboBox1.GetValue() == '選択して下さい':
+#          self.m_comboBox1.SetBackgroundColour("#ff0000")
+#          wx.MessageBox(u'Please select the Worksheet title!!', u'Setting value error', wx.ICON_ERROR)
+#         elif not 'page' in self.m_comboBox1.GetValue():
+#          self.m_comboBox1.SetBackgroundColour("#ff0000")
+#          wx.MessageBox(u'The selected sheet name is not valid.!!', u'Setting value error', wx.ICON_ERROR)
+#         else:
+#          self.m_comboBox1.SetBackgroundColour("#FFFFFF")
+#          print(self.m_textCtrl3.GetValue())
+#          print(self.m_comboBox1.GetValue())          
+#          wb = gc.open_by_key(self.m_textCtrl3.GetValue())
+#          ws2 = wb.worksheet(self.m_comboBox1.GetValue())          
+#          lastrow = len(ws2.col_values(1))
+#          cell_list1 = ws2.range(1, 1, lastrow, 1)
 
 #MyDialogの各設定値をMyFrame4に受け渡し
           adid = MyProject1MyFrame4(self)
 #          adid.InitializeComponents(self.m_textCtrl3.GetValue())
 #          adid.InitializeComponents(self.m_comboBox1.GetValue())
           adid.grid.ClearGrid()
-          i = 0
-          for row in range(lastrow):
-            print(cell_list1[i].value)
-            adid.grid.SetCellValue(row, 0, cell_list1[i].value)
-            i += 1
+#          i = 0
+          lastrow = 391
+          dlg = wx.ProgressDialog(
+            title="リスト取得中",
+            message="0/100",
+            maximum=100,
+            style=wx.PD_AUTO_HIDE | wx.PD_ELAPSED_TIME | wx.PD_ESTIMATED_TIME | wx.PD_REMAINING_TIME )         
+         
+# ダイアログ表示
+          dlg.Show()
+          rate = 0
+          
+          for row in range(lastrow+1):
+            adid.grid.SetCellValue(row, 0, "https://imitsu.jp/ct-hp-design/search/?pn=" + str(row+1))
+            print("https://imitsu.jp/ct-hp-design/search/?pn=" + str(row+1))
+#            print(cell_list1[i].value)
+#            adid.grid.SetCellValue(row, 0, cell_list1[i].value)
+#            i += 1
+            rate += 1/(lastrow+1)*100
+            # 値の更新
+            dlg.Update(value=rate, newmsg="%d/100" % rate + "%")
+ 
           adid.grid.AutoSize()
           adid.Show()
+          dlg.Destroy()
           
     def list_view( self, event ):
 		# TODO: Implement select_sql
@@ -2231,7 +2264,7 @@ class MyProject1MyFrame4( app.MyFrame4 ):
 #		lastrow = len(ws2.col_values(1))
 		self.grid = wx.grid.Grid( self, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, 0 )        
 #		grid = wx.grid.Grid(self)
-		self.grid.CreateGrid(10000, 1)
+		self.grid.CreateGrid(1000, 1)
 
 		# Set column labels.
 		self.grid.SetColLabelValue(0, "ページURL")
