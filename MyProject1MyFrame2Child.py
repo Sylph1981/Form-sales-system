@@ -204,7 +204,8 @@ class MyProject1MyFrame2( app.MyFrame2 ):
 	      sbSizer15.Add( self.m_comboBox1, 0, wx.ALL, 5 )
 
 #（お問い合わせページの抽出：機能未完成によりドロップボックスを無効）        
-	      self.m_comboBox1.Enable(False)
+#	      self.m_comboBox1.Enable(False)
+	      self.m_comboBox1.Enable(True)
 
 	      self.m_panel17.SetSizer( sbSizer15 )
 	      self.m_panel17.Layout()
@@ -221,7 +222,7 @@ class MyProject1MyFrame2( app.MyFrame2 ):
 
 	      self.row1 = wx.SpinCtrl( self.m_panel5, wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.DefaultSize, wx.SP_ARROW_KEYS, 0, 10000, 0 )
 	      gSizer6.Add( self.row1, 0, wx.ALL, 5 )
-	      self.row1.Disable()
+#	      self.row1.Disable()
 
 	      self.m_staticText6 = wx.StaticText( self.m_panel5, wx.ID_ANY, u"last", wx.DefaultPosition, wx.DefaultSize, 0 )
 	      self.m_staticText6.Wrap( -1 )
@@ -231,7 +232,7 @@ class MyProject1MyFrame2( app.MyFrame2 ):
 
 	      self.row2 = wx.SpinCtrl( self.m_panel5, wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.DefaultSize, wx.SP_ARROW_KEYS, 0, 10000, 0 )
 	      gSizer6.Add( self.row2, 0, wx.ALL, 5 )
-	      self.row2.Disable()
+#	      self.row2.Disable()
 
 	      gSizer5.Add( gSizer6, 1, wx.EXPAND, 5 )
 
@@ -250,7 +251,7 @@ class MyProject1MyFrame2( app.MyFrame2 ):
 	      self.btn3.SetFont( wx.Font( 10, wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_NORMAL, False, "Meiryo UI" ) )
 
 	      bSizer15.Add( self.btn3, 0, wx.ALL, 5 )
-	      self.btn3.Disable()
+#	      self.btn3.Disable()
 
 	      sbSizer5.Add( bSizer15, 1, wx.EXPAND, 5 )
 
@@ -273,6 +274,7 @@ class MyProject1MyFrame2( app.MyFrame2 ):
 #		self.m_panel17.Layout()
 #		sbSizer15.Fit( self.m_panel17 )
 #		gSizer5.Add( self.m_panel17, 1, wx.EXPAND |wx.ALL, 5 )
+
 
 	# Handlers for MyFrame2 events.
 	def create_button( self, event ):
@@ -382,7 +384,7 @@ class MyProject1MyFrame2( app.MyFrame2 ):
                 or not ws3.cell(k, 5).value == "":
 		     try:
 		      driver.get(ws3.cell(k, 5).value)
-		      time.sleep(5)
+		      time.sleep(2)
 
 		      if 'Error 502 (Server Error)!!1' in driver.title:
 		        ws3.update_cell(k, 6, driver.title)		 		 		  
@@ -416,145 +418,152 @@ class MyProject1MyFrame2( app.MyFrame2 ):
 		      for link in soup.select('a[href]'):
 #		       print(soup.find_all('a'))
 		       if "contact" in str(link.get("href")) \
-		     		        and not "actover" in str(link.get("href")) \
-		     		     		        and not "projection" in str(link.get("href")) \
-		     		     		     		       and not "consultation" in str(link.get("href")) \
-		     		     		     		     		       and not "regist" in str(link.get("href")) \
-		     		     		     		     		     		       and not "research" in str(link.get("href")) \
-		     		     		     		     		     		     		       and not "mailto" in str(link.get("href")) \
-		     		     		     		     		     		     		     		       and not "privacy" in str(link.get("href")) \
-		     		     		     		     		     		     		     		     		       and not "service" in str(link.get("href")) \
-		     		     		     		     		     		     		     		     		     		       and not "recruit" in str(link.get("href")) \
-		     		     		     		     		     		     		     		     		     		     		       and not "sdgs" in str(link.get("href")) \
-		     		     		     		     		     		     		     		     		     		     		     		       or "form2" in str(link.get("href")) \
-		     		     		     		     		     		     		     		     		     		     		     		     		       and "inq" in str(link.get("href")) \
-		     		     		     		     		     		     		     		     		     		     		     		       or "contact" in str(link.get("href")) \
-		     		     		     		     		     		     		     		     		     		     		     		     		      and "salesmarketingservice" in str(link.get("href")) \
-		     		     		     		     		     		     		     		     		     		     		     		     		     		       or r"contact/inq" in str(link.get("href")) \
-		     		       or "CONTACT" in str(link.get("href")) \
-		     		     		       and not "mailto" in str(link.get("href")) \
-		     		     		     		       and not "privacy" in str(link.get("href")) \
-		     		     		     		     		       and not "service" in str(link.get("href")) \
-		     		     		     		     		     		       and not "recruit" in str(link.get("href")) \
-		     		     		     		     		     		     		       and not "sdgs" in str(link.get("href")) \
-		     		     		     or "Contact" in str(link.get("href")) \
-		     		     		       and not "mailto" in str(link.get("href")) \
-		     		     		     		       and not "privacy" in str(link.get("href")) \
-		     		     		     		     		       and not "service" in str(link.get("href")) \
-		     		     		     		     		     		       and not "recruit" in str(link.get("href")) \
-		     		     		     		     		     		     		       and not "sdgs" in str(link.get("href")) \
-		     		     		     or "INQ" in str(link.get("href")) \
-		     		     		       and not "mailto" in str(link.get("href")) \
-		     		     		     		       and not "privacy" in str(link.get("href")) \
-		     		     		     		     		       and not "service" in str(link.get("href")) \
-		     		     		     		     		     		       and not "recruit" in str(link.get("href")) \
-		     		     		     		     		     		     		       and not "sdgs" in str(link.get("href")) \
-		     		     		     or "Inq" in str(link.get("href")) \
-		     		     		       and not "mailto" in str(link.get("href")) \
-		     		     		     		       and not "privacy" in str(link.get("href")) \
-		     		     		     		     		       and not "service" in str(link.get("href")) \
-		     		     		     		     		     		       and not "recruit" in str(link.get("href")) \
-		     		     		     		     		     		     		       and not "sdgs" in str(link.get("href")) \
-		     		     		     or "inq" in str(link.get("href")) \
-		     		     		       and not "mailto" in str(link.get("href")) \
-		     		     		     		       and not "privacy" in str(link.get("href")) \
-		     		     		     		     		       and not "service" in str(link.get("href")) \
-		     		     		     		     		     		       and not "recruit" in str(link.get("href")) \
-		     		     		     		     		     		     		       and not "sdgs" in str(link.get("href")) \
-		     		     		     or r".info/" in str(link.get("href")) \
-		     		     		     		       and not "privacy" in str(link.get("href")) \
-		     		     		     		     		       and not "service" in str(link.get("href")) \
-		     		     		     		     		     		       and not "recruit" in str(link.get("href")) \
-		     		     		     		     		     		     		       and not "sdgs" in str(link.get("href")) \
-		     		     		     or r"/info" in str(link.get("href")) \
-		     		     		     		       and not "privacy" in str(link.get("href")) \
-		     		     		     		     		       and not "service" in str(link.get("href")) \
-		     		     		     		     		     		       and not "recruit" in str(link.get("href")) \
-		     		     		     		     		     		     		       and not "sdgs" in str(link.get("href")) \
-		     		     		     		     		       or "お問い合わせ" in str(link.get("href")) \
-		     		     		     		     		     		       and not r"/よくある質問" in str(link.get("href")) \
-		     		     		     		     		     		       or "お問合せ" in str(link.get("href")) \
-		     		     		     		     		     		     		       and not r"/よくある質問" in str(link.get("href")) \
-		     		     		     		     		     		     		       or "お問い合せ" in str(link.get("href")) \
-		     		     		     		     		     		     		     		       and not r"/よくある質問" in str(link.get("href")) \
-		     		     		     		     		     		     		     		       or "お問合わせ" in str(link.get("href")) \
-		     		     		     		     		     		     		     		     		       and not r"/よくある質問" in str(link.get("href")) \
-		     		     		     		     		     		     		     		       or "mail" in str(link.get("href")) \
-		     		     		     		     		     		     		     		     		       and not "download" in str(link.get("href")) \
-		     		     		     		     		     		     		     		     		     		       and not "mailto" in str(link.get("href")) \
-		     		     		     		     		     		     		     		     		     		     		       and not "privacy" in str(link.get("href")) \
-		     		     		     		     		     		     		     		     		     		     		     		       and not "service" in str(link.get("href")) \
-		     		     		     		     		     		     		     		     		     		     		     		     		       and not "recruit" in str(link.get("href")) \
-		     		     		     		     		     		     		     		     		     		     		     		     		     		       and not "sdgs" in str(link.get("href")) \
-		     		     		     		     		     		     		     		       or "mailto" in str(link.get("href")) \
-		     		     		     		     		     		     		     		     		     		       and not "privacy" in str(link.get("href")) \
-		     		     		     		     		     		     		     		     		     		     		       and not "service" in str(link.get("href")) \
-		     		     		     		     		     		     		     		     		     		     		     		       and not "recruit" in str(link.get("href")) \
-		     		     		     		     		     		     		     		     		     		     		     		     		       and not "sdgs" in str(link.get("href")) \
-		     		     		     		     		      or "page_id=233" in str(link.get("href")) \
-		     		     		     		     		     		      or "page_id=39" in str(link.get("href")) \
-		     		     		     		     		     		     		      or "page_id=93" in str(link.get("href")) \
-		     		     		     		     		     		     or "page_id=15" in str(link.get("href")) \
-		     		     		     		     		     		       or "page_id=3781" in str(link.get("href")) \
-		     		     		     		     		     		     		     or r"form.run" in str(link.get("href")) \
-		     		     		     		     		     		     		       or r"form.php" in str(link.get("href")) \
-		     		     		     		     		     		     		     		     or r"/form$" in str(link.get("href")) \
-		     		     		     		     		     		     		     		     		     or r"form.html" in str(link.get("href")) \
-		     		     		     		     		     		     		     		     		     		     or r"%e3%81%8a%e5%95%8f%e3%81%84%e5%90%88%e3%82%8f%e3%81%9b" in str(link.get("href")) \
-		     		     		     		     		     		     		     		     		     		     		     or r"ask.html" in str(link.get("href")) \
-		     		     		     		     		     		     		     		     		     		     		       or r"/ask" in str(link.get("href")) \
-		     		     		     		     		     		     		     		     		     		     		     		     or r"forms.gle" in str(link.get("href")) \
-		     		     		     		     		     		     		     		     		     		     		     		     		     or "toiawase" in str(link.get("href")) \
-		     		     		     		     		     		     		     		     		     		     		     		     		     		     or "faq" in str(link.get("href")) \
-		     		     		     		     		     		     		     		     		     		     		     		     		        and not "mailto" in str(link.get("href")):
+                   and not "actover" in str(link.get("href")) \
+                       and not "projection" in str(link.get("href")) \
+                           and not "consultation" in str(link.get("href")) \
+                               and not "regist" in str(link.get("href")) \
+                                   and not "research" in str(link.get("href")) \
+                                       and not "mailto" in str(link.get("href")) \
+                                           and not "privacy" in str(link.get("href")) \
+                                               and not "service" in str(link.get("href")) \
+                                                   and not "recruit" in str(link.get("href")) \
+                                                       and not "sdgs" in str(link.get("href")) \
+                                                           and not "magazine" in str(link.get("href")) \
+                   or "form2" in str(link.get("href")) \
+                       and "inq" in str(link.get("href")) \
+                   or "contact" in str(link.get("href")) \
+                       and "salesmarketingservice" in str(link.get("href")) \
+		     	   or r"contact/inq" in str(link.get("href")) \
+		     	   or "CONTACT" in str(link.get("href")) \
+                        and not "mailto" in str(link.get("href")) \
+                            and not "privacy" in str(link.get("href")) \
+                                and not "service" in str(link.get("href")) \
+                                    and not "recruit" in str(link.get("href")) \
+                                        and not "sdgs" in str(link.get("href")) \
+		     	   or "Contact" in str(link.get("href")) \
+                        and not "mailto" in str(link.get("href")) \
+                            and not "privacy" in str(link.get("href")) \
+                                and not "service" in str(link.get("href")) \
+                                    and not "recruit" in str(link.get("href")) \
+                                        and not "sdgs" in str(link.get("href")) \
+		     	   or "INQ" in str(link.get("href")) \
+                        and not "mailto" in str(link.get("href")) \
+                            and not "privacy" in str(link.get("href")) \
+                                and not "service" in str(link.get("href")) \
+                                    and not "recruit" in str(link.get("href")) \
+                                        and not "sdgs" in str(link.get("href")) \
+		     	   or "Inq" in str(link.get("href")) \
+                        and not "mailto" in str(link.get("href")) \
+                            and not "privacy" in str(link.get("href")) \
+                                and not "service" in str(link.get("href")) \
+                                    and not "recruit" in str(link.get("href")) \
+                                        and not "sdgs" in str(link.get("href")) \
+		     	   or "inq" in str(link.get("href")) \
+                        and not "mailto" in str(link.get("href")) \
+                            and not "privacy" in str(link.get("href")) \
+                                and not "service" in str(link.get("href")) \
+                                    and not "recruit" in str(link.get("href")) \
+                                        and not "sdgs" in str(link.get("href")) \
+		     	   or r".info/" in str(link.get("href")) \
+                        and not "privacy" in str(link.get("href")) \
+                            and not "service" in str(link.get("href")) \
+                                and not "recruit" in str(link.get("href")) \
+                                    and not "sdgs" in str(link.get("href")) \
+		     	   or r"/info" in str(link.get("href")) \
+                        and not "privacy" in str(link.get("href")) \
+                            and not "service" in str(link.get("href")) \
+                                and not "recruit" in str(link.get("href")) \
+                                    and not "sdgs" in str(link.get("href")) \
+		     	   or "お問い合わせ" in str(link.get("href")) \
+                        and not r"/よくある質問" in str(link.get("href")) \
+		     	   or "お問合せ" in str(link.get("href")) \
+                        and not r"/よくある質問" in str(link.get("href")) \
+		     	   or "お問い合せ" in str(link.get("href")) \
+                        and not r"/よくある質問" in str(link.get("href")) \
+		     	   or "お問合わせ" in str(link.get("href")) \
+                        and not r"/よくある質問" in str(link.get("href")) \
+		     	   or "mail" in str(link.get("href")) \
+                        and not "download" in str(link.get("href")) \
+                            and not "mailto" in str(link.get("href")) \
+                                and not "privacy" in str(link.get("href")) \
+                                    and not "service" in str(link.get("href")) \
+                                        and not "recruit" in str(link.get("href")) \
+                                            and not "sdgs" in str(link.get("href")) \
+                                                and not "magazine" in str(link.get("href")) \
+		     	   or "mailto" in str(link.get("href")) \
+                        and not "privacy" in str(link.get("href")) \
+                            and not "service" in str(link.get("href")) \
+                                and not "recruit" in str(link.get("href")) \
+                                    and not "sdgs" in str(link.get("href")) \
+		     	   or "page_id=233" in str(link.get("href")) \
+		     	   or "page_id=39" in str(link.get("href")) \
+		     	   or "page_id=93" in str(link.get("href")) \
+		     	   or "page_id=15" in str(link.get("href")) \
+		     	   or "page_id=3781" in str(link.get("href")) \
+		     	   or r"form.run" in str(link.get("href")) \
+		     	   or r"form.php" in str(link.get("href")) \
+		     	   or r"/form$" in str(link.get("href")) \
+		     	   or r"form.html" in str(link.get("href")) \
+                   or "form" in str(link.get("href")) \
+		     	   or r"%e3%81%8a%e5%95%8f%e3%81%84%e5%90%88%e3%82%8f%e3%81%9b" in str(link.get("href")) \
+		     	   or r"ask.html" in str(link.get("href")) \
+		     	   or r"/ask" in str(link.get("href")) \
+		     	   or r"forms.gle" in str(link.get("href")) \
+		     	   or "toiawase" in str(link.get("href")) \
+		     	   or "faq" in str(link.get("href")) \
+                        and not "mailto" in str(link.get("href")):
 		        links_1.append(link.get("href"))   
 #		        print(links_1)
 		        print(len(links_1))
 
 #「http」で始まる文字列のリスト
 #		        if len([i for i in links_1 if r"^http" in i]) > 0:
-		      links_2 = [i for i in links_1 if "http" in i and r".info/contact" in i \
-		      		      		      		        or "http" in i and r"/faq" in i or "http" in i and not r"/info" in i \
-		      		      		      		      		       or "http" in i and not "recruit" in i or "http" in i and r"/ask" in i \
-		      		      		      		      		      		      or "http" in i and r"form2/B01" in i \
-		      		      		      		      		      		          or "http" in i and "contact" in i \
-		      		      		      		      		      		      		         or "http" in i and "mail" in i]
+		      links_2 = [i for i in links_1 \
+                   if "http" in i and r".info/contact" in i \
+                       or "http" in i and r"/faq" in i \
+                           or "http" in i and not r"/info" in i \
+                               or "http" in i and not "recruit" in i \
+                                   or "http" in i and r"/ask" in i \
+                                       or "http" in i and r"form2/B01" in i \
+                                           or "http" in i and "contact" in i \
+                                               or "http" in i and "mail" in i]
 		      print(len(links_2))
 #それ以外（"http"は含めない）
 #		        elif len([j for j in links_1 if r"^http" in j]) == 0:
-		      links_3 = [j for j in links_1 if r"/contact" in j and not "http" in j and not "mailto" in j \
-		      		      		         or r"/CONTACT" in j and not "http" in j and not "mailto" in j \
-		      		      		      		        or r"/Contact" in j and not "http" in j and not "mailto" in j \
-		      		      		      		      		       or r"Contact/" in j and not "http" in j and not "mailto" in j \
-		      		      		      		      		      		      or r"mail/" in j and not "http" in j and not "mailto" in j \
-		      		      		      		      		       or r"#contact" in j and not "http" in j and not "mailto" in j \
-		      		      		      		      		      		      or r"#CONTACT" in j and not "http" in j and not "mailto" in j \
-		      		      		      		      		      		          or r"#Contact" in j and not "http" in j and not "mailto" in j \
-		      		      		      		      		      		      		         or not "05contact" in j and not "http" in j and not "mailto" in j \
-		      		      		      		      		      		      		      		        or r"CONTACT" in j and not "http" in j and not "mailto" in j \
-		      		      		      		      		       or r"Contact" in j and not "http" in j and not "mailto" in j \
-		      		      		      		      		      		      or r"/お問い合わせ" in j and not "http" in j and not "mailto" in j \
-		      		      		      		      		      		          or r"/お問合せ" in j and not "http" in j and not "mailto" in j \
-		      		      		      		      		      		          or r"/お問い合せ" in j and not "http" in j and not "mailto" in j \
-		      		      		      		      		      		      		         or r"/お問合わせ" in j and not "http" in j and not "mailto" in j \
-		      		      		      		      		      		      		         or r"page_id" in j and not "http" in j and not "mailto" in j \
-		      		      		      		      		      		      		      		        or r"ask" in j and not "http" in j and not "mailto" in j \
-		      		      		      		      		      		      		      		        or r".info/contact" in j and not "http" in j and not "mailto" in j \
-		      		      		      		      		      		      		         or r"%e3%81%8a%e5%95%8f%e3%81%84%e5%90%88%e3%82%8f%e3%81%9b" in j and not "http" in j and not "mailto" in j \
-		      		      		      		      		      		      		      		        or r"contact.html" in j and not "http" in j and not "mailto" in j \
-		      		      		      		      		      		      		      		      		       or r"/contact.html" in j and not "http" in j and not "mailto" in j \
-		      		      		      		      		      		      		      		      		       or r"_contact" in j and not "http" in j and not "mailto" in j \
-		      		      		      		      		      		      		      		      		      		      or r"contact.php" in j and not "http" in j and not "mailto" in j \
-		      		      		      		      		      		      		      		      		      		      or r"/mail" in j and not "http" in j and not "mailto" in j \
-		      		      		      		      		      		      		      		      		      		          or r"forms.gle" in j and not "http" in j and not "mailto" in j \
-		      		      		      		      		      		      		      		      		      		          or r"form.run" in j and not "http" in j and not "mailto" in j \
-		      		      		      		      		      		      		      		      		      		      		         or r"section_contact" in j and not "http" in j and not "mailto" in j \
-		      		      		      		      		      		      		      		      		      		      		       or r"form.php" in j and not "http" in j and not "mailto" in j \
-		      		      		      		      		      		      		      		      		      		      		         or r"/form$" in j and not "http" in j and not "mailto" in j \
-		      		      		      		      		      		      		      		      		      		      		      		      or "toiawase" in j and not "mailto" in j and not "http" in j \
-		      		      		      		      		      		      		      		      		      		      		      		        or "inq" in j and not "mailto" in j and not "http" in j \
-		      		      		      		      		      		      		      		      		      		      		      		      		       or "INQ" in j and not "mailto" in j and not "http" in j \
-		      		      		      		      		      		      		      		      		      		      		      		      		      		      or "Inq" in j and not "mailto" in j and not "http" in j]
+		      links_3 = [j for j in links_1 \
+                   if r"/contact" in j and not "http" in j and not "mailto" in j \
+                       or r"/CONTACT" in j and not "http" in j and not "mailto" in j \
+                           or r"/Contact" in j and not "http" in j and not "mailto" in j \
+                               or r"Contact/" in j and not "http" in j and not "mailto" in j \
+                                   or r"mail/" in j and not "http" in j and not "mailto" in j \
+                                       or r"#contact" in j and not "http" in j and not "mailto" in j \
+                                           or r"#CONTACT" in j and not "http" in j and not "mailto" in j \
+                                               or r"#Contact" in j and not "http" in j and not "mailto" in j \
+                                                   or not "05contact" in j and not "http" in j and not "mailto" in j \
+                                                       or r"CONTACT" in j and not "http" in j and not "mailto" in j \
+                                                           or r"Contact" in j and not "http" in j and not "mailto" in j \
+                                                               or r"/お問い合わせ" in j and not "http" in j and not "mailto" in j \
+                                                                   or r"/お問合せ" in j and not "http" in j and not "mailto" in j \
+                                                                       or r"/お問い合せ" in j and not "http" in j and not "mailto" in j \
+                                                                           or r"/お問合わせ" in j and not "http" in j and not "mailto" in j \
+                                                                               or r"page_id" in j and not "http" in j and not "mailto" in j \
+                                                                                   or r"ask" in j and not "http" in j and not "mailto" in j \
+                                                                                       or r".info/contact" in j and not "http" in j and not "mailto" in j \
+                                                                                           or r"%e3%81%8a%e5%95%8f%e3%81%84%e5%90%88%e3%82%8f%e3%81%9b" in j and not "http" in j and not "mailto" in j \
+                                                                                               or r"contact.html" in j and not "http" in j and not "mailto" in j \
+                                                                                                   or r"/contact.html" in j and not "http" in j and not "mailto" in j \
+                                                                                                       or r"_contact" in j and not "http" in j and not "mailto" in j \
+                                                                                                           or r"contact.php" in j and not "http" in j and not "mailto" in j \
+                                                                                                               or r"/mail" in j and not "http" in j and not "mailto" in j \
+                                                                                                                   or r"forms.gle" in j and not "http" in j and not "mailto" in j \
+                                                                                                                       or r"form.run" in j and not "http" in j and not "mailto" in j \
+                                                                                                                           or r"section_contact" in j and not "http" in j and not "mailto" in j \
+                                                                                                                               or r"form.php" in j and not "http" in j and not "mailto" in j \
+                                                                                                                                   or r"/form$" in j and not "http" in j and not "mailto" in j \
+                                                                                                                                       or "toiawase" in j and not "mailto" in j and not "http" in j \
+                                                                                                                                           or "inq" in j and not "mailto" in j and not "http" in j \
+                                                                                                                                               or "INQ" in j and not "mailto" in j and not "http" in j \
+                                                                                                                                                   or "Inq" in j and not "mailto" in j and not "http" in j]
 		      print(links_3)
 		      print(len(links_3))
               
@@ -1167,14 +1176,14 @@ class MyProject1MyDialog( app.MyDialog ):
 #スプレッドシートに入力
             for v2,c2 in zip(service_urls,cell_list2):
              c2.value = v2
-             ws3.update_cells(cell_list2)
+            ws3.update_cells(cell_list2)
             
            elif lastrow1 > 0:
             cell_list2 = ws3.range(lastrow1+1, 1, lastrow1+1+len(service_urls), 1)
             time.sleep(5)
             for v2,c2 in zip(service_urls,cell_list2):
              c2.value = v2
-             ws3.update_cells(cell_list2)
+            ws3.update_cells(cell_list2)
             
         # ループ処理
 #          for a in range(rate, 100):
