@@ -77,7 +77,7 @@ ws5 = wb.worksheet('SELECT')
 start = time.time()
 #ws1の行数を取得
 lastrow = len(ws1.col_values(1))
-for k in tqdm(range(114, 115)):
+for k in tqdm(range(128, 129)):
     
 #シートの初期化
  ws5.clear()
@@ -88,19 +88,19 @@ for k in tqdm(range(114, 115)):
              cell.value = ""
 #             time.sleep(1)
  ws1.update_cells(cell_list2)
- 
-   
+    
 # 入力されているk行目の配列を取得
 # lastcol = len(list(ws1.row_values(k)))  
-#UI2comboBox = Screen_Transition.ui2.comboBox.currentText(0)
-#driver.get('https://www.ekiten.jp/gen_relax/' + UI2comboBox)
+
 # try:
- if not ws1.cell(k, 8).value == r"-" \
-       or not ws1.cell(k, 8).value == "" \
-           or not ws1.cell(k, 8).value == r"Time out!!" \
-               or not ws1.cell(k, 8).value == r"unknown error!!":
+ if ws1.cell(k, 8).value == r"-" \
+       or ws1.cell(k, 8).value == "" \
+           or r"Time out!!" in ws1.cell(k, 8).value \
+               or r"unknown error!!" in ws1.cell(k, 8).value:
+   ws1.update_cell(k, 9, "-")
+ else:                
     driver.get(ws1.cell(k, 8).value)
-    time.sleep(5)
+    time.sleep(1)
  
     html = driver.page_source
     soup = BeautifulSoup(html, 'html.parser')
@@ -126,13 +126,17 @@ for k in tqdm(range(114, 115)):
      ws1.update_cell(k, 9, "営業お断り！！")
     elif "recaptcha" in html:
      ws1.update_cell(k, 9, "reCAPTCHA")
+     
+    elif "このページはサービス" in html:
+     ws1.update_cell(k, 9, "サービスに関する専用フォーム")
 #    elif "予算" in str(soup.find_all("form")) \
 #        or "納期" in str(soup.find_all("form")) \
 #    or "サービスに関する" in str(soup.find_all("form")):
 #     ws1.update_cell(k, 9, "サービスに関する専用フォーム")
-    elif "無料相談" in html \
-        or "に関するご相談" in str(soup.find_all("form")):
-     ws1.update_cell(k, 9, "無料相談専用フォーム")
+#    elif "無料相談" in html \
+#        or "相談フォーム" in html:
+#        or "に関するご相談" in str(soup.find_all("form")):
+#     ws1.update_cell(k, 9, "無料相談専用フォーム")
 #    elif "求人" in html \
 #        or "採用" in str(soup.find_all("form")):
 #     ws1.update_cell(k, 9, "人材関連専用フォーム")
@@ -152,6 +156,7 @@ for k in tqdm(range(114, 115)):
       for list_ in element1:
         if "企業" in list_.getText() \
                 or "社名" in list_.getText() \
+                    or "法人" in list_.getText() \
                         or "ふりがな" in list_.getText() \
                             or "フリガナ" in list_.getText() \
                                 or "カナ" in list_.getText() \
@@ -203,6 +208,7 @@ for k in tqdm(range(114, 115)):
       for list_ in element1:
         if "企業" in list_.getText() \
                 or "社名" in list_.getText() \
+                    or "法人" in list_.getText() \
                         or "ふりがな" in list_.getText() \
                             or "フリガナ" in list_.getText() \
                                 or "カナ" in list_.getText() \
@@ -254,6 +260,7 @@ for k in tqdm(range(114, 115)):
       for list_ in element1:
         if "企業" in list_.getText() \
                 or "社名" in list_.getText() \
+                    or "法人" in list_.getText() \
                         or "ふりがな" in list_.getText() \
                             or "フリガナ" in list_.getText() \
                                 or "カナ" in list_.getText() \
@@ -305,6 +312,7 @@ for k in tqdm(range(114, 115)):
       for list_ in element1:
         if "企業" in list_.getText() \
                 or "社名" in list_.getText() \
+                    or "法人" in list_.getText() \
                         or "ふりがな" in list_.getText() \
                             or "フリガナ" in list_.getText() \
                                 or "カナ" in list_.getText() \
@@ -356,6 +364,7 @@ for k in tqdm(range(114, 115)):
       for list_ in element1:
         if "企業" in list_.getText() \
                 or "社名" in list_.getText() \
+                    or "法人" in list_.getText() \
                         or "ふりがな" in list_.getText() \
                             or "フリガナ" in list_.getText() \
                                 or "カナ" in list_.getText() \
@@ -408,6 +417,7 @@ for k in tqdm(range(114, 115)):
       for list_ in element1:
         if "企業" in list_.getText() \
                 or "社名" in list_.getText() \
+                    or "法人" in list_.getText() \
                         or "ふりがな" in list_.getText() \
                             or "フリガナ" in list_.getText() \
                                 or "カナ" in list_.getText() \
@@ -692,13 +702,22 @@ for k in tqdm(range(114, 115)):
                or "内容" in str(soup.find_all("form")) \
                    or "件名" in str(soup.find_all("form")):
 #        radiobutton = driver.find_elements_by_name(SELECT_list5[len(SELECT_list5)-1])[len(SELECT_list5)-1]
-        radiobutton = driver.find_element_by_css_selector("[value='other']")
-        driver.execute_script("arguments[0].click();", radiobutton)
-        print(radiobutton.is_selected())
-        if radiobutton.is_selected() is True:        
-         lastcol = len(list(ws1.row_values(k)))
-         time.sleep(1)
-         ws1.update_cell(k, lastcol+1, "その他")
+        try:
+          radiobutton = driver.find_element_by_css_selector("[value='other']")
+          driver.execute_script("arguments[0].click();", radiobutton)
+          print(radiobutton.is_selected())
+          if radiobutton.is_selected() is True:        
+            lastcol = len(list(ws1.row_values(k)))
+            time.sleep(1)
+            ws1.update_cell(k, lastcol+1, "その他")
+        except NoSuchElementException:
+          radiobutton = driver.find_element_by_css_selector("[value='その他のお問い合わせ']")
+          driver.execute_script("arguments[0].click();", radiobutton)
+          print(radiobutton.is_selected())
+          if radiobutton.is_selected() is True:        
+            lastcol = len(list(ws1.row_values(k)))
+            time.sleep(1)
+            ws1.update_cell(k, lastcol+1, "その他")
 
 
 #id値有りの場合（パターン注意）
@@ -719,7 +738,8 @@ for k in tqdm(range(114, 115)):
            print(radiobutton.is_selected())
 
 #（法人／個人）
-     if len([i for i in items_1 if "法人" in i]) == 1:
+     if len([i for i in items_1 if "法人" in i]) == 1 \
+         and len(SELECT_list4) > 0:
          radiobutton = driver.find_element_by_id(SELECT_list4[0])
          driver.execute_script("arguments[0].click();", radiobutton)
          print(radiobutton.is_selected())
@@ -732,9 +752,11 @@ for k in tqdm(range(114, 115)):
       
 #会社名
      if len([i for i in items_1 if "社名" in i \
-               or "企業" in i]) == 0 \
-                   and len([i for i in list_2 if "社名" in i \
-               or "企業" in i]) == 0:
+               or "企業" in i \
+                   or "法人" in i]) == 0 \
+         and len([i for i in list_2 if "社名" in i \
+               or "企業" in i \
+                   or "法人" in i]) == 0:
         lastcol = len(list(ws1.row_values(k)))
         time.sleep(1) 
         ws1.update_cell(k, lastcol+1, "会社名入力欄なし")
@@ -747,7 +769,8 @@ for k in tqdm(range(114, 115)):
       ws1.update_cell(k, lastcol+1, "会社名")
 
      elif not len([i for i in items_1 if "社名" in i \
-               or "企業" in i]) == 0:
+               or "企業" in i \
+                   or "法人" in i]) == 0:
         Cell_list1 = [i for i in list_2 if "facility" in i \
                       or "organization" in i \
                      or "your-company" in i \
@@ -762,7 +785,9 @@ for k in tqdm(range(114, 115)):
                                              or "社名" in i \
                                                  or "text-978" == i \
                                                      or "Company" in i \
-                                                         or "company3" == i]
+                                                         or "company3" == i \
+                                                             or "form_fields[company]" in i \
+                                                                 or "text-819" == i]
         driver.find_element_by_name(Cell_list1[0]).send_keys(ws2.cell(2, 2).value + "　")
         lastcol = len(list(ws1.row_values(k)))
         time.sleep(1)
@@ -783,7 +808,9 @@ for k in tqdm(range(114, 115)):
                                              or "社名" in i \
                                                  or "text-978" == i \
                                                      or "Company" in i \
-                                                         or "company3" == i]) == 0:
+                                                         or "company3" == i \
+                                                             or "form_fields[company]" in i \
+                                                                 or "text-819" == i]) == 0:
         Cell_list1 = [i for i in list_2 if "facility" in i \
                       or "organization" in i \
                      or "your-company" in i \
@@ -798,7 +825,9 @@ for k in tqdm(range(114, 115)):
                                              or "社名" in i \
                                                  or "text-978" == i \
                                                      or "Company" in i \
-                                                         or "company3" == i]
+                                                         or "company3" == i \
+                                                             or "form_fields[company]" in i \
+                                                                 or "text-819" == i]
         print(Cell_list1)
         driver.find_element_by_name(Cell_list1[0]).send_keys(ws2.cell(2, 2).value + "　")
         lastcol = len(list(ws1.row_values(k)))
@@ -820,7 +849,9 @@ for k in tqdm(range(114, 115)):
                                              or "社名" in i \
                                                  or "text-978" == i \
                                                      or "Company" in i \
-                                                         or "company3" == i]) == 0:
+                                                         or "company3" == i \
+                                                             or "form_fields[company]" in i \
+                                                                 or "text-819" == i]) == 0:
         Cell_list1 = [i for i in list_2c if "facility" in i \
                       or "organization" in i \
                      or "your-company" in i \
@@ -835,7 +866,9 @@ for k in tqdm(range(114, 115)):
                                                  or "社名" in i \
                                                  or "text-978" == i \
                                                      or "Company" in i \
-                                                         or "company3" == i]
+                                                         or "company3" == i \
+                                                             or "form_fields[company]" in i \
+                                                                 or "text-819" == i]
         print(Cell_list1)
         driver.find_elements_by_class_name(Cell_list1[0])[1].send_keys(ws2.cell(2, 2).value)
         lastcol = len(list(ws1.row_values(k)))
@@ -889,28 +922,34 @@ for k in tqdm(range(114, 115)):
                      or "first_name" == i \
                          or "name1" == i \
                              or "FirstName" in i \
+                                 or "firstname" in i \
                       or "名" == i \
                           or "lastName" == i \
                               or "name2" == i \
                                   or "LastName" in i \
-                                      or "name3" in i]) > 0:
+                                      or "name3" in i \
+                                          or "lastname" in i]) > 0:
          Cell_list3 = [i for i in list_2 if "姓" == i \
                  or "firstName" == i \
                      or "first_name" == i \
                          or "name1" == i \
                              or "FirstName" in i \
+                                 or "firstname" in i \
                       or "名" == i \
                           or "lastName" == i \
                               or "name2" == i \
                                   or "LastName" in i \
-                                      or "name3" in i]
+                                      or "name3" in i \
+                                          or "lastname" in i]
          print(Cell_list3)
          for j in range(1,len(Cell_list3)+1):
           elemName0 = driver.find_element_by_name(Cell_list3[0])
           elemName1 = driver.find_element_by_name(Cell_list3[1])
-          elemName2 = driver.find_element_by_name(Cell_list3[2])
-          try:
-           if elemName0.is_displayed() is False \
+          
+          if len(Cell_list3) > 2:
+           elemName2 = driver.find_element_by_name(Cell_list3[2])
+           try:
+            if elemName0.is_displayed() is False \
                or elemName1.is_displayed() is False \
                    or elemName2.is_displayed() is False:
                print(Cell_list3[j-1])
@@ -935,14 +974,15 @@ for k in tqdm(range(114, 115)):
                 time.sleep(1)             
                 ws1.update_cell(k, lastcol+1, "氏名")
 
-           else:
+#操作できない要素の回避
+           except ElementNotInteractableException:
+             pass
+
+          else:
                driver.find_element_by_name(Cell_list3[j-1]).send_keys(ws2.cell(6, 2+j).value)
                lastcol = len(list(ws1.row_values(k)))
                time.sleep(1) 
-               ws1.update_cell(k, lastcol+1, ws1.cell(6, 2+j).value)
-#操作できない要素の回避
-          except ElementNotInteractableException:
-            pass
+               ws1.update_cell(k, lastcol+1, ws2.cell(6, 2+j).value)
         
 #フルネーム（通常パターン）
       elif not len([i for i in list_2 if r"user_name" in i \
@@ -956,7 +996,10 @@ for k in tqdm(range(114, 115)):
                                              or "name1" == i \
                                                  or "text-978" == i \
                                                      or "firstname" == i \
-                                                         or "full_name" == i]) == 0:
+                                                         or "full_name" == i \
+                                                             or "customer_name" == i \
+                                                                 or "namae" in i \
+                                                                     or "form_fields[name]" in i]) == 0:
         Cell_list3 = [i for i in list_2 if r"user_name" in i \
                      or r"your-name" in i \
                          or "contact_name" in i \
@@ -968,7 +1011,10 @@ for k in tqdm(range(114, 115)):
                                              or "name1" == i \
                                                  or "text-978" == i \
                                                      or "firstname" == i \
-                                                         or "full_name" == i]
+                                                         or "full_name" == i \
+                                                             or "customer_name" == i \
+                                                                 or "namae" in i \
+                                                                     or "form_fields[name]" in i]
         print(Cell_list3)
         driver.find_element_by_name(Cell_list3[0]).send_keys(ws2.cell(6, 2).value)
         lastcol = len(list(ws1.row_values(k)))
@@ -983,7 +1029,13 @@ for k in tqdm(range(114, 115)):
                                  or "担当者" in i \
                                      or "氏名" in i \
                                          or "name" == i \
-                                             or "name1" == i]) == 0:
+                                             or "name1" == i \
+                                                 or "text-978" == i \
+                                                     or "firstname" == i \
+                                                         or "full_name" == i \
+                                                             or "customer_name" == i \
+                                                                 or "namae" in i \
+                                                                     or "form_fields[name]" in i]) == 0:
         Cell_list3 = [i for i in list_2d if r"user_name" in i \
                      or r"your-name" in i \
                          or "contact_name" in i \
@@ -992,7 +1044,13 @@ for k in tqdm(range(114, 115)):
                                  or "担当者" in i \
                                      or "氏名" in i \
                                          or "name" == i \
-                                             or "name1" == i]
+                                             or "name1" == i \
+                                                 or "text-978" == i \
+                                                     or "firstname" == i \
+                                                         or "full_name" == i \
+                                                             or "customer_name" == i \
+                                                                 or "namae" in i \
+                                                                     or "form_fields[name]" in i]
         print(Cell_list3)
         driver.find_element_by_id(Cell_list3[0]).send_keys(ws2.cell(6, 2).value)
         lastcol = len(list(ws1.row_values(k)))
@@ -1007,16 +1065,28 @@ for k in tqdm(range(114, 115)):
                                  or "担当者" in i \
                                      or "氏名" in i \
                                          or "name" == i \
-                                             or "name1" == i]) == 0:
+                                             or "name1" == i \
+                                                 or "text-978" == i \
+                                                     or "firstname" == i \
+                                                         or "full_name" == i \
+                                                             or "customer_name" == i \
+                                                                 or "namae" in i \
+                                                                     or "form_fields[name]" in i]) == 0:
         Cell_list3 = [i for i in list_2c if r"user_name" in i \
                      or r"your-name" in i \
                          or "contact_name" in i \
-                         or "名前" in i \
-                             or "f4a6f2b" in i \
-                                 or "担当者" in i \
-                                     or "氏名" in i \
+                             or "名前" in i \
+                                 or "f4a6f2b" in i \
+                                     or "担当者" in i \
+                                         or "氏名" in i \
                                              or "name" == i \
-                                                 or "name1" == i]
+                                                 or "name1" == i \
+                                                     or "text-978" == i \
+                                                         or "firstname" == i \
+                                                             or "full_name" == i \
+                                                                 or "customer_name" == i \
+                                                                     or "namae" in i \
+                                                                     or "form_fields[name]" in i]
         print(Cell_list3)
         driver.find_elements_by_class_name(list_2c[0])[0].send_keys(ws2.cell(6, 2).value)
         lastcol = len(list(ws1.row_values(k)))
@@ -1100,150 +1170,6 @@ for k in tqdm(range(114, 115)):
         ws1.update_cell(k, lastcol+1, "氏名フリガナ")
 
 
-#電話番号
-
-#（入力欄なしの場合は何もしない）
-     if len([i for i in list_1 if "電話" in i \
-                  or "TEL" in i]) == 0 \
-         and len([i for i in list_2 if "電話" in i \
-                  or "TEL" in i \
-                      or "tel" in i \
-                          or "Tel" in i \
-                              or "phone" in i]) == 0:
-             print(len([i for i in list_1 if "電話" in i \
-                  or "TEL" in i]))
-             print(len([i for i in list_2 if "電話" in i \
-                  or "TEL" in i \
-                      or "tel" in i \
-                          or "Tel" in i \
-                              or "phone" in i]))
-             pass
-
-#（ハイフン有り）
-     elif not len([i for i in list_1 if "電話" in i \
-                  or "TEL" in i]) == 0 \
-                  or len([i for i in list_2 if "電話" in i \
-                  or "TEL" in i \
-                      or "tel" in i \
-                          or "Tel" in i \
-                              or "phone" in i \
-                                  or "Phone" in i]) > 0:
-         Cell_list7 = [i for i in list_2 if "tel" in i \
-                      or "TEL" in i \
-                          or "Tel" in i \
-                              or "電話" in i \
-                                  or "phone" in i \
-                                      or "Phone" in i]
-         print(Cell_list7)
-
-         if len(Cell_list7) > 1:
-          elemName0 = driver.find_element_by_name(Cell_list7[0])
-          elemName1 = driver.find_element_by_name(Cell_list7[1])
-          elemName2 = driver.find_element_by_name(Cell_list7[2])
-          try:
-           if elemName0.is_displayed() is False \
-               or elemName1.is_displayed() is False \
-                   or elemName2.is_displayed() is False:
-               print(Cell_list7[j-1])
-               if "1" in Cell_list7[j-1]:
-                driver.find_element_by_name(Cell_list7[j-1]).send_keys(ws2.cell(14, 2).value)
-                lastcol = len(list(ws1.row_values(k)))
-                time.sleep(1)             
-                ws1.update_cell(k, lastcol+1, "電話（ハイフンあり）")
-
-               elif "2" in Cell_list7[j-1]:
-                driver.find_element_by_name(Cell_list7[j-1]).send_keys(ws2.cell(14, 2).value)
-                lastcol = len(list(ws1.row_values(k)))
-                time.sleep(1)             
-                ws1.update_cell(k, lastcol+1, "電話（ハイフンあり）")
-
-               elif "3" in Cell_list7[j-1]:
-                driver.find_element_by_name(Cell_list7[j-1]).send_keys(ws2.cell(14, 2).value)
-                lastcol = len(list(ws1.row_values(k)))
-                time.sleep(1)             
-                ws1.update_cell(k, lastcol+1, "電話（ハイフンあり）")
-
-#操作できない要素の回避
-          except ElementNotInteractableException:
-           pass
-
-         elif len(Cell_list7) == 1:
-            driver.find_element_by_name(Cell_list7[0]).send_keys(ws2.cell(14, 2).value)
-            lastcol = len(list(ws1.row_values(k)))
-            time.sleep(1) 
-            ws1.update_cell(k, lastcol+1, "電話（ハイフンあり）")
-
-
-     elif len(list_2d) > 0:
-       if len([i for i in list_2 if "tel" in i \
-                or "TEL" in i \
-                     or "電話" in i \
-                             or "phone" in i \
-                                  or "Phone" in i]) == 0:
-         Cell_list7 = [i for i in list_2d if "tel" in i \
-                      or "TEL" in i \
-                          or "Tel" in i \
-                              or "電話" in i \
-                                  or "phone" in i \
-                                      or "Phone" in i]
-         print(Cell_list7)
-         driver.find_element_by_id(Cell_list7[0]).send_keys(ws2.cell(14, 2).value)
-         lastcol = len(list(ws1.row_values(k)))
-         time.sleep(1) 
-         ws1.update_cell(k, lastcol+1, "電話（ハイフンあり）")
-
-     elif len(list_2c) > 0:
-       if len([i for i in list_2d if "tel" in i \
-                      or "TEL" in i \
-                          or "Tel" in i \
-                              or "電話" in i \
-                                  or "phone" in i \
-                                      or "Phone" in i]) == 0:
-         driver.find_elements_by_class_name(list_2c[0])[1].send_keys(ws2.cell(14, 2).value)
-         lastcol = len(list(ws1.row_values(k)))
-         time.sleep(1) 
-         ws1.update_cell(k, lastcol+1, "電話（ハイフンあり）")
-
-
-#（ハイフンなし市外局番別）
-     elif not len([i for i in list_1 if "電話" in i \
-                  or "TEL" in i]) == 0 \
-         and len([i for i in list_2 if "[0]" in i \
-                  or "[1]" in i \
-                      or "tel1" in i]) > 0:
-        Cell_list7 = [i for i in list_2 if "tel" in i \
-                      or "TEL" in i \
-                          or "Tel" in i \
-                              or "電話" in i \
-                                  or "phone" in i \
-                                      or "Phone" in i]
-
-        for j in range(1, len(Cell_list7)+1):
-          driver.find_element_by_name(Cell_list7[j-1]) \
-           .send_keys(ws2.cell(14, 2+j).value)
-          lastcol = len(list(ws1.row_values(k)))
-          time.sleep(3)
-          ws1.update_cell(k, lastcol+1, ws2.cell(14, 2+j).value)         
-            
-#（ハイフンなし）
-     elif not len([i for i in items_1 if "電話" in i \
-                  or "TEL" in i \
-                      and "ハイフンなし" in i]) == 0:
-        Cell_list7 = [i for i in list_2 if "tel" in i \
-                      or "TEL" in i \
-                          or "Tel" in i \
-                              or "電話" in i \
-                                  or "phone" in i \
-                                      or "Phone" in i]
-        print(Cell_list7)
-        driver.find_element_by_name(Cell_list7[0]).send_keys(ws2.cell(14, 3).value \
-                                                             + ws2.cell(14, 4).value \
-                                                                 + ws2.cell(14, 5).value)
-        lastcol = len(list(ws1.row_values(k)))
-        time.sleep(1) 
-        ws1.update_cell(k, lastcol+1, "電話（ハイフンなし）")
-
-
 #住所（郵便番号＋都道府県＋市区町村＋建物名）
      if len([i for i in list_1 if "郵便番号" in i \
              or "住所" in i \
@@ -1264,11 +1190,19 @@ for k in tqdm(range(114, 115)):
                          or "postalCode" in i \
                              or "zip" in i]
        print(Cell_list6)
-       if len(Cell_list6) > 0:
+       if len(Cell_list6) == 1:
         driver.find_element_by_name(Cell_list6[0]).send_keys(ws2.cell(4, 3).value + ws2.cell(4, 4).value)
         lastcol = len(list(ws1.row_values(k)))
         time.sleep(1)             
         ws1.update_cell(k, lastcol+1, "郵便番号")
+
+       elif len(Cell_list6) > 1:
+          for j in range(1,len(Cell_list6)+1):
+           driver.find_element_by_name(Cell_list6[j-1]).send_keys(ws2.cell(4, 2+j).value)
+           lastcol = len(list(ws1.row_values(k)))
+           time.sleep(1)
+           ws1.update_cell(k, lastcol+1, ws2.cell(4, 2+j).value)
+
                 
        if len([i for i in items_1 if "住所" in i]) > 0 \
            or len([i for i in list_2 if "address" == i \
@@ -1337,7 +1271,64 @@ for k in tqdm(range(114, 115)):
          ws1.update_cell(k, lastcol+1, "住所")
 
 
-#「都道府県」～「建物」がテキストに含まれる         
+#「都道府県」～「建物」がテキストに含まれる
+
+#（ドロップダウン選択式）
+        SELECT_list1 = []
+        for element in soup.find_all("option"): 
+          SELECT_list1.append(element.get("value"))
+        SELECT_list1 =[i for i in SELECT_list1 if i is not None]
+        print(SELECT_list1)
+
+        list_6 = []
+        for element5 in soup.find_all("select"):
+          list_6.append(element5.get("name"))
+        list_6 =[i for i in list_6 if i is not None]
+        print(list_6)
+        list_7 = []
+        for element5 in soup.find_all("select"):
+          list_7.append(element5.get("id"))
+        list_7 =[i for i in list_7 if i is not None]
+        print(list_7)
+
+        if len([i for i in items_1 if "都道府県" in i]) > 0 \
+         or "都道府県" in str(soup.find_all("select")) > 0:
+         list_6 = [i for i in list_6 if "pref" in i \
+                   or "都道府県" in i \
+                       or "address1" == i]
+             
+         if not list_6 == []:         
+          print(list_6[0])
+          dropdown = driver.find_element_by_name(list_6[0])
+          select = Select(dropdown)
+          SELECT_list3 = [i for i in SELECT_list1 if "東京都" in i]
+          print(SELECT_list3)
+          select.select_by_value(SELECT_list3[0])
+          lastcol = len(list(ws1.row_values(k)))    
+          time.sleep(1)             
+          ws1.update_cell(k, lastcol+1, SELECT_list3[0])
+          if len([i for i in items_1 if "建物" in i \
+               or "ビル" in i \
+                   or "アパート" in i]) == 0:
+           Cell_list6 = [i for i in list_2 if "address" == i \
+                        or "address2" in i \
+                            or "住所" in i \
+                                or "建物" in i]
+           print(Cell_list6)
+           if len(Cell_list6) == 1:
+            driver.find_element_by_name(Cell_list6[0]).clear()
+            driver.find_element_by_name(Cell_list6[0]).send_keys(ws2.cell(5, 3).value \
+                                                                 + ws2.cell(5, 4).value \
+                                                                     + ws2.cell(5, 5).value)
+           elif len(Cell_list6) == 2:
+             driver.find_element_by_name(Cell_list6[0]).clear()
+               
+#住所（市町村名・番地）
+             driver.find_element_by_name(Cell_list6[0]).send_keys(ws2.cell(5, 3).value
+                                                                   + ws2.cell(5, 4).value)
+#建物名・号室             
+             driver.find_element_by_name(Cell_list6[1]).send_keys(ws2.cell(5, 5).value)
+
         elif len([i for i in Cell_list6 if "0" in i or "1" in i]) == 0 \
             and len([i for i in items_1 if "都道府県" in i]) > 0:
          Cell_list5 = [i for i in list_2 if "pref" in i]
@@ -1414,6 +1405,15 @@ for k in tqdm(range(114, 115)):
             lastcol = len(list(ws1.row_values(k)))
             time.sleep(1)             
             ws1.update_cell(k, lastcol+1, ws2.cell(5, 1+j).value)
+
+       else:
+            driver.find_element_by_name(Cell_list6[0]).send_keys(ws2.cell(5, 2).value
+                                                                 + ws2.cell(5, 3).value
+                                                                 + ws2.cell(5, 4).value
+                                                                 + ws2.cell(5, 5).value)
+            lastcol = len(list(ws1.row_values(k)))
+            time.sleep(1)             
+            ws1.update_cell(k, lastcol+1, "住所")
 
 
 #郵便番号～住所
@@ -1581,6 +1581,150 @@ for k in tqdm(range(114, 115)):
          time.sleep(1)             
          ws1.update_cell(k, lastcol+1, "アパート")       
 
+
+#電話番号
+
+#（入力欄なしの場合は何もしない）
+     if len([i for i in list_1 if "電話" in i \
+                  or "TEL" in i]) == 0 \
+         and len([i for i in list_2 if "電話" in i \
+                  or "TEL" in i \
+                      or "tel" in i \
+                          or "Tel" in i \
+                              or "phone" in i]) == 0:
+             print(len([i for i in list_1 if "電話" in i \
+                  or "TEL" in i]))
+             print(len([i for i in list_2 if "電話" in i \
+                  or "TEL" in i \
+                      or "tel" in i \
+                          or "Tel" in i \
+                              or "phone" in i]))
+             pass
+
+#（ハイフン有り）
+     elif not len([i for i in list_1 if "電話" in i \
+                  or "TEL" in i]) == 0 \
+                  or len([i for i in list_2 if "電話" in i \
+                  or "TEL" in i \
+                      or "tel" in i \
+                          or "Tel" in i \
+                              or "phone" in i \
+                                  or "Phone" in i]) > 0:
+         Cell_list7 = [i for i in list_2 if "tel" in i \
+                      or "TEL" in i \
+                          or "Tel" in i \
+                              or "電話" in i \
+                                  or "phone" in i \
+                                      or "Phone" in i]
+         print(Cell_list7)
+
+         if len(Cell_list7) > 1:
+          elemName0 = driver.find_element_by_name(Cell_list7[0])
+          elemName1 = driver.find_element_by_name(Cell_list7[1])
+          elemName2 = driver.find_element_by_name(Cell_list7[2])
+          try:
+           if elemName0.is_displayed() is False \
+               or elemName1.is_displayed() is False \
+                   or elemName2.is_displayed() is False:
+               print(Cell_list7[j-1])
+               if "1" in Cell_list7[j-1]:
+                driver.find_element_by_name(Cell_list7[j-1]).send_keys(ws2.cell(14, 2).value)
+                lastcol = len(list(ws1.row_values(k)))
+                time.sleep(1)             
+                ws1.update_cell(k, lastcol+1, "電話（ハイフンあり）")
+
+               elif "2" in Cell_list7[j-1]:
+                driver.find_element_by_name(Cell_list7[j-1]).send_keys(ws2.cell(14, 2).value)
+                lastcol = len(list(ws1.row_values(k)))
+                time.sleep(1)             
+                ws1.update_cell(k, lastcol+1, "電話（ハイフンあり）")
+
+               elif "3" in Cell_list7[j-1]:
+                driver.find_element_by_name(Cell_list7[j-1]).send_keys(ws2.cell(14, 2).value)
+                lastcol = len(list(ws1.row_values(k)))
+                time.sleep(1)             
+                ws1.update_cell(k, lastcol+1, "電話（ハイフンあり）")
+
+#操作できない要素の回避
+          except ElementNotInteractableException:
+           pass
+
+         elif len(Cell_list7) == 1:
+            driver.find_element_by_name(Cell_list7[0]).send_keys(ws2.cell(14, 2).value)
+            lastcol = len(list(ws1.row_values(k)))
+            time.sleep(1) 
+            ws1.update_cell(k, lastcol+1, "電話（ハイフンあり）")
+
+
+     elif len(list_2d) > 0:
+       if len([i for i in list_2 if "tel" in i \
+                or "TEL" in i \
+                     or "電話" in i \
+                             or "phone" in i \
+                                  or "Phone" in i]) == 0:
+         Cell_list7 = [i for i in list_2d if "tel" in i \
+                      or "TEL" in i \
+                          or "Tel" in i \
+                              or "電話" in i \
+                                  or "phone" in i \
+                                      or "Phone" in i]
+         print(Cell_list7)
+         driver.find_element_by_id(Cell_list7[0]).send_keys(ws2.cell(14, 2).value)
+         lastcol = len(list(ws1.row_values(k)))
+         time.sleep(1) 
+         ws1.update_cell(k, lastcol+1, "電話（ハイフンあり）")
+
+     elif len(list_2c) > 0:
+       if len([i for i in list_2d if "tel" in i \
+                      or "TEL" in i \
+                          or "Tel" in i \
+                              or "電話" in i \
+                                  or "phone" in i \
+                                      or "Phone" in i]) == 0:
+         driver.find_elements_by_class_name(list_2c[0])[1].send_keys(ws2.cell(14, 2).value)
+         lastcol = len(list(ws1.row_values(k)))
+         time.sleep(1) 
+         ws1.update_cell(k, lastcol+1, "電話（ハイフンあり）")
+
+
+#（ハイフンなし市外局番別）
+     elif not len([i for i in list_1 if "電話" in i \
+                  or "TEL" in i]) == 0 \
+         and len([i for i in list_2 if "[0]" in i \
+                  or "[1]" in i \
+                      or "tel1" in i]) > 0:
+        Cell_list7 = [i for i in list_2 if "tel" in i \
+                      or "TEL" in i \
+                          or "Tel" in i \
+                              or "電話" in i \
+                                  or "phone" in i \
+                                      or "Phone" in i]
+
+        for j in range(1, len(Cell_list7)+1):
+          driver.find_element_by_name(Cell_list7[j-1]) \
+           .send_keys(ws2.cell(14, 2+j).value)
+          lastcol = len(list(ws1.row_values(k)))
+          time.sleep(1)
+          ws1.update_cell(k, lastcol+1, ws2.cell(14, 2+j).value)         
+            
+#（ハイフンなし）
+     elif not len([i for i in items_1 if "電話" in i \
+                  or "TEL" in i \
+                      and "ハイフンなし" in i]) == 0:
+        Cell_list7 = [i for i in list_2 if "tel" in i \
+                      or "TEL" in i \
+                          or "Tel" in i \
+                              or "電話" in i \
+                                  or "phone" in i \
+                                      or "Phone" in i]
+        print(Cell_list7)
+        driver.find_element_by_name(Cell_list7[0]).send_keys(ws2.cell(14, 3).value \
+                                                             + ws2.cell(14, 4).value \
+                                                                 + ws2.cell(14, 5).value)
+        lastcol = len(list(ws1.row_values(k)))
+        time.sleep(1) 
+        ws1.update_cell(k, lastcol+1, "電話（ハイフンなし）")
+
                            
 #メールアドレス
 
@@ -1688,20 +1832,20 @@ for k in tqdm(range(114, 115)):
                          or "ウェブ" in i \
                              or "site" in i]
        print(Cell_list8)
-       
-       elemName0 = driver.find_element_by_name(Cell_list8[0])
-       try:
+       if len(Cell_list8) == 1:
+         elemName0 = driver.find_element_by_name(Cell_list8[0])
+         try:
            if elemName0.is_displayed() is False:
             pass
-           elif not Cell_list8 == []:
+           else:
             driver.find_element_by_name(Cell_list8[0]).send_keys(ws2.cell(16, 2).value)       
             lastcol = len(list(ws1.row_values(k)))
             time.sleep(1)
             ws1.update_cell(k, lastcol+1, "URL")
 
 #操作できない要素の回避
-       except ElementNotInteractableException:
-         pass
+         except ElementNotInteractableException:
+           pass
 
 #業種
      if not len([i for i in items_1 if "業種" in i]) == 0:
@@ -1749,17 +1893,20 @@ for k in tqdm(range(114, 115)):
                or "題名" in i \
                    or "キーワード" in i \
                        or "件名" in i]) > 0 \
-         or len([i for i in list_2 if "サービス名" in i \
-               or "題名" in i \
-                   or "キーワード" in i \
-                       or "件名" in i]) > 0:
+         or len([i for i in list_2 if "text_field" in i \
+                        or "subject" in i \
+                            or "サービス名" in i \
+                                or "題名" in i \
+                                    or "キーワード" in i \
+                                        or "件名" in i \
+                                            or "daimei" in i]) > 0:
         SELECT_list1 = [i for i in list_2 if "text_field" in i \
                         or "subject" in i \
-                            or "題名" in i \
                                 or "サービス名" in i \
-               or "題名" in i \
-                   or "キーワード" in i \
-                       or "件名" in i]
+                                    or "題名" in i \
+                                        or "キーワード" in i \
+                                            or "件名" in i \
+                                                or "daimei" in i]
         print(SELECT_list1)
         if len(SELECT_list1) == 1:
          driver.find_element_by_name(SELECT_list1[0]).send_keys(ws2.cell(1, 2).value)
@@ -1778,6 +1925,7 @@ for k in tqdm(range(114, 115)):
      TEXTAREA_list1 = []
      TEXTAREA_list2 = []
      TEXTAREA_list3 = []
+     MAXLEN = []
      element3 = soup.find_all("textarea")
 #     print(element3)
        
@@ -1785,16 +1933,28 @@ for k in tqdm(range(114, 115)):
         TEXTAREA_list1.append(textarea.get("id"))
         TEXTAREA_list2.append(textarea.get("name"))
         TEXTAREA_list3.append(textarea.get("class"))
+        MAXLEN.append(textarea.get("maxlength"))
         TEXTAREA_list1 = [i for i in TEXTAREA_list1 if i is not None]
         TEXTAREA_list2 = [i for i in TEXTAREA_list2 if i is not None]
         TEXTAREA_list3 = [i for i in TEXTAREA_list3 if i is not None]
-#        print(TEXTAREA_list1)
+        MAXLEN = [i for i in MAXLEN if i is not None]
+     print(TEXTAREA_list1)
      print(TEXTAREA_list2)
-#        print(TEXTAREA_list3)
+     print(TEXTAREA_list3)
+     print(MAXLEN)
 #       for elem3 in element3: 
 #        items_1.append(name.get("placeholder"))
 #        print(items_1)
 
+#文字数制限チェック
+     if len(MAXLEN) > 0:
+       if ws3.cell(1, 3).value < MAXLEN[0]:
+         lastcol = len(list(ws1.row_values(k)))
+         ws1.update_cell(k, lastcol+1, "文字数問題なし")
+       elif ws3.cell(1, 3).value > MAXLEN[0]:
+         lastcol = len(list(ws1.row_values(k)))
+         ws1.update_cell(k, lastcol+1, MAXLEN[0] + "以内に設定されているため" + "文字数オーバー")
+         
 #（Googleフォーム）
      if not len([i for i in TEXTAREA_list3 if "exportTextarea" in i]) == 0:
       driver.find_elements_by_css_selector(".quantumWizTextinputPapertextareaInput.exportTextarea")[0].send_keys(ws3.cell(1, 1).value)
@@ -1854,10 +2014,12 @@ for k in tqdm(range(114, 115)):
           print(TEXTAREA_list2[0])
           
           elemName0 = driver.find_element_by_name(TEXTAREA_list2[0])
-          elemName1 = driver.find_element_by_name(TEXTAREA_list2[1])
-          elemName2 = driver.find_element_by_name(TEXTAREA_list2[2])
-          try:
-           if elemName0.is_displayed() is False \
+          
+          if len(TEXTAREA_list2) > 1:
+           elemName1 = driver.find_element_by_name(TEXTAREA_list2[1])
+           elemName2 = driver.find_element_by_name(TEXTAREA_list2[2])
+           try:
+            if elemName0.is_displayed() is False \
                or elemName1.is_displayed() is False \
                    or elemName2.is_displayed() is False:
                print(TEXTAREA_list2[j-1])
@@ -1878,15 +2040,17 @@ for k in tqdm(range(114, 115)):
                 lastcol = len(list(ws1.row_values(k)))
                 time.sleep(1)             
                 ws1.update_cell(k, lastcol+1, "本文")
-           else:
+                
+#操作できない要素の回避
+           except ElementNotInteractableException:
+             pass
+                
+          else:
             driver.find_element_by_name(TEXTAREA_list2[0]).send_keys(ws3.cell(1, 1).value)
             lastcol = len(list(ws1.row_values(k)))
             time.sleep(1) 
             ws1.update_cell(k, lastcol+1, "本文")
           
-#操作できない要素の回避
-          except ElementNotInteractableException:
-            pass
           
 #全て存在
      elif len(TEXTAREA_list1) > 0 \
@@ -1907,17 +2071,44 @@ for k in tqdm(range(114, 115)):
      list_7 = []
      for element5 in soup.find_all("select"):
        list_7.append(element5.get("id"))
-     print(list_7)
      list_7 =[i for i in list_7 if i is not None]
+     print(list_7)
 
 #（お問い合わせ内容）
      SELECT_list1 = []
      for element in soup.find_all("option"): 
         SELECT_list1.append(element.get("value"))
+     SELECT_list1 =[i for i in SELECT_list1 if i is not None]
      print(SELECT_list1)
         
-     if len(SELECT_list1) == 0:
-         pass
+     if len(SELECT_list1) == 0 \
+       and not len(list_6) == 0:
+         list_6 = [i for i in list_6 if "product" in i \
+                   or "koumoku" in i \
+                       or "custom" in i \
+                           or "collection" in i \
+                               or "menu" in i \
+                                   or "subject" in i \
+                                       or "toiawase" in i \
+                                           or "why-you-contact" in i]
+         if len([i for i in items_1 if "連絡方法" in i]) > 0:
+             pass
+#          for j in range(1, len(SELECT_list2)+1):
+         else:
+          if not list_6 == []:             
+           dropdown = driver.find_element_by_name(list_6[0])
+           print(list_6[0])
+           select = Select(dropdown)
+           
+#選択肢の数が決まっておらず、最後の選択肢を選択したい場合は次のようにする。
+           select.select_by_index(len(select.options)-1)
+           
+#select.optionsでは、selectタグ内のすべての選択肢（option）が返ってくる。
+#len()を使うことで選択肢の数を求めて最終選択肢を指定。
+           lastcol = len(list(ws1.row_values(k)))    
+           time.sleep(1)             
+           ws1.update_cell(k, lastcol+1, len(select.options)-1)
+#         pass
      elif len(SELECT_list1) > 0:
       SELECT_list2 = [i for i in SELECT_list1 if "お問い合わせ" == i \
                       or "その他" in i \
@@ -1932,7 +2123,10 @@ for k in tqdm(range(114, 115)):
                    or "koumoku" in i \
                        or "custom" in i \
                            or "collection" in i \
-                               or "menu" in i]
+                               or "menu" in i \
+                                   or "subject" in i \
+                                       or "toiawase" in i \
+                                           or "why-you-contact" in i]
          if len([i for i in items_1 if "連絡方法" in i]) > 0:
              pass
 #          for j in range(1, len(SELECT_list2)+1):
@@ -1952,7 +2146,10 @@ for k in tqdm(range(114, 115)):
                    or "koumoku" in i \
                        or "custom" in i \
                            or "collection" in i \
-                               or "menu" in i]
+                               or "menu" in i \
+                                   or "subject" in i \
+                                       or "toiawase" in i \
+                                           or "why-you-contact" in i]
 #        for j in range(1, len(SELECT_list2)+1):
          dropdown = driver.find_element_by_id(list_7[0])
          print(list_7[0])
@@ -1978,33 +2175,6 @@ for k in tqdm(range(114, 115)):
       list_7 =[i for i in list_7 if i is not None]
       print(list_7)
 
-#（都道府県）
-      if len([i for i in items_1 if "都道府県" in i]) > 0 \
-         or "都道府県" in str(soup.find_all("select")) > 0:
-         list_6 = [i for i in list_6 if "pref" in i \
-                   or "都道府県" in i \
-                       or "address1" == i]
-             
-         if not list_6 == []:         
-          print(list_6[0])
-          dropdown = driver.find_element_by_name(list_6[0])
-          select = Select(dropdown)
-          SELECT_list3 = [i for i in SELECT_list1 if "東京都" in i]
-          print(SELECT_list3)
-          select.select_by_value(SELECT_list3[0])
-          lastcol = len(list(ws1.row_values(k)))    
-          time.sleep(1)             
-          ws1.update_cell(k, lastcol+1, SELECT_list3[0])
-          if len([i for i in items_1 if "建物" in i \
-               or "ビル" in i \
-                   or "アパート" in i]) == 0:
-           Cell_list6 = [i for i in list_2 if "address" == i \
-                        or "address2" in i]
-           print(Cell_list6)
-           driver.find_element_by_name(Cell_list6[0]).clear()
-           driver.find_element_by_name(Cell_list6[0]).send_keys(ws2.cell(5, 3).value \
-                                                                 + ws2.cell(5, 4).value \
-                                                                     + ws2.cell(5, 5).value)
              
 #（連絡方法）
       SELECT_list2 = []       
@@ -2088,19 +2258,20 @@ for k in tqdm(range(114, 115)):
      SELECT_list5 = []
      for elem1 in element6: 
         SELECT_list5.append(elem1.get("value"))
-     print(SELECT_list5)
 
 #リストにNoneが含まれていると「TypeError: argument of type 'NoneType' is not iterable」
 #が発生するので、リスト内包表記で処理
-#選択肢：その他
-     SELECT_list6 = [i for i in SELECT_list5 if "その他" in i \
-                     and i is not None]
-     print(SELECT_list6)
+     SELECT_list5 = [i for i in SELECT_list5 if i is not None]
+     print(SELECT_list5)
 
 #name
      SELECT_list7 = []
      for elem1 in element6:
         SELECT_list7.append(elem1.get("name"))
+
+#リストにNoneが含まれていると「TypeError: argument of type 'NoneType' is not iterable」
+#が発生するので、リスト内包表記で処理
+     SELECT_list7 = [i for i in SELECT_list7 if i is not None]
      print(SELECT_list7)
 
 
@@ -2121,109 +2292,119 @@ for k in tqdm(range(114, 115)):
           
 #両リスト（SELECT_list3及びSELECT_list4）の要素が1個以上存在する場合において、
 #更にリスト内包表記で処理
-         if len(SELECT_list3) > 0 \
-             and len(SELECT_list4) > 0 \
+
+#リストにNoneが含まれていると「TypeError: argument of type 'NoneType' is not iterable」
+#が発生するのでリスト内包表記で処理。
+#（※SELECT_list5にNoneしか無い場合もある為「TypeError: argument of type 'NoneType' is not iterable」を回避）
+#選択肢：その他
+          if len([i for i in SELECT_list5 if "その他" in i]) > 0:
+            SELECT_list6 = [i for i in SELECT_list5 if "その他" in i \
+                     and i is not None]
+            print(SELECT_list6)
+
+            if len(SELECT_list3) > 0 \
+              and len(SELECT_list4) > 0 \
                  and len(SELECT_list6) == 0 \
                      and len(SELECT_list7) == 0:
-          SELECT_list4 = [i for i in SELECT_list3 if "その他" in i]
-          print(len(SELECT_list3))
-          print(len(SELECT_list4))
-          checkbox = driver.find_element_by_id(SELECT_list4[len(SELECT_list4)-1])
-          driver.execute_script("arguments[0].click();", checkbox)
-          print(checkbox.is_selected())          
-          if checkbox.is_selected() is True:           
-            lastcol = len(list(ws1.row_values(k)))    
-            time.sleep(1)             
-            ws1.update_cell(k, lastcol+1, SELECT_list4[len(SELECT_list4)-1])
-            print(checkbox.is_selected())
+              SELECT_list4 = [i for i in SELECT_list3 if "その他" in i]
+              print(len(SELECT_list3))
+              print(len(SELECT_list4))
+              checkbox = driver.find_element_by_id(SELECT_list4[len(SELECT_list4)-1])
+              driver.execute_script("arguments[0].click();", checkbox)
+              print(checkbox.is_selected())          
+              if checkbox.is_selected() is True:           
+                lastcol = len(list(ws1.row_values(k)))    
+                time.sleep(1)             
+                ws1.update_cell(k, lastcol+1, SELECT_list4[len(SELECT_list4)-1])
+                print(checkbox.is_selected())
 
 #valueのみしか存在しない
-         elif len(SELECT_list3) == 0 \
-             and len(SELECT_list4) == 0 \
+            elif len(SELECT_list3) == 0 \
+              and len(SELECT_list4) == 0 \
                  and len(SELECT_list6) > 0 \
                      and len(SELECT_list7) == 0:
 #          SELECT_list5 = [i for i in SELECT_list5 if "その他" in i]
 #          print(SELECT_list5)
-          print(len(SELECT_list3))
-          print(len(SELECT_list4))
-          print(len(SELECT_list6))
-          print(len(SELECT_list7))
+             print(len(SELECT_list3))
+             print(len(SELECT_list4))
+             print(len(SELECT_list6))
+             print(len(SELECT_list7))
 
-          checkbox = driver.find_element_by_css_selector("[value='その他']")
-          driver.execute_script("arguments[0].click();", checkbox)
-          print(checkbox.is_selected())          
-          if checkbox.is_selected() is True:           
-            lastcol = len(list(ws1.row_values(k)))    
-            time.sleep(1)             
-            ws1.update_cell(k, lastcol+1, SELECT_list6[len(SELECT_list6)-1])
-            print(checkbox.is_selected())
+             checkbox = driver.find_element_by_css_selector("[value='その他']")
+             driver.execute_script("arguments[0].click();", checkbox)
+             print(checkbox.is_selected())          
+             if checkbox.is_selected() is True:           
+               lastcol = len(list(ws1.row_values(k)))    
+               time.sleep(1)             
+               ws1.update_cell(k, lastcol+1, SELECT_list6[len(SELECT_list6)-1])
+               print(checkbox.is_selected())
 
 #id且つvalueの両方存在
-         elif len(SELECT_list3) == 0 \
-             and len(SELECT_list4) > 0 \
+            elif len(SELECT_list3) == 0 \
+              and len(SELECT_list4) > 0 \
                  and len(SELECT_list6) > 0 \
                      and len(SELECT_list7) == 0:
-          print(len(SELECT_list3))
-          print(len(SELECT_list4))
-          print(len(SELECT_list6))
-          print(len(SELECT_list7))
+              print(len(SELECT_list3))
+              print(len(SELECT_list4))
+              print(len(SELECT_list6))
+              print(len(SELECT_list7))
 
-          checkbox = driver.find_element_by_id(SELECT_list4[len(SELECT_list4)-1])
-          driver.execute_script("arguments[0].click();", checkbox)
-          print(checkbox.is_selected())          
-          if checkbox.is_selected() is True:
-           lastcol = len(list(ws1.row_values(k)))    
-           time.sleep(1)             
-           ws1.update_cell(k, lastcol+1, SELECT_list4[len(SELECT_list4)-1])
-           print(checkbox.is_selected())
+              checkbox = driver.find_element_by_id(SELECT_list4[len(SELECT_list4)-1])
+              driver.execute_script("arguments[0].click();", checkbox)
+              print(checkbox.is_selected())          
+              if checkbox.is_selected() is True:
+                lastcol = len(list(ws1.row_values(k)))    
+                time.sleep(1)             
+                ws1.update_cell(k, lastcol+1, SELECT_list4[len(SELECT_list4)-1])
+                print(checkbox.is_selected())
 
 #value且つnameの両方存在
-         elif len(SELECT_list3) == 0 \
-             and len(SELECT_list4) == 0 \
+            elif len(SELECT_list3) == 0 \
+              and len(SELECT_list4) == 0 \
                  and len(SELECT_list6) > 0 \
                      and len(SELECT_list7) > 0:
-          print(len(SELECT_list3))
-          print(len(SELECT_list4))
-          print(len(SELECT_list6))
-          print(len(SELECT_list7))
+              print(len(SELECT_list3))
+              print(len(SELECT_list4))
+              print(len(SELECT_list6))
+              print(len(SELECT_list7))
 
 #一旦チェックボックスを外す
-          try:
-           checkbox1 = driver.find_elements_by_name(SELECT_list7[0])[0]
+              try:
+                checkbox1 = driver.find_elements_by_name(SELECT_list7[0])[0]
            
 #選択状態にある場合
-           if checkbox1.is_selected() is True:
-             driver.execute_script("arguments[0].click();", checkbox1)
+                if checkbox1.is_selected() is True:
+                  driver.execute_script("arguments[0].click();", checkbox1)
 
 #選択状態にない場合
-           elif checkbox1.is_selected() is False:
-              checkbox = driver.find_elements_by_css_selector("[value='その他']")[0]
-              driver.execute_script("arguments[0].click();", checkbox)
-              print(checkbox.is_selected())          
-              if checkbox.is_selected() is True:           
-                lastcol = len(list(ws1.row_values(k)))    
-                time.sleep(1)             
-                ws1.update_cell(k, lastcol+1, "その他1")
+                elif checkbox1.is_selected() is False:
+                  checkbox = driver.find_elements_by_css_selector("[value='その他']")[0]
+                  driver.execute_script("arguments[0].click();", checkbox)
+                  print(checkbox.is_selected())          
+                  if checkbox.is_selected() is True:           
+                    lastcol = len(list(ws1.row_values(k)))    
+                    time.sleep(1)             
+                    ws1.update_cell(k, lastcol+1, "その他1")
 
 #一旦チェックボックスを外す
-           checkbox2 = driver.find_element_by_name(SELECT_list7[len(SELECT_list7)-1])
+                checkbox2 = driver.find_element_by_name(SELECT_list7[len(SELECT_list7)-1])
 
 #選択状態にある場合
-           if checkbox2.is_selected() is True:
-             driver.execute_script("arguments[0].click();", checkbox2)           
+                if checkbox2.is_selected() is True:
+                  driver.execute_script("arguments[0].click();", checkbox2)           
 
 #選択状態にない場合
-           elif checkbox2.is_selected() is False:
-              checkbox = driver.find_elements_by_css_selector("[value='その他']")[1]
-              driver.execute_script("arguments[0].click();", checkbox)
-              print(checkbox.is_selected())          
-              if checkbox.is_selected() is True:           
-                lastcol = len(list(ws1.row_values(k)))    
-                time.sleep(1)             
-                ws1.update_cell(k, lastcol+1, "その他2")
+                elif checkbox2.is_selected() is False:
+                  checkbox = driver.find_elements_by_css_selector("[value='その他']")[1]
+                  driver.execute_script("arguments[0].click();", checkbox)
+                  print(checkbox.is_selected())          
+                  if checkbox.is_selected() is True:           
+                    lastcol = len(list(ws1.row_values(k)))    
+                    time.sleep(1)             
+                    ws1.update_cell(k, lastcol+1, "その他2")
 #エラー回避
-          except:
-            pass
+              except:
+                pass
 
 
 #どちらの回答方法を希望するか？
@@ -2447,6 +2628,17 @@ for k in tqdm(range(114, 115)):
           time.sleep(1)             
           ws1.update_cell(k, lastcol+1, SELECT_list4[0])
           
+#valueのみ存在する場合
+       elif len(SELECT_list5) == 1:
+         checkbox = driver.find_element_by_css_selector("[value='1']")
+         if checkbox.is_selected() is not True:
+          driver.execute_script("arguments[0].click();", checkbox)
+          print(checkbox.is_selected())         
+#         if checkbox.is_selected() is True:
+          lastcol = len(list(ws1.row_values(k)))
+          time.sleep(1)             
+          ws1.update_cell(k, lastcol+1, SELECT_list5[0])
+
 
 #送信ボタン押下
 
@@ -2460,7 +2652,29 @@ for k in tqdm(range(114, 115)):
 #           ws1.update_cell(k, lastcol+1, "スパムメール防止チェック済")
 
 #（name値に指定キーワードが含まれる）
-     if not len([i for i in list_2 if "submit" in i]) == 0:
+     if not len([i for i in list_2 if "Confirm" in i]) == 0:
+        try:
+          driver.find_element_by_name("submitConfirm").click()
+          time.sleep(1)
+          html = driver.page_source
+          soup = BeautifulSoup(html, 'html.parser')
+
+#エラーメッセージ
+          for Content in soup.select(".text.tac.red"):
+           Content = re.sub("[\n]", "", Content.getText(), 4)
+           ws1.update_cell(k, 9, Content)
+          print(soup.select(".text.tac.red"))
+
+          checkbox = driver.find_element_by_css_selector("[value='送信する']")
+          driver.execute_script("arguments[0].click();", checkbox)
+          ws1.update_cell(k, 9, "送信完了しました。")
+
+        except:
+          pass
+      
+     elif not len([i for i in list_2 if "submit" in i]) == 0:
+         
+        try:
           driver.find_element_by_name("submit").click()
           time.sleep(1)
           html = driver.page_source
@@ -2471,18 +2685,32 @@ for k in tqdm(range(114, 115)):
           for result in soup.select(".error-box"):
            ws1.update_cell(k, 9, result.getText())
           print(soup.select(".error-box"))
+          
+          for result in soup.select(".error_message"):
+           ws1.update_cell(k, 9, result.getText())
+          print(soup.select(".error-message"))
+          
+        except NoSuchElementException:
+          elem = driver.find_element_by_css_selector(".elementor-button.elementor-size-xs")
+          driver.execute_script("arguments[0].click();", elem)          
+          time.sleep(3)
+          html = driver.page_source
+          soup = BeautifulSoup(html, 'html.parser')
+          ws1.update_cell(k, 9, "送信完了しました。")
 
 #（name値に指定キーワードが含まれない、且つtype値に指定キーワードが含まれる）
      elif len([i for i in list_2 if "submit" in i]) == 0 \
-           or len([i for i in list_2t if "submit" in i]) > 0:
+           or len([i for i in list_2t if "submit" in i]) > 0 \
+               or len([i for i in list_2t if "button" in i]) > 0:
           
 #対象物が画面の外にあると、
 #「ElementClickInterceptedException: element click intercepted: Element is not clickable at point」
 #になってしまうので以下の方法で回避
         try:
-          driver.execute_script("window.scrollTo(0, 200);")
-          driver.find_element_by_css_selector("input[value='送信']").click()
-          time.sleep(1)
+#          driver.execute_script("window.scrollTo(0, 200);")
+          elem = driver.find_element_by_css_selector("input[value='送信']")
+          driver.execute_script("arguments[0].click();", elem)          
+          time.sleep(3)
           html = driver.page_source
           soup = BeautifulSoup(html, 'html.parser')
 
@@ -2492,6 +2720,26 @@ for k in tqdm(range(114, 115)):
            ws1.update_cell(k, 9, Content)
           print(soup.select(".text"))
 
+          for result in soup.select(".wpcf7-response-output"):
+                  Content = re.sub("[\n]", "", result.getText(), 4)
+#                if Content == "":
+#                    ws1.update_cell(k, 9, "送信に失敗しました。")
+#                else:
+                  ws1.update_cell(k, 9, Content)
+          print(soup.select(".wpcf7-response-output"))
+              
+#              for result in soup.select(".missopen"):
+#                Content = re.sub("[\n]", "", result.getText(), 4)
+#                ws1.update_cell(k, 9, Content)
+#              print(soup.select(".missopen"))
+
+#結果出力
+          for result in soup.select(".wpcf7-not-valid-tip"):
+                Content = re.sub("[\n]", "", result.getText(), 4)
+                ws1.update_cell(k, 9, Content)
+          print(soup.select(".wpcf7-not-valid-tip"))
+
+
         except NoSuchElementException:
           try:
            elemName0 = driver.find_elements_by_css_selector('.basic-button.is-slim.form-confirmation-button')[0]
@@ -2499,22 +2747,22 @@ for k in tqdm(range(114, 115)):
            elemName2 = driver.find_elements_by_css_selector('.basic-button.is-slim.form-confirmation-button')[2]
            if elemName0.is_displayed() is True:
             driver.find_elements_by_css_selector('.basic-button.is-slim.form-confirmation-button')[0].click()
-            time.sleep(1)
+            time.sleep(3)
             html = driver.page_source
             soup = BeautifulSoup(html, 'html.parser')
            elif elemName1.is_displayed() is True:
             driver.find_elements_by_css_selector('.basic-button.is-slim.form-confirmation-button')[1].click()
-            time.sleep(1)
+            time.sleep(3)
             html = driver.page_source
             soup = BeautifulSoup(html, 'html.parser')
            elif elemName2.is_displayed() is True:
             driver.find_elements_by_css_selector('.basic-button.is-slim.form-confirmation-button')[2].click()
-            time.sleep(1)
+            time.sleep(3)
             html = driver.page_source
             soup = BeautifulSoup(html, 'html.parser')            
            else:
             driver.find_element_by_css_selector('.basic-button.is-slim.form-confirmation-button').click()
-            time.sleep(1)
+            time.sleep(3)
             html = driver.page_source
             soup = BeautifulSoup(html, 'html.parser')
 
@@ -2532,25 +2780,52 @@ for k in tqdm(range(114, 115)):
             try:
               elem = driver.find_element_by_css_selector('.wpcf7-form-control.wpcf7-submit')
               driver.execute_script("arguments[0].click();", elem)
-              time.sleep(5)
+              time.sleep(3)
               html = driver.page_source
               soup = BeautifulSoup(html, 'html.parser')
                 
 #エラーメッセージ
               for result in soup.select(".wpcf7-response-output"):
                 Content = re.sub("[\n]", "", result.getText(), 4)
-                ws1.update_cell(k, 9, Content)
+                if Content == "":
+                    ws1.update_cell(k, 9, "送信に失敗しました。")
+                else:
+                  ws1.update_cell(k, 9, Content)
               print(soup.select(".wpcf7-response-output"))
+              
+#              for result in soup.select(".missopen"):
+#                Content = re.sub("[\n]", "", result.getText(), 4)
+#                ws1.update_cell(k, 9, Content)
+#              print(soup.select(".missopen"))
 
 #結果出力
               for result in soup.select(".wpcf7-not-valid-tip"):
                 Content = re.sub("[\n]", "", result.getText(), 4)
                 ws1.update_cell(k, 9, Content)
               print(soup.select(".wpcf7-not-valid-tip"))
+              
+#              for result in soup.select(".clearopen"):
+#                Content = re.sub("[\n]", "", result.getText(), 4)
+#                ws1.update_cell(k, 9, Content)
+#              print(soup.select(".clearopen"))              
 
 #エラー回避
-            except:                
-              ws1.update_cell(k, 9, "送信ボタン押下不可")
+            except:
+              try:
+                elem = driver.find_element_by_css_selector(".btn.-next")
+                driver.execute_script("arguments[0].click();", elem)          
+                time.sleep(3)
+                html = driver.page_source
+                soup = BeautifulSoup(html, 'html.parser')
+                
+#エラーメッセージ
+                for result in soup.select(".form__input-errors"):
+                  Content = re.sub("[\n]", "", result.getText(), 4)
+                  ws1.update_cell(k, 9, Content)
+                print(soup.select(".form__input-errors"))
+                
+              except:
+                ws1.update_cell(k, 9, "送信ボタン押下不可")
 
     else:
      ws1.update_cell(k, 9, "フォーム要素取得不可")
