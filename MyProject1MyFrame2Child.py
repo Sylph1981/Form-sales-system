@@ -2,10 +2,9 @@
 
 import wx
 import app
-import wx.xrc
+import json
+import codecs
 import wx.grid
-import wx.adv
-#import sqlite3
 import gspread
 
 #ServiceAccountCredentials：Googleの各サービスへアクセスできるservice変数を生成します。
@@ -19,220 +18,181 @@ from tqdm import tqdm
 #2つのAPIを記述しないとリフレッシュトークンを3600秒毎に発行し続けなければならない
 scope = ['https://spreadsheets.google.com/feeds','https://www.googleapis.com/auth/drive']
 
+#ドラッグアンドドロップの実装
+class FileDropTarget1(wx.FileDropTarget):
+    def __init__(self, window):
+        wx.FileDropTarget.__init__(self)
+        self.window = window
 
-#「キー」で取得
-#SPREADSHEET_KEY = '1BazsXmS9dW8oAOmvjMNVabvvw1dYAgW9SR-qbyAylEU'
-#SPREADSHEET_KEY2 = '1FrygfVLHP8fMZh8HdBYboZtkg4fCH8lcDUsbQ58Hbqs'
+    def OnDropFiles(self, x, y, files):
+        self.window.m_textCtrl11.SetLabel(files[0])
+        return 0
 
-#wb = gc.open_by_key(SPREADSHEET_KEY)
-#wb2 = gc.open_by_key(SPREADSHEET_KEY2)
-#ws1 = wb.worksheet('sheet1')
-#ws2 = wb2.worksheet('imc-pager__item')
-#ws3 = wb.worksheet('ターゲットリスト')
+class FileDropTarget2(wx.FileDropTarget):
+    def __init__(self, window):
+        wx.FileDropTarget.__init__(self)
+        self.window = window
 
-#pyファイル「dbSqliteClass」の関数「db_sqlite」を参照
-#from dbSqliteClass import db_sqlite
-
-#データベース読み込み
-#__res = None
-#DB_NAME = '【JUNO】食品衛生470.accdb'
- 
-#def get_resources():
-#    global __res
-#    if __res is None:
-#        __init_resources()
-#    return __res
- 
-#def __init_resources():
-#    global __res
-#    __res = wx.xrc.XmlResource()
-#    __res.Load('test.xrc')
-
-
+    def OnDropFiles(self, x, y, files):
+        self.window.m_textCtrl111.SetLabel(files[0])
+        return 0
+    
 # Implementing MyFrame2
 class MyProject1MyFrame2( app.MyFrame2 ):
 	def __init__( self, parent ):
 		app.MyFrame2.__init__( self, parent )
-#		get_resources().LoadFrame(self, parent, 'MyProject1MyFrame2')
  
-		self.Bind(wx.EVT_CLOSE, self.quit_button)
- 
-		self.btn1 = wx.xrc.XRCCTRL(self, 'btn1')
-#		self.btn2 = wx.xrc.XRCCTRL(self, 'btn2')
-#		self.btn2.Bind(wx.EVT_BUTTON, self.quit_button)
-		self.btn3 = wx.xrc.XRCCTRL(self, 'btn3')
+#Setting up the menu on menubar.
+		self.m_menubar1 = wx.MenuBar( 0 )
+		self.m_menu1 = wx.Menu()
+		self.m_menuItem1 = wx.MenuItem( self.m_menu1, wx.ID_ANY, u"MyMenuItem", wx.EmptyString, wx.ITEM_NORMAL )
+		self.m_menu1.Append( self.m_menuItem1 )
 
+		self.m_menuItem2 = wx.MenuItem( self.m_menu1, wx.ID_ANY, u"Exit", wx.EmptyString, wx.ITEM_NORMAL )
+		self.m_menu1.Append( self.m_menuItem2 )
 
-		self.m_panel22.SetFont( wx.Font( 10, wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_NORMAL, False, "Meiryo UI" ) )
+		self.m_menubar1.Append( self.m_menu1, u"File" )
 
-		sbSizer151 = wx.StaticBoxSizer( wx.StaticBox( self.m_panel22, wx.ID_ANY, u"List up" ), wx.VERTICAL )
+		self.m_menu11 = wx.Menu()
+		self.m_menuItem11 = wx.MenuItem( self.m_menu11, wx.ID_ANY, u"Configuration", wx.EmptyString, wx.ITEM_NORMAL )
+		self.m_menu11.Append( self.m_menuItem11 )
 
-		self.m_panel161 = wx.Panel( sbSizer151.GetStaticBox(), wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, wx.TAB_TRAVERSAL )
-		self.m_panel161.SetFont( wx.Font( 10, wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_NORMAL, False, "Meiryo UI" ) )
+		self.m_menuItem12 = wx.MenuItem( self.m_menu11, wx.ID_ANY, u"Profile", wx.EmptyString, wx.ITEM_NORMAL )
+		self.m_menu11.Append( self.m_menuItem12 )
 
-		sbSizer141 = wx.StaticBoxSizer( wx.StaticBox( self.m_panel161, wx.ID_ANY, u"Please enter the Google API service account Authentication key." ), wx.VERTICAL )
+		self.m_menuItem13 = wx.MenuItem( self.m_menu11, wx.ID_ANY, u"Send text creation", wx.EmptyString, wx.ITEM_NORMAL )
+		self.m_menu11.Append( self.m_menuItem13 )
 
-		self.m_textCtrl11 = wx.TextCtrl( sbSizer141.GetStaticBox(), wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.Size( 400,-1 ), 0 )
-		sbSizer141.Add( self.m_textCtrl11, 0, wx.ALL, 5 )
+		self.m_menubar1.Append( self.m_menu11, u"Setting" )
 
+		self.m_menu111 = wx.Menu()
+		self.m_menuItem111 = wx.MenuItem( self.m_menu111, wx.ID_ANY, u"Create", wx.EmptyString, wx.ITEM_NORMAL )
+		self.m_menu111.Append( self.m_menuItem111 )
 
-		self.m_panel161.SetSizer( sbSizer141 )
-		self.m_panel161.Layout()
-		sbSizer141.Fit( self.m_panel161 )
-		sbSizer151.Add( self.m_panel161, 1, wx.EXPAND |wx.ALL, 5 )
+		self.m_menuItem211 = wx.MenuItem( self.m_menu111, wx.ID_ANY, u"Inquiry", wx.EmptyString, wx.ITEM_NORMAL )
+		self.m_menu111.Append( self.m_menuItem211 )
 
-		self.m_panel16 = wx.Panel( sbSizer151.GetStaticBox(), wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, wx.TAB_TRAVERSAL )
-		self.m_panel16.SetFont( wx.Font( 10, wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_NORMAL, False, "Meiryo UI" ) )
+		self.m_menubar1.Append( self.m_menu111, u"List" )
 
-		sbSizer14 = wx.StaticBoxSizer( wx.StaticBox( self.m_panel16, wx.ID_ANY, u"Please enter the spreadsheet key." ), wx.VERTICAL )
+		self.SetMenuBar( self.m_menubar1 )
 
-		m_comboBox6Choices = ['1BazsXmS9dW8oAOmvjMNVabvvw1dYAgW9SR-qbyAylEU']
-		self.m_comboBox6 = wx.ComboBox( sbSizer14.GetStaticBox(), wx.ID_ANY, u"選択して下さい", wx.DefaultPosition, wx.Size( 400,-1 ), m_comboBox6Choices, 0 )
-
-#コンボボックスの項目が選択されたときに処理するイベントをtext_event()メソッドに関連付けるバインダーを設定
-		self.m_comboBox6.Bind(wx.EVT_COMBOBOX, self.text_event)
-
-		sbSizer14.Add( self.m_comboBox6, 0, wx.ALL, 5 )
-
-		self.m_panel16.SetSizer( sbSizer14 )
-		self.m_panel16.Layout()
-		sbSizer14.Fit( self.m_panel16 )
-		sbSizer151.Add( self.m_panel16, 1, wx.EXPAND |wx.ALL, 5 )
-
-		self.btn1 = wx.Button( sbSizer151.GetStaticBox(), wx.ID_ANY, u"Create", wx.DefaultPosition, wx.DefaultSize, 0 )
-		self.btn1.SetFont( wx.Font( 10, wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_NORMAL, False, "Meiryo UI" ) )
-
-#EVT_TEXTにて、ボタンクリックイベントをtext_event()メソッドに関連付けるバインダーを設定
-		self.btn1.Bind(wx.EVT_BUTTON, self.create_button)
-
-		sbSizer151.Add( self.btn1, 0, wx.ALL, 5 )
-
-
-		self.m_panel22.SetSizer( sbSizer151 )
-		self.m_panel22.Layout()
-		sbSizer151.Fit( self.m_panel22 )
-
-#		bSizer19.Add( self.m_panel6, 1, wx.EXPAND |wx.ALL, 5 )
-
+#Connect Events
+		self.Bind( wx.EVT_MENU, self.quit_button, self.m_menuItem2 )
+		self.Bind( wx.EVT_MENU, self.Configuration, self.m_menuItem11 )
+		self.Bind( wx.EVT_MENU, self.create_button, self.m_menuItem111 )
+		self.Bind( wx.EVT_MENU, self.inquiry_button, self.m_menuItem211 )
+		self.Bind(wx.EVT_CLOSE, self.quit_button) 
         
-#		self.m_panel6.Layout()
-#		bsizer.Fit( self.m_panel6 )
+#各メニュー項目選択後の画面遷移
+	def Configuration(self, event):
+	    adid = MyProject1MyDialog3(self)
+	    adid.ShowModal()
+	    adid.Destroy()
 
-#Progressbar
-		self.m_panel4.SetFont( wx.Font( 10, wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_NORMAL, False, "Meiryo UI" ) )
-		sbSizer2 = wx.StaticBoxSizer( wx.StaticBox( self.m_panel4, wx.ID_ANY, u"Progress" ), wx.VERTICAL )
+	def Profile(self, event):
+	    adid = MyProject1MyDialog4(self)
+	    adid.ShowModal()
+	    adid.Destroy()
 
-		self.m_gauge2 = wx.Gauge( sbSizer2.GetStaticBox(), wx.ID_ANY, 100, wx.DefaultPosition, (500, -1), wx.GA_HORIZONTAL )
-		self.m_gauge2.SetValue( 0 )
-		self.Bind(wx.EVT_BUTTON, self.select_sql)
-		sbSizer2.Add( self.m_gauge2, 0, wx.ALL, 5 )
+	def Send_email_body(self, event):
+	    adid = MyProject1MyDialog5(self)
+	    adid.ShowModal()
+	    adid.Destroy()
 
-		self.m_panel4.SetSizer( sbSizer2 )
-		self.m_panel4.Layout()
-		sbSizer2.Fit( self.m_panel4 )
-
-
-#	def tableShow(self):
-        # Set cell values.
-#		conn = sqlite3.connect(DB_NAME)
+	def inquiry_button(self, event):
+	   adid = MyProject1MyDialog3(self)
         
-#		c = conn.cursor()
-#レコード取得SQL文
-#テーブル「sheet1」内の「法人名称」「サイトURL」「住所」を選択
-#		sql = ('select 法人名称, サイトURL, 住所 from sheet1')
-
-#	def tableShow(self):
-#		result = ws1.get_all_values()
-#		print(result)
-#fetchallで結果リストを取得する        
-#		acc = c.execute(sql).fetchall()
-#		lastrow = len(ws1.col_values(1))
-#		i = 2
-#		for row in range(5):
-#		  try:
-#		 self.gridTable.SetCellValue(row, 0, ws1.cell(i, 2).value)
-#		 self.gridTable.SetCellValue(row, 1, ws1.cell(i, 3).value)
-#		    am = f"{acc[i]['amount']:,}"
-#		 self.gridTable.SetCellValue(row, 2, ws1.cell(i, 7).value)
-#		  except:
-#		 print(ws1.cell(i, 2).value)
-#		 print(ws1.cell(i, 3).value)
-#		 print(ws1.cell(i, 7).value)
-#		 i += 1
-#		self.gridTable.AutoSize()
-
-	def text_event(self, event):
-	   if not self.m_comboBox6.GetValue() == '1BazsXmS9dW8oAOmvjMNVabvvw1dYAgW9SR-qbyAylEU' \
-           or not 'json' in self.m_textCtrl11.GetValue() \
-           or self.m_textCtrl11.GetValue() == '1BazsXmS9dW8oAOmvjMNVabvvw1dYAgW9SR-qbyAylEU':
-#           or not 'json' in self.m_textCtrl11.GetValue():
-	      self.m_comboBox6.SetBackgroundColour('#f56cbe')
-	      self.m_textCtrl11.SetBackgroundColour('#f56cbe')          
-#	      self.m_comboBox6.SetForegroundColour('#f56cbe')
+	   if not adid.m_comboBox6.GetValue() == '1BazsXmS9dW8oAOmvjMNVabvvw1dYAgW9SR-qbyAylEU' \
+           or not 'json' in adid.m_textCtrl11.GetValue():
+	      adid.m_comboBox6.SetBackgroundColour('#f56cbe')
+	      adid.m_textCtrl11.SetBackgroundColour('#f56cbe')
+#	      self.m_textCtrl111.SetForegroundColour('#f56cbe')
 	      wx.MessageBox(u'The key is incorrect or does not exist!!', u'Setting value error', wx.ICON_ERROR)
-	   elif self.m_comboBox6.GetValue() == '1BazsXmS9dW8oAOmvjMNVabvvw1dYAgW9SR-qbyAylEU' \
-           and 'json' in self.m_textCtrl11.GetValue():
-	      self.m_comboBox6.SetBackgroundColour('#FFFFFF')
-	      self.m_textCtrl11.SetBackgroundColour('#FFFFFF')
-	      sbSizer5 = wx.StaticBoxSizer( wx.StaticBox( self.m_panel6, wx.ID_ANY, u"Extraction of inquiry page." ), wx.VERTICAL )
+	   elif not 'chromedriver.exe' in adid.m_textCtrl111.GetValue():
+	      adid.m_textCtrl111.SetForegroundColour('#f56cbe')
+	      wx.MessageBox(u'The web driver file is not set or the file path does not pass!!', u'Setting value error', wx.ICON_ERROR)
+	   elif adid.m_comboBox6.GetValue() == '1BazsXmS9dW8oAOmvjMNVabvvw1dYAgW9SR-qbyAylEU' \
+           and 'json' in adid.m_textCtrl11.GetValue() \
+               and 'chromedriver.exe' in adid.m_textCtrl111.GetValue():
+	      adid.m_comboBox6.SetBackgroundColour('#FFFFFF')
+	      adid.m_textCtrl11.SetBackgroundColour('#FFFFFF')
+	      adid.m_textCtrl111.SetBackgroundColour('#FFFFFF')
 
-	      self.m_panel5 = wx.Panel( sbSizer5.GetStaticBox(), wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, wx.TAB_TRAVERSAL )
+	      sbSizer5 = wx.StaticBoxSizer( wx.StaticBox( self.m_panel6, wx.ID_ANY, u"Processing related to inquiry form" ), wx.VERTICAL )
+
+	      bSizer15 = wx.BoxSizer( wx.VERTICAL )
+
+	      gSizer8 = wx.GridSizer( 0, 2, 0, 0 )
+
+	      self.m_panel27 = wx.Panel( sbSizer5.GetStaticBox(), wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, wx.TAB_TRAVERSAL )
+	      self.m_panel27.SetFont( wx.Font( 10, wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_NORMAL, False, "Meiryo UI" ) )
+
+	      sbSizer20 = wx.StaticBoxSizer( wx.StaticBox( self.m_panel27, wx.ID_ANY, u"Extraction of inquiry page." ), wx.VERTICAL )
+
+	      self.m_panel5 = wx.Panel( sbSizer20.GetStaticBox(), wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, wx.TAB_TRAVERSAL )
 	      bSizer16 = wx.BoxSizer( wx.VERTICAL )
 
 	      gSizer5 = wx.GridSizer( 0, 2, 0, 0 )
         
-	      self.m_panel17 = wx.Panel( self.m_panel5, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, wx.TAB_TRAVERSAL )
-	      self.m_panel17.SetFont( wx.Font( 10, wx.FONTFAMILY_MODERN, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_NORMAL, False, "Meiryo UI" ) )
+#	      self.m_panel17 = wx.Panel( self.m_panel5, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, wx.TAB_TRAVERSAL )
+#	      self.m_panel17.SetFont( wx.Font( 10, wx.FONTFAMILY_MODERN, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_NORMAL, False, "Meiryo UI" ) )
 
-	      sbSizer15 = wx.StaticBoxSizer( wx.StaticBox( self.m_panel17, wx.ID_ANY, u"Worksheet title" ), wx.VERTICAL )
+#	      sbSizer15 = wx.StaticBoxSizer( wx.StaticBox( self.m_panel17, wx.ID_ANY, u"Worksheet title" ), wx.VERTICAL )
+
+	      self.m_staticText5 = wx.StaticText( self.m_panel5, wx.ID_ANY, u"start", wx.DefaultPosition, wx.DefaultSize, 0 )
+	      self.m_staticText5.Wrap( -1 )
+
+	      self.m_staticText5.SetFont( wx.Font( 10, wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_NORMAL, False, "Meiryo UI" ) )
+
+	      gSizer5.Add( self.m_staticText5, 0, wx.ALL|wx.ALIGN_RIGHT, 5 )
+
+	      self.row1 = wx.SpinCtrl( self.m_panel5, wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.Size( 100,-1 ), wx.SP_ARROW_KEYS, 0, 1000, 0 )
+	      gSizer5.Add( self.row1, 0, wx.ALL, 5 )
+	      self.row1.Disable()
+
+	      self.m_staticText6 = wx.StaticText( self.m_panel5, wx.ID_ANY, u"last", wx.DefaultPosition, wx.DefaultSize, 0 )
+	      self.m_staticText6.Wrap( -1 )
+
+	      gSizer5.Add( self.m_staticText6, 0, wx.ALL|wx.ALIGN_RIGHT, 5 )
+
+	      self.row2 = wx.SpinCtrl( self.m_panel5, wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.Size( 100,-1 ), wx.SP_ARROW_KEYS, 0, 1000, 0 )
+	      gSizer5.Add( self.row2, 0, wx.ALL, 5 )
+	      self.row2.Disable()
+
+	      self.m_staticText61 = wx.StaticText( self.m_panel5, wx.ID_ANY, u"sheet title", wx.DefaultPosition, wx.DefaultSize, 0 )
+	      self.m_staticText61.Wrap( -1 )
+
+	      gSizer5.Add( self.m_staticText61, 0, wx.ALL|wx.ALIGN_RIGHT, 5 )
 
 #秘密鍵（JSONファイル）のファイル名を入力
-	      credentials = ServiceAccountCredentials.from_json_keyfile_name(self.m_textCtrl11.GetValue(), scope)
+	      credentials = ServiceAccountCredentials.from_json_keyfile_name(adid.m_textCtrl11.GetValue(), scope)
 
 #OAuth2の資格情報を使用してGoogle APIにログインします。
 	      gc = gspread.authorize(credentials)
 
 #存在するワークシートの情報を全て取得
-	      wb = gc.open_by_key(self.m_comboBox6.GetValue())
+	      wb = gc.open_by_key(adid.m_comboBox6.GetValue())
 	      worksheets = wb.worksheets()
         
 #現在のワークシートのタイトルをリストへ格納
 	      m_comboBox1Choices = [worksheet.title for worksheet in worksheets]
 	      print(m_comboBox1Choices)
-	      self.m_comboBox1 = wx.ComboBox( sbSizer15.GetStaticBox(), wx.ID_ANY, u"選択して下さい", wx.DefaultPosition, wx.DefaultSize, m_comboBox1Choices, wx.CB_DROPDOWN )
+	      self.m_comboBox1 = wx.ComboBox( self.m_panel5, wx.ID_ANY, u"選択して下さい", wx.DefaultPosition, wx.DefaultSize, m_comboBox1Choices, wx.CB_DROPDOWN )
         
-	      sbSizer15.Add( self.m_comboBox1, 0, wx.ALL, 5 )
+	      gSizer5.Add( self.m_comboBox1, 0, wx.ALL, 5 )
 
 #（お問い合わせページの抽出：機能未完成によりドロップボックスを無効）        
-#	      self.m_comboBox1.Enable(False)
-	      self.m_comboBox1.Enable(True)
+	      self.m_comboBox1.Enable(False)
+#	      self.m_comboBox1.Enable(True)
 
-	      self.m_panel17.SetSizer( sbSizer15 )
-	      self.m_panel17.Layout()
-	      sbSizer15.Fit( self.m_panel17 )
-	      gSizer5.Add( self.m_panel17, 1, wx.EXPAND |wx.ALL, 5 )
+	      self.btn3 = wx.Button( self.m_panel5, wx.ID_ANY, u"Check", wx.DefaultPosition, wx.DefaultSize, 0 )
+	      self.btn3.SetFont( wx.Font( 10, wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_NORMAL, False, "Meiryo UI" ) )
+	      self.btn3.Disable()
+          
+	      gSizer5.Add( self.btn3, 0, wx.ALL, 5 )
 
 	      gSizer6 = wx.GridSizer( 0, 2, 0, 0 )
 
-	      self.m_staticText5 = wx.StaticText( self.m_panel5, wx.ID_ANY, u"start", wx.DefaultPosition, wx.DefaultSize, 0 )
-	      self.m_staticText5.Wrap( -1 )
-	      self.m_staticText5.SetFont( wx.Font( 10, wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_NORMAL, False, "Meiryo UI" ) )
-
-	      gSizer6.Add( self.m_staticText5, 0, wx.ALL|wx.ALIGN_RIGHT, 5 )
-
-	      self.row1 = wx.SpinCtrl( self.m_panel5, wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.DefaultSize, wx.SP_ARROW_KEYS, 0, 10000, 0 )
-	      gSizer6.Add( self.row1, 0, wx.ALL, 5 )
-#	      self.row1.Disable()
-
-	      self.m_staticText6 = wx.StaticText( self.m_panel5, wx.ID_ANY, u"last", wx.DefaultPosition, wx.DefaultSize, 0 )
-	      self.m_staticText6.Wrap( -1 )
-	      self.m_staticText6.SetFont( wx.Font( 10, wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_NORMAL, False, "Meiryo UI" ) )
-
-	      gSizer6.Add( self.m_staticText6, 0, wx.ALL|wx.ALIGN_RIGHT, 5 )
-
-	      self.row2 = wx.SpinCtrl( self.m_panel5, wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.DefaultSize, wx.SP_ARROW_KEYS, 0, 10000, 0 )
-	      gSizer6.Add( self.row2, 0, wx.ALL, 5 )
-#	      self.row2.Disable()
 
 	      gSizer5.Add( gSizer6, 1, wx.EXPAND, 5 )
 
@@ -243,15 +203,87 @@ class MyProject1MyFrame2( app.MyFrame2 ):
 	      self.m_panel5.SetSizer( bSizer16 )
 	      self.m_panel5.Layout()
 	      bSizer16.Fit( self.m_panel5 )
-	      sbSizer5.Add( self.m_panel5, 1, wx.EXPAND |wx.ALL, 5 )
+	      sbSizer20.Add( self.m_panel5, 1, wx.EXPAND |wx.ALL, 5 )
 
-	      bSizer15 = wx.BoxSizer( wx.VERTICAL )
 
-	      self.btn3 = wx.Button( sbSizer5.GetStaticBox(), wx.ID_ANY, u"Check", wx.DefaultPosition, wx.DefaultSize, 0 )
-	      self.btn3.SetFont( wx.Font( 10, wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_NORMAL, False, "Meiryo UI" ) )
+	      self.m_panel27.SetSizer( sbSizer20 )
+	      self.m_panel27.Layout()
+	      sbSizer20.Fit( self.m_panel27 )
+	      gSizer8.Add( self.m_panel27, 1, wx.EXPAND |wx.ALL, 5 )
 
-	      bSizer15.Add( self.btn3, 0, wx.ALL, 5 )
-#	      self.btn3.Disable()
+	      self.m_panel271 = wx.Panel( sbSizer5.GetStaticBox(), wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, wx.TAB_TRAVERSAL )
+	      self.m_panel271.SetFont( wx.Font( 10, wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_NORMAL, False, "Meiryo UI" ) )
+
+	      sbSizer201 = wx.StaticBoxSizer( wx.StaticBox( self.m_panel271, wx.ID_ANY, u"Automatic form posting settings." ), wx.VERTICAL )
+
+	      self.m_panel51 = wx.Panel( sbSizer201.GetStaticBox(), wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, wx.TAB_TRAVERSAL )
+	      bSizer161 = wx.BoxSizer( wx.VERTICAL )
+
+	      gSizer51 = wx.GridSizer( 0, 2, 0, 0 )
+
+	      self.m_staticText51 = wx.StaticText( self.m_panel51, wx.ID_ANY, u"start", wx.DefaultPosition, wx.DefaultSize, 0 )
+	      self.m_staticText51.Wrap( -1 )
+
+	      self.m_staticText51.SetFont( wx.Font( 10, wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_NORMAL, False, "Meiryo UI" ) )
+
+	      gSizer51.Add( self.m_staticText51, 0, wx.ALL|wx.ALIGN_RIGHT, 5 )
+
+	      self.row11 = wx.SpinCtrl( self.m_panel51, wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.Size( 100,-1 ), wx.SP_ARROW_KEYS, 0, 1000, 0 )
+	      gSizer51.Add( self.row11, 0, wx.ALL, 5 )
+	      self.row11.Disable()
+          
+	      self.m_staticText62 = wx.StaticText( self.m_panel51, wx.ID_ANY, u"last", wx.DefaultPosition, wx.DefaultSize, 0 )
+	      self.m_staticText62.Wrap( -1 )
+
+	      gSizer51.Add( self.m_staticText62, 0, wx.ALL|wx.ALIGN_RIGHT, 5 )
+
+	      self.row21 = wx.SpinCtrl( self.m_panel51, wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.Size( 100,-1 ), wx.SP_ARROW_KEYS, 0, 1000, 0 )
+	      gSizer51.Add( self.row21, 0, wx.ALL, 5 )
+	      self.row21.Disable()
+          
+	      self.m_staticText611 = wx.StaticText( self.m_panel51, wx.ID_ANY, u"sheet title", wx.DefaultPosition, wx.DefaultSize, 0 )
+	      self.m_staticText611.Wrap( -1 )
+
+	      gSizer51.Add( self.m_staticText611, 0, wx.ALL|wx.ALIGN_RIGHT, 5 )
+
+	      m_comboBox11Choices = [worksheet.title for worksheet in worksheets]
+	      self.m_comboBox11 = wx.ComboBox( self.m_panel51, wx.ID_ANY, u"選択して下さい", wx.DefaultPosition, wx.DefaultSize, m_comboBox11Choices, wx.CB_DROPDOWN )
+	      print(m_comboBox1Choices)
+
+	      gSizer51.Add( self.m_comboBox11, 0, wx.ALL, 5 )
+
+#（お問い合わせページの抽出：機能未完成によりドロップボックスを無効）        
+	      self.m_comboBox11.Enable(False)
+#	      self.m_comboBox11.Enable(True)
+
+	      self.btn31 = wx.Button( self.m_panel51, wx.ID_ANY, u"Create", wx.DefaultPosition, wx.DefaultSize, 0 )
+	      self.btn31.SetFont( wx.Font( 10, wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_NORMAL, False, "Meiryo UI" ) )
+	      self.btn31.Disable()
+          
+	      gSizer51.Add( self.btn31, 0, wx.ALL, 5 )
+
+	      gSizer61 = wx.GridSizer( 0, 2, 0, 0 )
+
+
+	      gSizer51.Add( gSizer61, 1, wx.EXPAND, 5 )
+
+
+	      bSizer161.Add( gSizer51, 1, wx.EXPAND, 5 )
+
+
+	      self.m_panel51.SetSizer( bSizer161 )
+	      self.m_panel51.Layout()
+	      bSizer161.Fit( self.m_panel51 )
+	      sbSizer201.Add( self.m_panel51, 1, wx.EXPAND |wx.ALL, 5 )
+
+
+	      self.m_panel271.SetSizer( sbSizer201 )
+	      self.m_panel271.Layout()
+	      sbSizer201.Fit( self.m_panel271 )
+	      gSizer8.Add( self.m_panel271, 1, wx.EXPAND |wx.ALL, 5 )
+
+
+	      bSizer15.Add( gSizer8, 1, wx.EXPAND, 5 )
 
 	      sbSizer5.Add( bSizer15, 1, wx.EXPAND, 5 )
 
@@ -275,25 +307,24 @@ class MyProject1MyFrame2( app.MyFrame2 ):
 #		sbSizer15.Fit( self.m_panel17 )
 #		gSizer5.Add( self.m_panel17, 1, wx.EXPAND |wx.ALL, 5 )
 
-
+        
 	# Handlers for MyFrame2 events.
 	def create_button( self, event ):
-		# TODO: Implement create_button
-	   if not self.m_comboBox6.GetValue() == '1BazsXmS9dW8oAOmvjMNVabvvw1dYAgW9SR-qbyAylEU' \
-           or self.m_textCtrl11.GetValue() == '1BazsXmS9dW8oAOmvjMNVabvvw1dYAgW9SR-qbyAylEU' \
-           or not 'json' in self.m_textCtrl11.GetValue():
-	      self.m_comboBox6.SetBackgroundColour('#f56cbe')
-	      self.m_textCtrl11.SetBackgroundColour('#f56cbe')          
-#	      self.m_comboBox6.SetForegroundColour('#f56cbe')
+	   adid = MyProject1MyDialog3(self)
+	   if not adid.m_comboBox6.GetValue() == '1BazsXmS9dW8oAOmvjMNVabvvw1dYAgW9SR-qbyAylEU' \
+           or adid.m_textCtrl11.GetValue() == '1BazsXmS9dW8oAOmvjMNVabvvw1dYAgW9SR-qbyAylEU' \
+               or not 'json' in adid.m_textCtrl11.GetValue() \
+                   or not 'chromedriver.exe' in adid.m_textCtrl111.GetValue():
 	      wx.MessageBox(u'The key is incorrect or does not exist!!', u'Setting value error', wx.ICON_ERROR)
+	   elif not 'chromedriver.exe' in adid.m_textCtrl111.GetValue():
+	      wx.MessageBox(u'The web driver file is not set or the file path does not pass!!', u'Setting value error', wx.ICON_ERROR)          
 	   else:
-	    self.m_comboBox6.SetBackgroundColour('#FFFFFF')
-	    self.m_textCtrl11.SetBackgroundColour('#FFFFFF')
 	    adid = MyProject1MyDialog(self)
         
-#MyFrame2のテキストボックスに入力した値をMyDialogに受け渡し        
-	    adid.import_json_file(self.m_textCtrl11.GetValue())        
-	    adid.import_sheet_title(self.m_comboBox6.GetValue())
+#MyFrame2のテキストボックス及びコンボボックスの値をMyDialogに受け渡し        
+#	    adid.import_json_file(self.m_textCtrl11.GetValue())        
+#	    adid.import_sheet_title(self.m_comboBox6.GetValue())
+#	    adid.import_webdriver_file(self.m_textCtrl111.GetValue())
 #		adid.select_sql(self.m_textCtrl1.GetValue())
 #		adid.page_list(self.m_textCtrl1.GetValue())
 	    adid.ShowModal()
@@ -302,7 +333,7 @@ class MyProject1MyFrame2( app.MyFrame2 ):
 		# TODO: Implement quit_button
 		self.Destroy()
         
-	def select_sql( self, event ):
+	def inquiry_url( self, event ):
 		# TODO: Implement select_sql
 		row1 = self.row1.GetValue()
 		row2 = self.row2.GetValue()
@@ -349,7 +380,7 @@ class MyProject1MyFrame2( app.MyFrame2 ):
 		 option.add_argument('--disable-dev-shm-usage')
 
 # ChromeのWebDriverオブジェクトを作成する。
-		 driver = webdriver.Chrome("C:/Users/iorin/OneDrive/ドキュメント/Python Scripts/chromedriver.exe",options=option)
+		 driver = webdriver.Chrome(self.m_textCtrl11.GetValue(),options=option)
 		 driver.set_page_load_timeout(60)
                         
 		 credentials = ServiceAccountCredentials.from_json_keyfile_name(self.m_textCtrl11.GetValue(), scope)
@@ -771,63 +802,14 @@ class MyProject1MyFrame2( app.MyFrame2 ):
 		 adid.Show()
         
 
+
 class MyProject1MyDialog( app.MyDialog ):
     def __init__(self, parent):
         app.MyDialog.__init__(self, parent)
-
-#        get_resources().LoadDialog(self, parent, 'MyProject1MyDialog')
-#        self.SetSize((300, 250))
         self.parent = parent
- 
-#        c = db_sqlite(DB_NAME)
- 
-#        self.dbtn1 = wx.xrc.XRCCTRL(self, 'dbtn1')
-        self.Bind( wx.EVT_CLOSE, self.quit_button )
-#        self.dbtn2 = wx.xrc.XRCCTRL(self, 'dbtn2')
-#        self.Bind( wx.EVT_BUTTON, self.select_sql )
-#        self.Bind( wx.EVT_BUTTON, self.Get_details )
-        
-        self.row1 = wx.xrc.XRCCTRL(self, 'row1')
-        self.row2 = wx.xrc.XRCCTRL(self, 'row2')
-        self.row3 = wx.xrc.XRCCTRL(self, 'row3')
-        self.row4 = wx.xrc.XRCCTRL(self, 'row4')        
-#        self.in3 = wx.xrc.XRCCTRL(self, 'in3')
-#        in2Items = self.createitemname()
-#        self.in2.SetItems(in2Items)
+
 #        mainBox.Add( hbox1, 1, wx.EXPAND, 5 )
 #        self.m_panel6 = wx.Panel( self.main_panel, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, wx.TAB_TRAVERSAL )
-
-
-#値を渡す関数
-    def import_json_file(self, key):
-#        print(key)
-        
-        sbSizer161 = wx.StaticBoxSizer( wx.StaticBox( self.m_panel22, wx.ID_ANY, u"Authentication key:" ), wx.VERTICAL )
-
-        self.m_textCtrl5 = wx.TextCtrl( sbSizer161.GetStaticBox(), wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.Size( 400,-1 ), 0 )
-        sbSizer161.Add( self.m_textCtrl5, 0, wx.ALL, 5 )
-        self.m_textCtrl5.SetValue(key)
-        self.m_textCtrl5.Disable()
-
-        self.m_panel22.SetSizer( sbSizer161 )
-        self.m_panel22.Layout()
-        sbSizer161.Fit( self.m_panel22 )
-
-
-#値を渡す関数
-    def import_sheet_title(self, key):
-#        print(key)
-#        self.m_panel20 = wx.Panel( self.main_panel, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, wx.TAB_TRAVERSAL )
-        sbSizer20 = wx.StaticBoxSizer( wx.StaticBox( self.m_panel20, wx.ID_ANY, u"Sheet key:" ), wx.VERTICAL )
-
-        self.m_textCtrl3 = wx.TextCtrl( sbSizer20.GetStaticBox(), wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.Size( 400,-1 ), 0 )
-        sbSizer20.Add( self.m_textCtrl3, 0, wx.ALL, 5 )
-        self.m_textCtrl3.SetValue(key)
-        self.m_textCtrl3.Disable()
-
-        self.m_panel20.SetSizer( sbSizer20 )
-        self.m_panel20.Layout()
-        sbSizer20.Fit( self.m_panel20 )
         
         self.m_panel6.SetFont( wx.Font( 10, wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_NORMAL, False, "Meiryo UI" ) )
 
@@ -845,15 +827,17 @@ class MyProject1MyDialog( app.MyDialog ):
 
 #        m_comboBox1Choices = []
 #        self.m_comboBox1 = wx.ComboBox( sbSizer15.GetStaticBox(), wx.ID_ANY, u"Combo!", wx.DefaultPosition, wx.DefaultSize, m_comboBox1Choices, wx.CB_DROPDOWN )
+
+        adid = MyProject1MyDialog3(self)
                 
 #秘密鍵（JSONファイル）のファイル名を入力
-        credentials = ServiceAccountCredentials.from_json_keyfile_name(self.m_textCtrl5.GetValue(), scope)
+        credentials = ServiceAccountCredentials.from_json_keyfile_name(adid.m_textCtrl11.GetValue(), scope)
 
 #OAuth2の資格情報を使用してGoogle APIにログインします。
         gc = gspread.authorize(credentials)
 
 #存在するワークシートの情報を全て取得
-        wb = gc.open_by_key(key)
+        wb = gc.open_by_key(adid.m_comboBox6.GetValue())
         worksheets = wb.worksheets()
         
 #現在のワークシートのタイトルをリストへ格納
@@ -1037,7 +1021,8 @@ class MyProject1MyDialog( app.MyDialog ):
 #        print(m_comboBox1Choices)
 #        self.m_comboBox1 = wx.ComboBox( sbSizer15.GetStaticBox(), wx.ID_ANY, u"選択して下さい", wx.DefaultPosition, wx.DefaultSize, m_comboBox1Choices, wx.CB_DROPDOWN )
 
-
+#Connect Events
+        self.Bind( wx.EVT_CLOSE, self.quit_button )
         self.btn3.Bind( wx.EVT_BUTTON, self.header )
         self.btn4.Bind( wx.EVT_BUTTON, self.Get_details )
         self.dbtn2.Bind( wx.EVT_BUTTON, self.page_list )
@@ -1045,8 +1030,8 @@ class MyProject1MyDialog( app.MyDialog ):
 
 
     def header( self, event ):
-		# TODO: Implement select_sql
-        credentials = ServiceAccountCredentials.from_json_keyfile_name(self.m_textCtrl5.GetValue(), scope)
+        adid = MyProject1MyDialog3(self)
+        credentials = ServiceAccountCredentials.from_json_keyfile_name(adid.m_textCtrl11.GetValue(), scope)
         gc = gspread.authorize(credentials)                   
         row1 = self.row1.GetValue()
         row2 = self.row2.GetValue()
@@ -1112,10 +1097,12 @@ class MyProject1MyDialog( app.MyDialog ):
          option.add_argument('--disable-dev-shm-usage')
 
 # ChromeのWebDriverオブジェクトを作成する。
-         driver = webdriver.Chrome("C:/Users/iorin/OneDrive/ドキュメント/Python Scripts/chromedriver.exe",options=option)
+
+#「パスが通っていません」というエラーが出るためコメントアウトする
+         driver = webdriver.Chrome(adid.m_textCtrl111.GetValue(),options=option)
          driver.set_page_load_timeout(60)
             
-         wb = gc.open_by_key(self.m_textCtrl3.GetValue())
+         wb = gc.open_by_key(adid.m_comboBox6.GetValue())
          print(self.m_textCtrl3.GetValue())
 #         ws2 = wb.worksheet(self.m_comboBox1.GetValue())
 #         print(self.m_comboBox1.GetValue())
@@ -1213,8 +1200,8 @@ class MyProject1MyDialog( app.MyDialog ):
 
 
     def Get_details( self, event ):
-		# TODO: Implement select_sql
-        credentials = ServiceAccountCredentials.from_json_keyfile_name(self.m_textCtrl5.GetValue(), scope)
+        adid = MyProject1MyDialog3(self)
+        credentials = ServiceAccountCredentials.from_json_keyfile_name(adid.m_textCtrl11.GetValue(), scope)
         gc = gspread.authorize(credentials)        
         row3 = self.row3.GetValue()
         row4 = self.row4.GetValue()
@@ -1266,10 +1253,10 @@ class MyProject1MyDialog( app.MyDialog ):
          option.add_argument('--disable-dev-shm-usage')
 
 # ChromeのWebDriverオブジェクトを作成する。
-         driver = webdriver.Chrome("C:/Users/iorin/OneDrive/ドキュメント/Python Scripts/chromedriver.exe",options=option)
+         driver = webdriver.Chrome(adid.m_textCtrl111.GetValue(),options=option)
          driver.set_page_load_timeout(60)
             
-         wb = gc.open_by_key(self.m_textCtrl3.GetValue())
+         wb = gc.open_by_key(adid.m_comboBox6.GetValue())
          print(self.m_textCtrl3.GetValue())
          ws3 = wb.worksheet(self.m_comboBox31.GetStringSelection())
          print(self.m_comboBox3.GetStringSelection())
@@ -2189,8 +2176,8 @@ class MyProject1MyDialog( app.MyDialog ):
           dlg.Destroy()
           
     def list_view( self, event ):
-		# TODO: Implement select_sql
-        credentials = ServiceAccountCredentials.from_json_keyfile_name(self.m_textCtrl5.GetValue(), scope)
+        adid = MyProject1MyDialog3(self)
+        credentials = ServiceAccountCredentials.from_json_keyfile_name(adid.m_textCtrl11.GetValue(), scope)
         gc = gspread.authorize(credentials)                   
 
         if self.m_comboBox11.GetValue() == '選択して下さい':
@@ -2201,7 +2188,7 @@ class MyProject1MyDialog( app.MyDialog ):
          wx.MessageBox(u'The selected sheet name is not valid.!!', u'Setting value error', wx.ICON_ERROR)
 		# Set cell values.
         else:
-         wb = gc.open_by_key(self.m_textCtrl3.GetValue())            
+         wb = gc.open_by_key(adid.m_comboBox6.GetValue())
          ws3 = wb.worksheet(self.m_comboBox11.GetValue())
          lastrow = len(ws3.col_values(1))         
          self.m_comboBox11.SetBackgroundColour("#FFFFFF")
@@ -2246,7 +2233,7 @@ class MyProject1MyDialog( app.MyDialog ):
             print(cell_list5[i].value)
             print(cell_list6[i].value)
             i += 1
-            rate += 1/(lastrow-1)*100
+            rate += 1/(lastrow+1)*100
             # 値の更新
             dlg.Update(value=rate, newmsg="%d/100" % rate + "%")
            
@@ -2260,7 +2247,1101 @@ class MyProject1MyDialog( app.MyDialog ):
 #		    row1 += 1
          adid.grid.AutoSize()
          adid.Show()
-          
+
+
+class MyProject1MyDialog3( app.MyDialog3 ):
+    def __init__(self, parent):
+        app.MyDialog3.__init__(self, parent)
+        self.parent = parent
+ 
+        hbox4 = wx.BoxSizer( wx.VERTICAL )
+
+        self.m_panel22 = wx.Panel( self, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, wx.TAB_TRAVERSAL )
+        self.m_panel22.SetFont( wx.Font( 10, wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_NORMAL, False, "Meiryo UI" ) )
+
+        sbSizer151 = wx.StaticBoxSizer( wx.StaticBox( self.m_panel22, wx.ID_ANY, u"Required information" ), wx.VERTICAL )
+
+        self.m_panel161 = wx.Panel( sbSizer151.GetStaticBox(), wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, wx.TAB_TRAVERSAL )
+        self.m_panel161.SetFont( wx.Font( 10, wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_NORMAL, False, "Meiryo UI" ) )
+
+        sbSizer141 = wx.StaticBoxSizer( wx.StaticBox( self.m_panel161, wx.ID_ANY, u"Google API service account verification key" ), wx.VERTICAL )
+
+        self.m_textCtrl11 = wx.TextCtrl( sbSizer141.GetStaticBox(), wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.Size( 400,-1 ), 0 )
+        
+# ドロップ対象の設定
+        self.m_textCtrl11.SetDropTarget(FileDropTarget1(self))
+        
+#ツールチップ（補足情報を載せる小さいウィンドウ）を表示
+        self.m_textCtrl11.SetToolTip("Please drag and drop the JSON file into this text box.")
+        
+        sbSizer141.Add( self.m_textCtrl11, 0, wx.ALL, 5 )
+
+
+        self.m_panel161.SetSizer( sbSizer141 )
+        self.m_panel161.Layout()
+        sbSizer141.Fit( self.m_panel161 )
+        sbSizer151.Add( self.m_panel161, 1, wx.EXPAND |wx.ALL, 5 )
+
+        self.m_panel16 = wx.Panel( sbSizer151.GetStaticBox(), wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, wx.TAB_TRAVERSAL )
+        self.m_panel16.SetFont( wx.Font( 10, wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_NORMAL, False, "Meiryo UI" ) )
+
+        sbSizer14 = wx.StaticBoxSizer( wx.StaticBox( self.m_panel16, wx.ID_ANY, u"Google spreadsheet key" ), wx.VERTICAL )
+
+        m_comboBox6Choices = ['1BazsXmS9dW8oAOmvjMNVabvvw1dYAgW9SR-qbyAylEU']
+        self.m_comboBox6 = wx.ComboBox( sbSizer14.GetStaticBox(), wx.ID_ANY, u"選択して下さい", wx.DefaultPosition, wx.Size( 400,-1 ), m_comboBox6Choices, 0 )
+
+#コンボボックスの項目が選択されたときに処理するイベントをtext_event()メソッドに関連付けるバインダーを設定
+#        self.m_comboBox6.Bind(wx.EVT_COMBOBOX, self.text_event)
+
+        sbSizer14.Add( self.m_comboBox6, 0, wx.ALL, 5 )
+
+
+        self.m_panel16.SetSizer( sbSizer14 )
+        self.m_panel16.Layout()
+        sbSizer14.Fit( self.m_panel16 )
+        sbSizer151.Add( self.m_panel16, 1, wx.EXPAND |wx.ALL, 5 )
+
+        self.m_panel162 = wx.Panel( sbSizer151.GetStaticBox(), wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, wx.TAB_TRAVERSAL )
+        self.m_panel162.SetFont( wx.Font( 10, wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_NORMAL, False, "Meiryo UI" ) )
+
+        sbSizer142 = wx.StaticBoxSizer( wx.StaticBox( self.m_panel162, wx.ID_ANY, u"Web driver file for Google Chrome" ), wx.VERTICAL )
+
+        self.m_textCtrl111 = wx.TextCtrl( sbSizer142.GetStaticBox(), wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.Size( 400,-1 ), 0 )
+ 
+# ドロップ対象の設定
+        self.m_textCtrl111.SetDropTarget(FileDropTarget2(self))
+        
+#ツールチップ（補足情報を載せる小さいウィンドウ）を表示
+        self.m_textCtrl111.SetToolTip("Please drag and drop the webdriver file into this text box.")
+    
+        sbSizer142.Add( self.m_textCtrl111, 0, wx.ALL, 5 )
+
+
+        self.m_panel162.SetSizer( sbSizer142 )
+        self.m_panel162.Layout()
+        sbSizer142.Fit( self.m_panel162 )
+        sbSizer151.Add( self.m_panel162, 1, wx.EXPAND |wx.ALL, 5 )
+
+
+        self.m_panel22.SetSizer( sbSizer151 )
+        self.m_panel22.Layout()
+        sbSizer151.Fit( self.m_panel22 )
+        hbox4.Add( self.m_panel22, 1, wx.EXPAND |wx.ALL, 5 )
+
+        self.m_panel27 = wx.Panel( self, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, wx.TAB_TRAVERSAL )
+        self.m_panel27.SetFont( wx.Font( 10, wx.FONTFAMILY_MODERN, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_NORMAL, False, "Meiryo UI" ) )
+
+        sbSizer17 = wx.StaticBoxSizer( wx.StaticBox( self.m_panel27, wx.ID_ANY, u"Your account information." ), wx.VERTICAL )
+
+        self.m_panel20 = wx.Panel( sbSizer17.GetStaticBox(), wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, wx.TAB_TRAVERSAL )
+        self.m_panel20.SetFont( wx.Font( 10, wx.FONTFAMILY_MODERN, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_NORMAL, False, "Meiryo UI" ) )
+
+        sbSizer15 = wx.StaticBoxSizer( wx.StaticBox( self.m_panel20, wx.ID_ANY, u"Username" ), wx.VERTICAL )
+
+        self.m_textCtrl4 = wx.TextCtrl( sbSizer15.GetStaticBox(), wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.Size( 200,-1 ), 0 )
+        sbSizer15.Add( self.m_textCtrl4, 0, wx.ALL, 5 )
+
+
+        self.m_panel20.SetSizer( sbSizer15 )
+        self.m_panel20.Layout()
+        sbSizer15.Fit( self.m_panel20 )
+        sbSizer17.Add( self.m_panel20, 1, wx.EXPAND |wx.ALL, 5 )
+
+        self.m_panel21 = wx.Panel( sbSizer17.GetStaticBox(), wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, wx.TAB_TRAVERSAL )
+        self.m_panel21.SetFont( wx.Font( 10, wx.FONTFAMILY_MODERN, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_NORMAL, False, "Meiryo UI" ) )
+
+        sbSizer16 = wx.StaticBoxSizer( wx.StaticBox( self.m_panel21, wx.ID_ANY, u"Password" ), wx.VERTICAL )
+
+        self.m_textCtrl5 = wx.TextCtrl( sbSizer16.GetStaticBox(), wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.Size( 200,-1 ), wx.TE_PASSWORD )
+        sbSizer16.Add( self.m_textCtrl5, 0, wx.ALL, 5 )
+
+
+        self.m_panel21.SetSizer( sbSizer16 )
+        self.m_panel21.Layout()
+        sbSizer16.Fit( self.m_panel21 )
+        sbSizer17.Add( self.m_panel21, 1, wx.EXPAND |wx.ALL, 5 )
+
+
+        self.m_panel27.SetSizer( sbSizer17 )
+        self.m_panel27.Layout()
+        sbSizer17.Fit( self.m_panel27 )
+        hbox4.Add( self.m_panel27, 1, wx.EXPAND |wx.ALL, 5 )
+
+        self.btn11 = wx.Button( self, wx.ID_ANY, u"Save", wx.DefaultPosition, wx.DefaultSize, 0 )
+        self.btn11.SetFont( wx.Font( 10, wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_NORMAL, False, "Meiryo UI" ) )
+
+        hbox4.Add( self.btn11, 0, wx.ALL, 5 )
+
+
+        self.SetSizer( hbox4 )
+        self.Layout()
+
+        self.Centre( wx.BOTH )
+
+# Connect Events
+        self.btn11.Bind( wx.EVT_BUTTON, self.write )
+        self.Bind( wx.EVT_CLOSE, self.quit_button )
+
+
+#設定情報（json）読み込み
+#文字コードをUTF-8に変換しないとエラーが発生するため注意！！
+        with codecs.open('setting.json','r',encoding='utf-8') as f:
+            j = json.load(f)
+#            print(j)
+            f.close()
+            self.m_textCtrl11.SetValue(j['verificationkey'])
+            self.m_comboBox6.SetValue(j['spreadsheetkey'])
+            self.m_textCtrl111.SetValue(j['webdriver'])
+            self.m_textCtrl4.SetValue(j['user'])
+            self.m_textCtrl5.SetValue(j['password'])
+
+#設定情報（json）書き出し
+    def write(self, event):
+            if not self.m_comboBox6.GetValue() == '1BazsXmS9dW8oAOmvjMNVabvvw1dYAgW9SR-qbyAylEU' \
+                or self.m_textCtrl11.GetValue() == '1BazsXmS9dW8oAOmvjMNVabvvw1dYAgW9SR-qbyAylEU' \
+                    or not 'json' in self.m_textCtrl11.GetValue() \
+                        or not 'chromedriver.exe' in self.m_textCtrl111.GetValue():
+              self.m_comboBox6.SetBackgroundColour('#f56cbe')
+              self.m_textCtrl11.SetBackgroundColour('#f56cbe')          
+#	      self.m_textCtrl111.SetForegroundColour('#f56cbe')
+              wx.MessageBox(u'The key is incorrect or does not exist!!', u'Setting value error', wx.ICON_ERROR)
+            elif not 'chromedriver.exe' in self.m_textCtrl111.GetValue():
+              self.m_textCtrl111.SetBackgroundColour('#f56cbe')
+              wx.MessageBox(u'The web driver file is not set or the file path does not pass!!', u'Setting value error', wx.ICON_ERROR)
+            elif self.m_textCtrl4.GetValue() == "" \
+                or self.m_textCtrl5.GetValue() == "":
+              self.m_textCtrl4.SetBackgroundColour('#f56cbe')
+              self.m_textCtrl5.SetBackgroundColour('#f56cbe')
+              wx.MessageBox(u'No user name or password has been entered!!', u'Setting value error', wx.ICON_ERROR)
+            else:
+              self.m_comboBox6.SetBackgroundColour('#FFFFFF')
+              self.m_textCtrl11.SetBackgroundColour('#FFFFFF')
+              self.m_textCtrl111.SetBackgroundColour('#FFFFFF')
+              self.m_textCtrl4.SetBackgroundColour('#FFFFFF')
+              self.m_textCtrl5.SetBackgroundColour('#FFFFFF')
+
+#文字コードをUTF-8に変換しないとエラー発生がするため注意！！
+              with open('setting.json','w',encoding='utf-8') as f:
+                w_data = {}
+                w_data['verificationkey'] = self.m_textCtrl11.GetValue()
+                w_data['spreadsheetkey'] = self.m_comboBox6.GetValue()
+                w_data['webdriver'] = self.m_textCtrl111.GetValue()
+                w_data['user'] = self.m_textCtrl4.GetValue()
+                w_data['password'] = self.m_textCtrl5.GetValue()
+                json.dump(w_data, f, ensure_ascii=False, indent=1, sort_keys=True, separators=(',', ': '))
+                print('WRITE:')
+ #               print(w_data)
+                self.Destroy()
+        
+    def quit_button( self, event ):
+		# TODO: Implement quit_button
+        self.Destroy()
+
+#Profile
+class MyProject1MyDialog4( app.MyDialog4 ):
+    def __init__(self, parent):
+        app.MyDialog4.__init__(self, parent)
+        self.parent = parent
+
+        hbox4 = wx.BoxSizer( wx.VERTICAL )
+
+        self.m_panel22 = wx.Panel( self, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, wx.TAB_TRAVERSAL )
+        self.m_panel22.SetFont( wx.Font( 10, wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_NORMAL, False, "Meiryo UI" ) )
+
+        sbSizer151 = wx.StaticBoxSizer( wx.StaticBox( self.m_panel22, wx.ID_ANY, u"Profile" ), wx.VERTICAL )
+
+        self.m_panel46 = wx.Panel( sbSizer151.GetStaticBox(), wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, wx.TAB_TRAVERSAL )
+        sbSizer50 = wx.StaticBoxSizer( wx.StaticBox( self.m_panel46, wx.ID_ANY, u"Corporate infomation" ), wx.VERTICAL )
+
+        gSizer72 = wx.GridSizer( 0, 2, 0, 0 )
+
+        gSizer73 = wx.GridSizer( 0, 2, 0, 0 )
+
+        self.m_panel47 = wx.Panel( sbSizer50.GetStaticBox(), wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, wx.TAB_TRAVERSAL )
+        self.m_panel47.SetFont( wx.Font( 10, wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_NORMAL, False, "Meiryo UI" ) )
+
+        sbSizer51 = wx.StaticBoxSizer( wx.StaticBox( self.m_panel47, wx.ID_ANY, u"Company name" ), wx.VERTICAL )
+
+        self.m_textCtrl11 = wx.TextCtrl( sbSizer51.GetStaticBox(), wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.Size( 400,-1 ), 0 )
+        sbSizer51.Add( self.m_textCtrl11, 0, wx.ALL, 5 )
+
+
+        self.m_panel47.SetSizer( sbSizer51 )
+        self.m_panel47.Layout()
+        sbSizer51.Fit( self.m_panel47 )
+        gSizer73.Add( self.m_panel47, 1, wx.EXPAND |wx.ALL, 5 )
+
+        self.m_panel48 = wx.Panel( sbSizer50.GetStaticBox(), wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, wx.TAB_TRAVERSAL )
+        sbSizer52 = wx.StaticBoxSizer( wx.StaticBox( self.m_panel48, wx.ID_ANY, u"Hiragana" ), wx.VERTICAL )
+
+        self.m_textCtrl12 = wx.TextCtrl( sbSizer52.GetStaticBox(), wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.Size( 400,-1 ), 0 )
+        sbSizer52.Add( self.m_textCtrl12, 0, wx.ALL, 5 )
+
+
+        self.m_panel48.SetSizer( sbSizer52 )
+        self.m_panel48.Layout()
+        sbSizer52.Fit( self.m_panel48 )
+        gSizer73.Add( self.m_panel48, 1, wx.EXPAND |wx.ALL, 5 )
+
+
+        gSizer72.Add( gSizer73, 1, wx.EXPAND, 5 )
+
+        gSizer74 = wx.GridSizer( 0, 2, 0, 0 )
+
+        self.m_panel49 = wx.Panel( sbSizer50.GetStaticBox(), wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, wx.TAB_TRAVERSAL )
+        sbSizer53 = wx.StaticBoxSizer( wx.StaticBox( self.m_panel49, wx.ID_ANY, u"Katakana" ), wx.VERTICAL )
+
+        self.m_textCtrl13 = wx.TextCtrl( sbSizer53.GetStaticBox(), wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.Size( 400,-1 ), 0 )
+        sbSizer53.Add( self.m_textCtrl13, 0, wx.ALL, 5 )
+
+
+        self.m_panel49.SetSizer( sbSizer53 )
+        self.m_panel49.Layout()
+        sbSizer53.Fit( self.m_panel49 )
+        gSizer74.Add( self.m_panel49, 1, wx.EXPAND |wx.ALL, 5 )
+
+
+        gSizer72.Add( gSizer74, 1, wx.EXPAND, 5 )
+
+
+        sbSizer50.Add( gSizer72, 1, wx.EXPAND, 5 )
+
+        gSizer75 = wx.GridSizer( 0, 2, 0, 0 )
+
+        gSizer76 = wx.GridSizer( 0, 2, 0, 0 )
+
+        self.m_panel50 = wx.Panel( sbSizer50.GetStaticBox(), wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, wx.TAB_TRAVERSAL )
+        sbSizer54 = wx.StaticBoxSizer( wx.StaticBox( self.m_panel50, wx.ID_ANY, u"Industry" ), wx.VERTICAL )
+
+#業種をリストへ格納
+        m_comboBox61Choices = ('IT・通信・インターネット',
+                               'マスコミ・メディア',
+                               '新聞・雑誌・出版',
+                               '広告・イベント・プロモーション',
+                               '芸能・エンターテイメント',
+                               'ゲーム・アニメ・玩具',
+                               '恋愛・出会い・占い',
+                               '婚活・ブライダル',
+                               '動物・ペット',
+                               '生花・園芸・造園',
+                               '美術・工芸・音楽',
+                               'スポーツ・フィットネス',
+                               '自動車・バイク',
+                               '旅行・観光・グルメ',
+                               'ホテル・旅館・民泊',
+                               'メーカー',
+                               '商社',
+                               '流通・運輸・交通',
+                               '工業・製造',
+                               '卸売・小売',
+                               'ファッション・アパレル',
+                               '家具・インテリア',
+                               '食品・飲料・たばこ',
+                               '医療・医薬',
+                               '介護・福祉',
+                               '家事代行',
+                               '葬祭',
+                               '金融・保険',
+                               '住宅・不動産',
+                               '建築・工務店',
+                               '店舗（飲食店・居酒屋など）',
+                               '美容室・サロン',
+                               '資格・習い事',
+                               '保育園・幼稚園',
+                               '塾・予備校',
+                               '大学・学校',
+                               '学術・研究',
+                               'リサーチ・調査',
+                               'コンサルティング・シンクタンク',
+                               '士業（個人事務所）',
+                               '人材紹介・人材派遣',
+                               '翻訳・通訳',
+                               'エネルギー（電気・ガス・水道など）',
+                               '農林・水産・鉱業',
+                               '清掃・設備・警備',
+                               '公益・非営利団体',
+                               '官公庁・自治体',
+                               '政治',
+                               '宗教')
+        print(m_comboBox61Choices)
+        self.m_comboBox61 = wx.ComboBox( sbSizer54.GetStaticBox(), wx.ID_ANY, u"選択して下さい", wx.DefaultPosition, wx.Size( 400,-1 ), m_comboBox61Choices, 0 )
+        sbSizer54.Add( self.m_comboBox61, 0, wx.ALL, 5 )
+
+
+        self.m_panel50.SetSizer( sbSizer54 )
+        self.m_panel50.Layout()
+        sbSizer54.Fit( self.m_panel50 )
+        gSizer76.Add( self.m_panel50, 1, wx.EXPAND |wx.ALL, 5 )
+
+        self.m_panel51 = wx.Panel( sbSizer50.GetStaticBox(), wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, wx.TAB_TRAVERSAL )
+        sbSizer55 = wx.StaticBoxSizer( wx.StaticBox( self.m_panel51, wx.ID_ANY, u"Business content" ), wx.VERTICAL )
+
+        self.m_textCtrl14 = wx.TextCtrl( sbSizer55.GetStaticBox(), wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.Size( 400,-1 ), 0 )
+        sbSizer55.Add( self.m_textCtrl14, 0, wx.ALL, 5 )
+
+
+        self.m_panel51.SetSizer( sbSizer55 )
+        self.m_panel51.Layout()
+        sbSizer55.Fit( self.m_panel51 )
+        gSizer76.Add( self.m_panel51, 1, wx.EXPAND |wx.ALL, 5 )
+
+
+        gSizer75.Add( gSizer76, 1, wx.EXPAND, 5 )
+
+        gSizer77 = wx.GridSizer( 0, 2, 0, 0 )
+
+        self.m_panel52 = wx.Panel( sbSizer50.GetStaticBox(), wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, wx.TAB_TRAVERSAL )
+        gSizer77.Add( self.m_panel52, 1, wx.EXPAND |wx.ALL, 5 )
+
+
+        gSizer75.Add( gSizer77, 1, wx.EXPAND, 5 )
+
+
+        sbSizer50.Add( gSizer75, 1, wx.EXPAND, 5 )
+
+
+        self.m_panel46.SetSizer( sbSizer50 )
+        self.m_panel46.Layout()
+        sbSizer50.Fit( self.m_panel46 )
+        sbSizer151.Add( self.m_panel46, 1, wx.EXPAND |wx.ALL, 5 )
+
+        self.m_panel53 = wx.Panel( sbSizer151.GetStaticBox(), wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, wx.TAB_TRAVERSAL )
+        sbSizer56 = wx.StaticBoxSizer( wx.StaticBox( self.m_panel53, wx.ID_ANY, u"Sender" ), wx.VERTICAL )
+
+        gSizer78 = wx.GridSizer( 0, 2, 0, 0 )
+
+        self.m_panel53 = wx.Panel( sbSizer56.GetStaticBox(), wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, wx.TAB_TRAVERSAL )
+        sbSizer57 = wx.StaticBoxSizer( wx.StaticBox( self.m_panel53, wx.ID_ANY, u"Kanji full" ), wx.VERTICAL )
+
+        self.m_textCtrl15 = wx.TextCtrl( sbSizer57.GetStaticBox(), wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.Size( 400,-1 ), 0 )
+        sbSizer57.Add( self.m_textCtrl15, 0, wx.ALL, 5 )
+
+
+        self.m_panel53.SetSizer( sbSizer57 )
+        self.m_panel53.Layout()
+        sbSizer57.Fit( self.m_panel53 )
+        gSizer78.Add( self.m_panel53, 1, wx.EXPAND |wx.ALL, 5 )
+
+        gSizer79 = wx.GridSizer( 0, 2, 0, 0 )
+
+        self.m_panel54 = wx.Panel( sbSizer56.GetStaticBox(), wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, wx.TAB_TRAVERSAL )
+        sbSizer58 = wx.StaticBoxSizer( wx.StaticBox( self.m_panel54, wx.ID_ANY, u"Sei" ), wx.VERTICAL )
+
+        self.m_textCtrl16 = wx.TextCtrl( sbSizer58.GetStaticBox(), wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.Size( 400,-1 ), 0 )
+        sbSizer58.Add( self.m_textCtrl16, 0, wx.ALL, 5 )
+
+
+        self.m_panel54.SetSizer( sbSizer58 )
+        self.m_panel54.Layout()
+        sbSizer58.Fit( self.m_panel54 )
+        gSizer79.Add( self.m_panel54, 1, wx.EXPAND |wx.ALL, 5 )
+
+        self.m_panel55 = wx.Panel( sbSizer56.GetStaticBox(), wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, wx.TAB_TRAVERSAL )
+        sbSizer59 = wx.StaticBoxSizer( wx.StaticBox( self.m_panel55, wx.ID_ANY, u"Mei" ), wx.VERTICAL )
+
+        self.m_textCtrl17 = wx.TextCtrl( sbSizer59.GetStaticBox(), wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.Size( 400,-1 ), 0 )
+        sbSizer59.Add( self.m_textCtrl17, 0, wx.ALL, 5 )
+
+
+        self.m_panel55.SetSizer( sbSizer59 )
+        self.m_panel55.Layout()
+        sbSizer59.Fit( self.m_panel55 )
+        gSizer79.Add( self.m_panel55, 1, wx.EXPAND |wx.ALL, 5 )
+
+
+        gSizer78.Add( gSizer79, 1, wx.EXPAND, 5 )
+
+
+        sbSizer56.Add( gSizer78, 1, wx.EXPAND, 5 )
+
+        gSizer80 = wx.GridSizer( 0, 2, 0, 0 )
+
+        self.m_panel56 = wx.Panel( sbSizer56.GetStaticBox(), wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, wx.TAB_TRAVERSAL )
+        sbSizer60 = wx.StaticBoxSizer( wx.StaticBox( self.m_panel56, wx.ID_ANY, u"Hiragana full" ), wx.VERTICAL )
+
+        self.m_textCtrl18 = wx.TextCtrl( sbSizer60.GetStaticBox(), wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.Size( 400,-1 ), 0 )
+        sbSizer60.Add( self.m_textCtrl18, 0, wx.ALL, 5 )
+
+
+        self.m_panel56.SetSizer( sbSizer60 )
+        self.m_panel56.Layout()
+        sbSizer60.Fit( self.m_panel56 )
+        gSizer80.Add( self.m_panel56, 1, wx.EXPAND |wx.ALL, 5 )
+
+        gSizer81 = wx.GridSizer( 0, 2, 0, 0 )
+
+        self.m_panel57 = wx.Panel( sbSizer56.GetStaticBox(), wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, wx.TAB_TRAVERSAL )
+        sbSizer61 = wx.StaticBoxSizer( wx.StaticBox( self.m_panel57, wx.ID_ANY, u"Sei" ), wx.VERTICAL )
+
+        self.m_textCtrl19 = wx.TextCtrl( sbSizer61.GetStaticBox(), wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.Size( 400,-1 ), 0 )
+        sbSizer61.Add( self.m_textCtrl19, 0, wx.ALL, 5 )
+
+
+        self.m_panel57.SetSizer( sbSizer61 )
+        self.m_panel57.Layout()
+        sbSizer61.Fit( self.m_panel57 )
+        gSizer81.Add( self.m_panel57, 1, wx.EXPAND |wx.ALL, 5 )
+
+        self.m_panel58 = wx.Panel( sbSizer56.GetStaticBox(), wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, wx.TAB_TRAVERSAL )
+        sbSizer62 = wx.StaticBoxSizer( wx.StaticBox( self.m_panel58, wx.ID_ANY, u"Mei" ), wx.VERTICAL )
+
+        self.m_textCtrl20 = wx.TextCtrl( sbSizer62.GetStaticBox(), wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.Size( 400,-1 ), 0 )
+        sbSizer62.Add( self.m_textCtrl20, 0, wx.ALL, 5 )
+
+
+        self.m_panel58.SetSizer( sbSizer62 )
+        self.m_panel58.Layout()
+        sbSizer62.Fit( self.m_panel58 )
+        gSizer81.Add( self.m_panel58, 1, wx.EXPAND |wx.ALL, 5 )
+
+
+        gSizer80.Add( gSizer81, 1, wx.EXPAND, 5 )
+
+
+        sbSizer56.Add( gSizer80, 1, wx.EXPAND, 5 )
+
+        gSizer82 = wx.GridSizer( 0, 2, 0, 0 )
+
+        self.m_panel59 = wx.Panel( sbSizer56.GetStaticBox(), wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, wx.TAB_TRAVERSAL )
+        sbSizer63 = wx.StaticBoxSizer( wx.StaticBox( self.m_panel59, wx.ID_ANY, u"Katakana full" ), wx.VERTICAL )
+
+        self.m_textCtrl21 = wx.TextCtrl( sbSizer63.GetStaticBox(), wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.Size( 400,-1 ), 0 )
+        sbSizer63.Add( self.m_textCtrl21, 0, wx.ALL, 5 )
+
+
+        self.m_panel59.SetSizer( sbSizer63 )
+        self.m_panel59.Layout()
+        sbSizer63.Fit( self.m_panel59 )
+        gSizer82.Add( self.m_panel59, 1, wx.EXPAND |wx.ALL, 5 )
+
+        gSizer83 = wx.GridSizer( 0, 2, 0, 0 )
+
+        self.m_panel60 = wx.Panel( sbSizer56.GetStaticBox(), wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, wx.TAB_TRAVERSAL )
+        sbSizer64 = wx.StaticBoxSizer( wx.StaticBox( self.m_panel60, wx.ID_ANY, u"Sei" ), wx.VERTICAL )
+
+        self.m_textCtrl22 = wx.TextCtrl( sbSizer64.GetStaticBox(), wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.Size( 400,-1 ), 0 )
+        sbSizer64.Add( self.m_textCtrl22, 0, wx.ALL, 5 )
+
+
+        self.m_panel60.SetSizer( sbSizer64 )
+        self.m_panel60.Layout()
+        sbSizer64.Fit( self.m_panel60 )
+        gSizer83.Add( self.m_panel60, 1, wx.EXPAND |wx.ALL, 5 )
+
+        self.m_panel61 = wx.Panel( sbSizer56.GetStaticBox(), wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, wx.TAB_TRAVERSAL )
+        sbSizer65 = wx.StaticBoxSizer( wx.StaticBox( self.m_panel61, wx.ID_ANY, u"Mei" ), wx.VERTICAL )
+
+        self.m_textCtrl23 = wx.TextCtrl( sbSizer65.GetStaticBox(), wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.Size( 400,-1 ), 0 )
+        sbSizer65.Add( self.m_textCtrl23, 0, wx.ALL, 5 )
+
+
+        self.m_panel61.SetSizer( sbSizer65 )
+        self.m_panel61.Layout()
+        sbSizer65.Fit( self.m_panel61 )
+        gSizer83.Add( self.m_panel61, 1, wx.EXPAND |wx.ALL, 5 )
+
+
+        gSizer82.Add( gSizer83, 1, wx.EXPAND, 5 )
+
+
+        sbSizer56.Add( gSizer82, 1, wx.EXPAND, 5 )
+
+        gSizer84 = wx.GridSizer( 0, 2, 0, 0 )
+
+        gSizer85 = wx.GridSizer( 0, 2, 0, 0 )
+
+        self.m_panel62 = wx.Panel( sbSizer56.GetStaticBox(), wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, wx.TAB_TRAVERSAL )
+        sbSizer66 = wx.StaticBoxSizer( wx.StaticBox( self.m_panel62, wx.ID_ANY, u"Department name" ), wx.VERTICAL )
+
+        self.m_textCtrl24 = wx.TextCtrl( sbSizer66.GetStaticBox(), wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.Size( 200,-1 ), 0 )
+        sbSizer66.Add( self.m_textCtrl24, 0, wx.ALL, 5 )
+
+
+        self.m_panel62.SetSizer( sbSizer66 )
+        self.m_panel62.Layout()
+        sbSizer66.Fit( self.m_panel62 )
+        gSizer85.Add( self.m_panel62, 1, wx.EXPAND |wx.ALL, 5 )
+
+        self.m_panel63 = wx.Panel( sbSizer56.GetStaticBox(), wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, wx.TAB_TRAVERSAL )
+        sbSizer67 = wx.StaticBoxSizer( wx.StaticBox( self.m_panel63, wx.ID_ANY, u"Official position" ), wx.VERTICAL )
+
+        self.m_textCtrl25 = wx.TextCtrl( sbSizer67.GetStaticBox(), wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.Size( 200,-1 ), 0 )
+        sbSizer67.Add( self.m_textCtrl25, 0, wx.ALL, 5 )
+
+
+        self.m_panel63.SetSizer( sbSizer67 )
+        self.m_panel63.Layout()
+        sbSizer67.Fit( self.m_panel63 )
+        gSizer85.Add( self.m_panel63, 1, wx.EXPAND |wx.ALL, 5 )
+
+
+        gSizer84.Add( gSizer85, 1, wx.EXPAND, 5 )
+
+        gSizer86 = wx.GridSizer( 0, 2, 0, 0 )
+
+        self.m_panel64 = wx.Panel( sbSizer56.GetStaticBox(), wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, wx.TAB_TRAVERSAL )
+        sbSizer68 = wx.StaticBoxSizer( wx.StaticBox( self.m_panel64, wx.ID_ANY, u"Age" ), wx.VERTICAL )
+
+        self.m_textCtrl26 = wx.TextCtrl( sbSizer68.GetStaticBox(), wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.Size( 200,-1 ), 0 )
+        sbSizer68.Add( self.m_textCtrl26, 0, wx.ALL, 5 )
+
+
+        self.m_panel64.SetSizer( sbSizer68 )
+        self.m_panel64.Layout()
+        sbSizer68.Fit( self.m_panel64 )
+        gSizer86.Add( self.m_panel64, 1, wx.EXPAND |wx.ALL, 5 )
+
+
+        gSizer84.Add( gSizer86, 1, wx.EXPAND, 5 )
+
+
+        sbSizer56.Add( gSizer84, 1, wx.EXPAND, 5 )
+
+
+        self.m_panel53.SetSizer( sbSizer56 )
+        self.m_panel53.Layout()
+        sbSizer56.Fit( self.m_panel53 )
+        sbSizer151.Add( self.m_panel53, 1, wx.EXPAND |wx.ALL, 5 )
+
+        self.m_panel65 = wx.Panel( sbSizer151.GetStaticBox(), wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, wx.TAB_TRAVERSAL )
+        sbSizer69 = wx.StaticBoxSizer( wx.StaticBox( self.m_panel65, wx.ID_ANY, u"Location" ), wx.VERTICAL )
+
+        self.m_panel66 = wx.Panel( sbSizer69.GetStaticBox(), wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, wx.TAB_TRAVERSAL )
+        gSizer87 = wx.GridSizer( 0, 2, 0, 0 )
+
+        sbSizer70 = wx.StaticBoxSizer( wx.StaticBox( self.m_panel66, wx.ID_ANY, u"Postcode" ), wx.VERTICAL )
+
+        gSizer88 = wx.GridSizer( 0, 2, 0, 0 )
+
+        self.m_panel67 = wx.Panel( sbSizer70.GetStaticBox(), wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, wx.TAB_TRAVERSAL )
+        sbSizer71 = wx.StaticBoxSizer( wx.StaticBox( self.m_panel67, wx.ID_ANY, u"Hyphen included" ), wx.VERTICAL )
+
+        self.m_textCtrl27 = wx.TextCtrl( sbSizer71.GetStaticBox(), wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.Size( 400,-1 ), 0 )
+        sbSizer71.Add( self.m_textCtrl27, 0, wx.ALL, 5 )
+
+
+        self.m_panel67.SetSizer( sbSizer71 )
+        self.m_panel67.Layout()
+        sbSizer71.Fit( self.m_panel67 )
+        gSizer88.Add( self.m_panel67, 1, wx.EXPAND |wx.ALL, 5 )
+
+        gSizer89 = wx.GridSizer( 0, 2, 0, 0 )
+
+        self.m_panel68 = wx.Panel( sbSizer70.GetStaticBox(), wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, wx.TAB_TRAVERSAL )
+        sbSizer72 = wx.StaticBoxSizer( wx.StaticBox( self.m_panel68, wx.ID_ANY, u"Num1" ), wx.VERTICAL )
+
+        self.m_textCtrl28 = wx.TextCtrl( sbSizer72.GetStaticBox(), wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.Size( 400,-1 ), 0 )
+        sbSizer72.Add( self.m_textCtrl28, 0, wx.ALL, 5 )
+
+
+        self.m_panel68.SetSizer( sbSizer72 )
+        self.m_panel68.Layout()
+        sbSizer72.Fit( self.m_panel68 )
+        gSizer89.Add( self.m_panel68, 1, wx.EXPAND |wx.ALL, 5 )
+
+        self.m_panel69 = wx.Panel( sbSizer70.GetStaticBox(), wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, wx.TAB_TRAVERSAL )
+        sbSizer73 = wx.StaticBoxSizer( wx.StaticBox( self.m_panel69, wx.ID_ANY, u"Num2" ), wx.VERTICAL )
+
+        self.m_textCtrl29 = wx.TextCtrl( sbSizer73.GetStaticBox(), wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.Size( 400,-1 ), 0 )
+        sbSizer73.Add( self.m_textCtrl29, 0, wx.ALL, 5 )
+
+
+        self.m_panel69.SetSizer( sbSizer73 )
+        self.m_panel69.Layout()
+        sbSizer73.Fit( self.m_panel69 )
+        gSizer89.Add( self.m_panel69, 1, wx.EXPAND |wx.ALL, 5 )
+
+
+        gSizer88.Add( gSizer89, 1, wx.EXPAND, 5 )
+
+
+        sbSizer70.Add( gSizer88, 1, wx.EXPAND, 5 )
+
+
+        gSizer87.Add( sbSizer70, 1, wx.EXPAND, 5 )
+
+
+        self.m_panel66.SetSizer( gSizer87 )
+        self.m_panel66.Layout()
+        gSizer87.Fit( self.m_panel66 )
+        sbSizer69.Add( self.m_panel66, 1, wx.EXPAND |wx.ALL, 5 )
+
+        self.m_panel70 = wx.Panel( sbSizer69.GetStaticBox(), wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, wx.TAB_TRAVERSAL )
+        sbSizer74 = wx.StaticBoxSizer( wx.StaticBox( self.m_panel70, wx.ID_ANY, u"Detail" ), wx.VERTICAL )
+
+        gSizer90 = wx.GridSizer( 0, 2, 0, 0 )
+
+        gSizer91 = wx.GridSizer( 0, 2, 0, 0 )
+
+        self.m_panel71 = wx.Panel( sbSizer74.GetStaticBox(), wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, wx.TAB_TRAVERSAL )
+        sbSizer75 = wx.StaticBoxSizer( wx.StaticBox( self.m_panel71, wx.ID_ANY, u"Prefecture" ), wx.VERTICAL )
+
+#都道府県をリストへ格納
+        m_comboBox6Choices = ('北海道',
+                               '青森県',
+                               '岩手県',
+                               '宮城県',
+                               '秋田県',
+                               '山形県',
+                               '福島県',
+                               '茨城県',
+                               '栃木県',
+                               '群馬県',
+                               '埼玉県',
+                               '千葉県',
+                               '東京都',
+                               '神奈川県',
+                               '新潟県',
+                               '富山県',
+                               '石川県',
+                               '福井県',
+                               '山梨県',
+                               '長野県',
+                               '岐阜県',
+                               '静岡県',
+                               '愛知県',
+                               '三重県',
+                               '滋賀県',
+                               '京都府',
+                               '大阪府',
+                               '兵庫県',
+                               '奈良県',
+                               '和歌山県',
+                               '鳥取県',
+                               '島根県',
+                               '岡山県',
+                               '広島県',
+                               '山口県',
+                               '徳島県',
+                               '香川県',
+                               '愛媛県',
+                               '高知県',
+                               '福岡県',
+                               '佐賀県',
+                               '長崎県',
+                               '熊本県',
+                               '大分県',
+                               '宮崎県',
+                               '鹿児島県',
+                               '沖縄県')
+        print(m_comboBox6Choices)
+        self.m_comboBox6 = wx.ComboBox( sbSizer75.GetStaticBox(), wx.ID_ANY, u"選択して下さい", wx.DefaultPosition, wx.Size( 400,-1 ), m_comboBox6Choices, 0 )
+        sbSizer75.Add( self.m_comboBox6, 0, wx.ALL, 5 )
+
+
+        self.m_panel71.SetSizer( sbSizer75 )
+        self.m_panel71.Layout()
+        sbSizer75.Fit( self.m_panel71 )
+        gSizer91.Add( self.m_panel71, 1, wx.EXPAND |wx.ALL, 5 )
+
+        self.m_panel72 = wx.Panel( sbSizer74.GetStaticBox(), wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, wx.TAB_TRAVERSAL )
+        sbSizer76 = wx.StaticBoxSizer( wx.StaticBox( self.m_panel72, wx.ID_ANY, u"Municipalities" ), wx.VERTICAL )
+
+        self.m_textCtrl30 = wx.TextCtrl( sbSizer76.GetStaticBox(), wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.Size( 200,-1 ), 0 )
+        sbSizer76.Add( self.m_textCtrl30, 0, wx.ALL, 5 )
+
+
+        self.m_panel72.SetSizer( sbSizer76 )
+        self.m_panel72.Layout()
+        sbSizer76.Fit( self.m_panel72 )
+        gSizer91.Add( self.m_panel72, 1, wx.EXPAND |wx.ALL, 5 )
+
+
+        gSizer90.Add( gSizer91, 1, wx.EXPAND, 5 )
+
+        gSizer92 = wx.GridSizer( 0, 2, 0, 0 )
+
+        self.m_panel73 = wx.Panel( sbSizer74.GetStaticBox(), wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, wx.TAB_TRAVERSAL )
+        sbSizer77 = wx.StaticBoxSizer( wx.StaticBox( self.m_panel73, wx.ID_ANY, u"address" ), wx.VERTICAL )
+
+        self.m_textCtrl31 = wx.TextCtrl( sbSizer77.GetStaticBox(), wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.Size( 200,-1 ), 0 )
+        sbSizer77.Add( self.m_textCtrl31, 0, wx.ALL, 5 )
+
+
+        self.m_panel73.SetSizer( sbSizer77 )
+        self.m_panel73.Layout()
+        sbSizer77.Fit( self.m_panel73 )
+        gSizer92.Add( self.m_panel73, 1, wx.EXPAND |wx.ALL, 5 )
+
+        self.m_panel74 = wx.Panel( sbSizer74.GetStaticBox(), wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, wx.TAB_TRAVERSAL )
+        sbSizer78 = wx.StaticBoxSizer( wx.StaticBox( self.m_panel74, wx.ID_ANY, u"Building" ), wx.VERTICAL )
+
+        self.m_textCtrl32 = wx.TextCtrl( sbSizer78.GetStaticBox(), wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.Size( 200,-1 ), 0 )
+        sbSizer78.Add( self.m_textCtrl32, 0, wx.ALL, 5 )
+
+
+        self.m_panel74.SetSizer( sbSizer78 )
+        self.m_panel74.Layout()
+        sbSizer78.Fit( self.m_panel74 )
+        gSizer92.Add( self.m_panel74, 1, wx.EXPAND |wx.ALL, 5 )
+
+
+        gSizer90.Add( gSizer92, 1, wx.EXPAND, 5 )
+
+
+        sbSizer74.Add( gSizer90, 1, wx.EXPAND, 5 )
+
+
+        self.m_panel70.SetSizer( sbSizer74 )
+        self.m_panel70.Layout()
+        sbSizer74.Fit( self.m_panel70 )
+        sbSizer69.Add( self.m_panel70, 1, wx.EXPAND |wx.ALL, 5 )
+
+
+        self.m_panel65.SetSizer( sbSizer69 )
+        self.m_panel65.Layout()
+        sbSizer69.Fit( self.m_panel65 )
+        sbSizer151.Add( self.m_panel65, 1, wx.EXPAND |wx.ALL, 5 )
+
+        self.m_panel75 = wx.Panel( sbSizer151.GetStaticBox(), wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, wx.TAB_TRAVERSAL )
+        self.m_panel75.SetFont( wx.Font( 10, wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_NORMAL, False, "Meiryo UI" ) )
+
+        sbSizer79 = wx.StaticBoxSizer( wx.StaticBox( self.m_panel75, wx.ID_ANY, u"Contact" ), wx.VERTICAL )
+
+        self.m_panel76 = wx.Panel( sbSizer79.GetStaticBox(), wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, wx.TAB_TRAVERSAL )
+        sbSizer80 = wx.StaticBoxSizer( wx.StaticBox( self.m_panel76, wx.ID_ANY, u"Tel number" ), wx.VERTICAL )
+
+        gSizer93 = wx.GridSizer( 0, 2, 0, 0 )
+
+        gSizer94 = wx.GridSizer( 0, 2, 0, 0 )
+
+        self.m_panel77 = wx.Panel( sbSizer80.GetStaticBox(), wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, wx.TAB_TRAVERSAL )
+        sbSizer81 = wx.StaticBoxSizer( wx.StaticBox( self.m_panel77, wx.ID_ANY, u"Hyphen included" ), wx.VERTICAL )
+
+        self.m_textCtrl33 = wx.TextCtrl( sbSizer81.GetStaticBox(), wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.Size( 400,-1 ), 0 )
+        sbSizer81.Add( self.m_textCtrl33, 0, wx.ALL, 5 )
+
+
+        self.m_panel77.SetSizer( sbSizer81 )
+        self.m_panel77.Layout()
+        sbSizer81.Fit( self.m_panel77 )
+        gSizer94.Add( self.m_panel77, 1, wx.EXPAND |wx.ALL, 5 )
+
+        self.m_panel78 = wx.Panel( sbSizer80.GetStaticBox(), wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, wx.TAB_TRAVERSAL )
+        sbSizer82 = wx.StaticBoxSizer( wx.StaticBox( self.m_panel78, wx.ID_ANY, u"Num1" ), wx.VERTICAL )
+
+        self.m_textCtrl34 = wx.TextCtrl( sbSizer82.GetStaticBox(), wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.Size( 400,-1 ), 0 )
+        sbSizer82.Add( self.m_textCtrl34, 0, wx.ALL, 5 )
+
+
+        self.m_panel78.SetSizer( sbSizer82 )
+        self.m_panel78.Layout()
+        sbSizer82.Fit( self.m_panel78 )
+        gSizer94.Add( self.m_panel78, 1, wx.EXPAND |wx.ALL, 5 )
+
+
+        gSizer93.Add( gSizer94, 1, wx.EXPAND, 5 )
+
+        gSizer95 = wx.GridSizer( 0, 2, 0, 0 )
+
+        self.m_panel79 = wx.Panel( sbSizer80.GetStaticBox(), wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, wx.TAB_TRAVERSAL )
+        sbSizer83 = wx.StaticBoxSizer( wx.StaticBox( self.m_panel79, wx.ID_ANY, u"Num2" ), wx.VERTICAL )
+
+        self.m_textCtrl35 = wx.TextCtrl( sbSizer83.GetStaticBox(), wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.Size( 400,-1 ), 0 )
+        sbSizer83.Add( self.m_textCtrl35, 0, wx.ALL, 5 )
+
+
+        self.m_panel79.SetSizer( sbSizer83 )
+        self.m_panel79.Layout()
+        sbSizer83.Fit( self.m_panel79 )
+        gSizer95.Add( self.m_panel79, 1, wx.EXPAND |wx.ALL, 5 )
+
+        self.m_panel80 = wx.Panel( sbSizer80.GetStaticBox(), wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, wx.TAB_TRAVERSAL )
+        sbSizer84 = wx.StaticBoxSizer( wx.StaticBox( self.m_panel80, wx.ID_ANY, u"Num3" ), wx.VERTICAL )
+
+        self.m_textCtrl36 = wx.TextCtrl( sbSizer84.GetStaticBox(), wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.Size( 400,-1 ), 0 )
+        sbSizer84.Add( self.m_textCtrl36, 0, wx.ALL, 5 )
+
+
+        self.m_panel80.SetSizer( sbSizer84 )
+        self.m_panel80.Layout()
+        sbSizer84.Fit( self.m_panel80 )
+        gSizer95.Add( self.m_panel80, 1, wx.EXPAND |wx.ALL, 5 )
+
+
+        gSizer93.Add( gSizer95, 1, wx.EXPAND, 5 )
+
+
+        sbSizer80.Add( gSizer93, 1, wx.EXPAND, 5 )
+
+
+        self.m_panel76.SetSizer( sbSizer80 )
+        self.m_panel76.Layout()
+        sbSizer80.Fit( self.m_panel76 )
+        sbSizer79.Add( self.m_panel76, 1, wx.EXPAND |wx.ALL, 5 )
+
+        self.m_panel81 = wx.Panel( sbSizer79.GetStaticBox(), wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, wx.TAB_TRAVERSAL )
+        sbSizer85 = wx.StaticBoxSizer( wx.StaticBox( self.m_panel81, wx.ID_ANY, u"Email address" ), wx.VERTICAL )
+
+        gSizer96 = wx.GridSizer( 0, 2, 0, 0 )
+
+        gSizer97 = wx.GridSizer( 0, 2, 0, 0 )
+
+        self.m_panel82 = wx.Panel( sbSizer85.GetStaticBox(), wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, wx.TAB_TRAVERSAL )
+        sbSizer86 = wx.StaticBoxSizer( wx.StaticBox( self.m_panel82, wx.ID_ANY, u"At mark included" ), wx.VERTICAL )
+
+        self.m_textCtrl37 = wx.TextCtrl( sbSizer86.GetStaticBox(), wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.Size( 400,-1 ), 0 )
+        sbSizer86.Add( self.m_textCtrl37, 0, wx.ALL, 5 )
+
+
+        self.m_panel82.SetSizer( sbSizer86 )
+        self.m_panel82.Layout()
+        sbSizer86.Fit( self.m_panel82 )
+        gSizer97.Add( self.m_panel82, 1, wx.EXPAND |wx.ALL, 5 )
+
+        self.m_panel83 = wx.Panel( sbSizer85.GetStaticBox(), wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, wx.TAB_TRAVERSAL )
+        sbSizer87 = wx.StaticBoxSizer( wx.StaticBox( self.m_panel83, wx.ID_ANY, u"Account name" ), wx.VERTICAL )
+
+        self.m_textCtrl38 = wx.TextCtrl( sbSizer87.GetStaticBox(), wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.Size( 400,-1 ), 0 )
+        sbSizer87.Add( self.m_textCtrl38, 0, wx.ALL, 5 )
+
+
+        self.m_panel83.SetSizer( sbSizer87 )
+        self.m_panel83.Layout()
+        sbSizer87.Fit( self.m_panel83 )
+        gSizer97.Add( self.m_panel83, 1, wx.EXPAND |wx.ALL, 5 )
+
+
+        gSizer96.Add( gSizer97, 1, wx.EXPAND, 5 )
+
+        gSizer98 = wx.GridSizer( 0, 2, 0, 0 )
+
+        self.m_panel84 = wx.Panel( sbSizer85.GetStaticBox(), wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, wx.TAB_TRAVERSAL )
+        sbSizer88 = wx.StaticBoxSizer( wx.StaticBox( self.m_panel84, wx.ID_ANY, u"Domain name" ), wx.VERTICAL )
+
+        self.m_textCtrl39 = wx.TextCtrl( sbSizer88.GetStaticBox(), wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.Size( 400,-1 ), 0 )
+        sbSizer88.Add( self.m_textCtrl39, 0, wx.ALL, 5 )
+
+
+        self.m_panel84.SetSizer( sbSizer88 )
+        self.m_panel84.Layout()
+        sbSizer88.Fit( self.m_panel84 )
+        gSizer98.Add( self.m_panel84, 1, wx.EXPAND |wx.ALL, 5 )
+
+
+        gSizer96.Add( gSizer98, 1, wx.EXPAND, 5 )
+
+
+        sbSizer85.Add( gSizer96, 1, wx.EXPAND, 5 )
+
+
+        self.m_panel81.SetSizer( sbSizer85 )
+        self.m_panel81.Layout()
+        sbSizer85.Fit( self.m_panel81 )
+        sbSizer79.Add( self.m_panel81, 1, wx.EXPAND |wx.ALL, 5 )
+
+
+        self.m_panel75.SetSizer( sbSizer79 )
+        self.m_panel75.Layout()
+        sbSizer79.Fit( self.m_panel75 )
+        sbSizer151.Add( self.m_panel75, 1, wx.EXPAND |wx.ALL, 5 )
+
+
+        self.m_panel22.SetSizer( sbSizer151 )
+        self.m_panel22.Layout()
+        sbSizer151.Fit( self.m_panel22 )
+        hbox4.Add( self.m_panel22, 1, wx.EXPAND |wx.ALL, 5 )
+
+        self.btn11 = wx.Button( self, wx.ID_ANY, u"Save", wx.DefaultPosition, wx.DefaultSize, 0 )
+        self.btn11.SetFont( wx.Font( 10, wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_NORMAL, False, "Meiryo UI" ) )
+
+        hbox4.Add( self.btn11, 0, wx.ALL, 5 )
+
+
+        self.SetSizer( hbox4 )
+        self.Layout()
+
+        self.Centre( wx.BOTH )
+
+# Connect Events
+        self.btn11.Bind( wx.EVT_BUTTON, self.write )
+        self.Bind( wx.EVT_CLOSE, self.quit_button )
+
+#設定情報（json）読み込み
+#文字コードをUTF-8に変換しないとエラーが発生するため注意！！
+        with codecs.open('setting.json','r',encoding='utf-8') as f:
+            j = json.load(f)
+#            print(j)
+            f.close()
+            self.m_textCtrl11.SetValue(j['companyname'])
+            self.m_textCtrl12.SetValue(j['companyhiragana'])
+            self.m_textCtrl13.SetValue(j['companykatakana'])
+            self.m_comboBox61.SetValue(j['industry'])
+            self.m_textCtrl14.SetValue(j['bussinesscontent'])
+            self.m_textCtrl15.SetValue(j['kanjifull'])
+            self.m_textCtrl16.SetValue(j['kanjisei'])
+            self.m_textCtrl17.SetValue(j['kanjimei'])
+            self.m_textCtrl18.SetValue(j['hiraganafull'])
+            self.m_textCtrl19.SetValue(j['hiraganasei'])
+            self.m_textCtrl20.SetValue(j['hiraganamei'])
+            self.m_textCtrl21.SetValue(j['katakanafull'])
+            self.m_textCtrl22.SetValue(j['katakanasei'])
+            self.m_textCtrl23.SetValue(j['katakanamei'])
+            self.m_textCtrl24.SetValue(j['department'])
+            self.m_textCtrl25.SetValue(j['position'])
+            self.m_textCtrl26.SetValue(j['age'])
+            self.m_textCtrl27.SetValue(j['postcodefull'])
+            self.m_textCtrl28.SetValue(j['postcode1'])
+            self.m_textCtrl29.SetValue(j['postcode2'])
+            self.m_comboBox6.SetValue(j['prefecture'])
+            self.m_textCtrl30.SetValue(j['municipalities'])
+            self.m_textCtrl31.SetValue(j['address'])
+            self.m_textCtrl32.SetValue(j['building'])
+            self.m_textCtrl33.SetValue(j['telnumberfull'])
+            self.m_textCtrl34.SetValue(j['tel1'])
+            self.m_textCtrl35.SetValue(j['tel2'])
+            self.m_textCtrl36.SetValue(j['tel3'])
+            self.m_textCtrl37.SetValue(j['email'])
+            self.m_textCtrl38.SetValue(j['account'])
+            self.m_textCtrl39.SetValue(j['domain'])
+
+#設定情報（json）書き出し
+    def write(self, event):
+            if self.m_comboBox6.GetValue() == '選択して下さい' \
+                or self.m_textCtrl11.GetValue() == '' \
+                    or self.m_textCtrl12.GetValue() == '' \
+                        or self.m_textCtrl13.GetValue() == '' \
+                            or self.m_textCtrl14.GetValue() == '' \
+                                or self.m_textCtrl15.GetValue() == '' \
+                                    or self.m_textCtrl16.GetValue() == '' \
+                                        or self.m_textCtrl17.GetValue() == '' \
+                                            or self.m_textCtrl18.GetValue() == '' \
+                                                or self.m_textCtrl19.GetValue() == '' \
+                                                    or self.m_textCtrl20.GetValue() == '' \
+                                                        or self.m_textCtrl21.GetValue() == '' \
+                                                            or self.m_textCtrl22.GetValue() == '' \
+                                                                or self.m_textCtrl23.GetValue() == '' \
+                                                                    or self.m_textCtrl24.GetValue() == '' \
+                                                                        or self.m_textCtrl25.GetValue() == '' \
+                                                                            or self.m_textCtrl26.GetValue() == '' \
+                                                                                or self.m_textCtrl27.GetValue() == '' \
+                                                                                    or self.m_textCtrl28.GetValue() == '' \
+                                                                                        or self.m_textCtrl29.GetValue() == '' \
+                                                                                            or self.m_textCtrl30.GetValue() == '' \
+                                                                                                or self.m_textCtrl31.GetValue() == '' \
+                                                                                                    or self.m_textCtrl32.GetValue() == '' \
+                                                                                                        or self.m_textCtrl33.GetValue() == '' \
+                                                                                                            or self.m_textCtrl34.GetValue() == '' \
+                                                                                                                or self.m_textCtrl35.GetValue() == '' \
+                                                                                                                    or self.m_textCtrl36.GetValue() == '' \
+                                                                                                                        or self.m_textCtrl37.GetValue() == '' \
+                                                                                                                            or self.m_textCtrl38.GetValue() == '' \
+                                                                                                                                or self.m_textCtrl39.GetValue() == '' \
+                                                                                                                                    or self.m_comboBox61.GetValue() == '選択して下さい':
+              self.m_comboBox6.SetBackgroundColour('#f56cbe')
+              self.m_comboBox61.SetBackgroundColour('#f56cbe')
+              self.m_textCtrl11.SetBackgroundColour('#f56cbe')
+              self.m_textCtrl12.SetBackgroundColour('#f56cbe')
+              self.m_textCtrl13.SetBackgroundColour('#f56cbe')
+              self.m_textCtrl14.SetBackgroundColour('#f56cbe')
+              self.m_textCtrl15.SetBackgroundColour('#f56cbe')
+              self.m_textCtrl16.SetBackgroundColour('#f56cbe')
+              self.m_textCtrl17.SetBackgroundColour('#f56cbe')
+              self.m_textCtrl18.SetBackgroundColour('#f56cbe')
+              self.m_textCtrl19.SetBackgroundColour('#f56cbe')
+              self.m_textCtrl20.SetBackgroundColour('#f56cbe')
+              self.m_textCtrl21.SetBackgroundColour('#f56cbe')
+              self.m_textCtrl22.SetBackgroundColour('#f56cbe')
+              self.m_textCtrl23.SetBackgroundColour('#f56cbe')
+              self.m_textCtrl24.SetBackgroundColour('#f56cbe')
+              self.m_textCtrl25.SetBackgroundColour('#f56cbe')
+              self.m_textCtrl26.SetBackgroundColour('#f56cbe')
+              self.m_textCtrl27.SetBackgroundColour('#f56cbe')
+              self.m_textCtrl28.SetBackgroundColour('#f56cbe')
+              self.m_textCtrl29.SetBackgroundColour('#f56cbe')
+              self.m_textCtrl30.SetBackgroundColour('#f56cbe')
+              self.m_textCtrl31.SetBackgroundColour('#f56cbe')
+              self.m_textCtrl32.SetBackgroundColour('#f56cbe')
+              self.m_textCtrl33.SetBackgroundColour('#f56cbe')
+              self.m_textCtrl34.SetBackgroundColour('#f56cbe')
+              self.m_textCtrl35.SetBackgroundColour('#f56cbe')
+              self.m_textCtrl36.SetBackgroundColour('#f56cbe')
+              self.m_textCtrl37.SetBackgroundColour('#f56cbe')
+              self.m_textCtrl38.SetBackgroundColour('#f56cbe')
+              self.m_textCtrl39.SetBackgroundColour('#f56cbe')
+              wx.MessageBox(u'There are unselected or blank areas!!', u'Setting value error', wx.ICON_ERROR)
+            else:
+              self.m_comboBox6.SetBackgroundColour('#FFFFFF')
+              self.m_comboBox61.SetBackgroundColour('#FFFFFF')
+              self.m_textCtrl11.SetBackgroundColour('#FFFFFF')
+              self.m_textCtrl12.SetBackgroundColour('#FFFFFF')
+              self.m_textCtrl13.SetBackgroundColour('#FFFFFF')
+              self.m_textCtrl14.SetBackgroundColour('#FFFFFF')
+              self.m_textCtrl15.SetBackgroundColour('#FFFFFF')
+              self.m_textCtrl16.SetBackgroundColour('#FFFFFF')
+              self.m_textCtrl17.SetBackgroundColour('#FFFFFF')
+              self.m_textCtrl18.SetBackgroundColour('#FFFFFF')
+              self.m_textCtrl19.SetBackgroundColour('#FFFFFF')
+              self.m_textCtrl20.SetBackgroundColour('#FFFFFF')
+              self.m_textCtrl21.SetBackgroundColour('#FFFFFF')
+              self.m_textCtrl22.SetBackgroundColour('#FFFFFF')
+              self.m_textCtrl23.SetBackgroundColour('#FFFFFF')
+              self.m_textCtrl24.SetBackgroundColour('#FFFFFF')
+              self.m_textCtrl25.SetBackgroundColour('#FFFFFF')
+              self.m_textCtrl26.SetBackgroundColour('#FFFFFF')
+              self.m_textCtrl27.SetBackgroundColour('#FFFFFF')
+              self.m_textCtrl28.SetBackgroundColour('#FFFFFF')
+              self.m_textCtrl29.SetBackgroundColour('#FFFFFF')
+              self.m_textCtrl30.SetBackgroundColour('#FFFFFF')
+              self.m_textCtrl31.SetBackgroundColour('#FFFFFF')
+              self.m_textCtrl32.SetBackgroundColour('#FFFFFF')
+              self.m_textCtrl33.SetBackgroundColour('#FFFFFF')
+              self.m_textCtrl34.SetBackgroundColour('#FFFFFF')
+              self.m_textCtrl35.SetBackgroundColour('#FFFFFF')
+              self.m_textCtrl36.SetBackgroundColour('#FFFFFF')
+              self.m_textCtrl37.SetBackgroundColour('#FFFFFF')
+              self.m_textCtrl38.SetBackgroundColour('#FFFFFF')
+              self.m_textCtrl39.SetBackgroundColour('#FFFFFF')
+
+#文字コードをUTF-8に変換しないとエラー発生がするため注意！！
+              with open('setting.json','w',encoding='utf-8') as f:
+                w_data = {}
+                w_data['prefecture'] = self.m_comboBox6.GetValue()
+                w_data['industry'] = self.m_comboBox61.GetValue()
+                w_data['companyname'] = self.m_textCtrl11.GetValue()
+                w_data['companyhiragana'] = self.m_textCtrl12.GetValue()
+                w_data['companykatakana'] = self.m_textCtrl13.GetValue()
+                w_data['businesscontent'] = self.m_textCtrl14.GetValue()
+                w_data['kanjifull'] = self.m_textCtrl15.GetValue()
+                w_data['kanjisei'] = self.m_textCtrl16.GetValue()
+                w_data['kanjimei'] = self.m_textCtrl17.GetValue()
+                w_data['hiraganafull'] = self.m_textCtrl18.GetValue()
+                w_data['hiraganasei'] = self.m_textCtrl19.GetValue()
+                w_data['hiraganamei'] = self.m_textCtrl20.GetValue()
+                w_data['katakanafull'] = self.m_textCtrl21.GetValue()
+                w_data['katakanasei'] = self.m_textCtrl22.GetValue()
+                w_data['katakanamei'] = self.m_textCtrl23.GetValue()
+                w_data['department'] = self.m_textCtrl24.GetValue()
+                w_data['position'] = self.m_textCtrl25.GetValue()
+                w_data['age'] = self.m_textCtrl26.GetValue()
+                w_data['postcodefull'] = self.m_textCtrl27.GetValue()
+                w_data['postcode1'] = self.m_textCtrl28.GetValue()
+                w_data['postcode2'] = self.m_textCtrl29.GetValue()
+                w_data['municipalities'] = self.m_textCtrl30.GetValue()
+                w_data['address'] = self.m_textCtrl31.GetValue()
+                w_data['building'] = self.m_textCtrl32.GetValue()
+                w_data['telnumberfull'] = self.m_textCtrl33.GetValue()
+                w_data['tel1'] = self.m_textCtrl34.GetValue()
+                w_data['tel2'] = self.m_textCtrl35.GetValue()
+                w_data['tel3'] = self.m_textCtrl36.GetValue()
+                w_data['email'] = self.m_textCtrl37.GetValue()
+                w_data['account'] = self.m_textCtrl38.GetValue()
+                w_data['domain'] = self.m_textCtrl39.GetValue()
+
+                json.dump(w_data, f, ensure_ascii=False, indent=1, sort_keys=True, separators=(',', ': '))
+                print('WRITE:')
+ #               print(w_data)
+                self.Destroy()
+
+# TODO: Implement quit_button
+    def quit_button( self, event ):
+        self.Destroy()
+        
+class MyProject1MyDialog5( app.MyDialog5 ):
+    def __init__(self, parent):
+        app.MyDialog5.__init__(self, parent)
+        self.parent = parent
+
                      
 class MyProject1MyFrame4( app.MyFrame4 ):
 	def __init__( self, parent ):
