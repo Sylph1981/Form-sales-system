@@ -79,6 +79,8 @@ class MyProject1MyFrame2( app.MyFrame2 ):
 #Connect Events
 		self.Bind( wx.EVT_MENU, self.quit_button, self.m_menuItem2 )
 		self.Bind( wx.EVT_MENU, self.Configuration, self.m_menuItem11 )
+		self.Bind( wx.EVT_MENU, self.Profile, self.m_menuItem12 )
+		self.Bind( wx.EVT_MENU, self.Send_email_body, self.m_menuItem13 )
 		self.Bind( wx.EVT_MENU, self.create_button, self.m_menuItem111 )
 		self.Bind( wx.EVT_MENU, self.inquiry_button, self.m_menuItem211 )
 		self.Bind(wx.EVT_CLOSE, self.quit_button) 
@@ -148,7 +150,7 @@ class MyProject1MyFrame2( app.MyFrame2 ):
 
 	      self.row1 = wx.SpinCtrl( self.m_panel5, wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.Size( 100,-1 ), wx.SP_ARROW_KEYS, 0, 1000, 0 )
 	      gSizer5.Add( self.row1, 0, wx.ALL, 5 )
-	      self.row1.Disable()
+#	      self.row1.Disable()
 
 	      self.m_staticText6 = wx.StaticText( self.m_panel5, wx.ID_ANY, u"last", wx.DefaultPosition, wx.DefaultSize, 0 )
 	      self.m_staticText6.Wrap( -1 )
@@ -157,7 +159,7 @@ class MyProject1MyFrame2( app.MyFrame2 ):
 
 	      self.row2 = wx.SpinCtrl( self.m_panel5, wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.Size( 100,-1 ), wx.SP_ARROW_KEYS, 0, 1000, 0 )
 	      gSizer5.Add( self.row2, 0, wx.ALL, 5 )
-	      self.row2.Disable()
+#	      self.row2.Disable()
 
 	      self.m_staticText61 = wx.StaticText( self.m_panel5, wx.ID_ANY, u"sheet title", wx.DefaultPosition, wx.DefaultSize, 0 )
 	      self.m_staticText61.Wrap( -1 )
@@ -176,18 +178,18 @@ class MyProject1MyFrame2( app.MyFrame2 ):
         
 #現在のワークシートのタイトルをリストへ格納
 	      m_comboBox1Choices = [worksheet.title for worksheet in worksheets]
-	      print(m_comboBox1Choices)
+#	      print(m_comboBox1Choices)
 	      self.m_comboBox1 = wx.ComboBox( self.m_panel5, wx.ID_ANY, u"選択して下さい", wx.DefaultPosition, wx.DefaultSize, m_comboBox1Choices, wx.CB_DROPDOWN )
         
 	      gSizer5.Add( self.m_comboBox1, 0, wx.ALL, 5 )
 
 #（お問い合わせページの抽出：機能未完成によりドロップボックスを無効）        
-	      self.m_comboBox1.Enable(False)
-#	      self.m_comboBox1.Enable(True)
+#	      self.m_comboBox1.Enable(False)
+	      self.m_comboBox1.Enable(True)
 
 	      self.btn3 = wx.Button( self.m_panel5, wx.ID_ANY, u"Check", wx.DefaultPosition, wx.DefaultSize, 0 )
 	      self.btn3.SetFont( wx.Font( 10, wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_NORMAL, False, "Meiryo UI" ) )
-	      self.btn3.Disable()
+#	      self.btn3.Disable()
           
 	      gSizer5.Add( self.btn3, 0, wx.ALL, 5 )
 
@@ -248,7 +250,7 @@ class MyProject1MyFrame2( app.MyFrame2 ):
 
 	      m_comboBox11Choices = [worksheet.title for worksheet in worksheets]
 	      self.m_comboBox11 = wx.ComboBox( self.m_panel51, wx.ID_ANY, u"選択して下さい", wx.DefaultPosition, wx.DefaultSize, m_comboBox11Choices, wx.CB_DROPDOWN )
-	      print(m_comboBox1Choices)
+#	      print(m_comboBox1Choices)
 
 	      gSizer51.Add( self.m_comboBox11, 0, wx.ALL, 5 )
 
@@ -292,20 +294,9 @@ class MyProject1MyFrame2( app.MyFrame2 ):
 	      self.m_panel6.Layout()
 	      sbSizer5.Fit( self.m_panel6 )
 
-
-#存在するワークシートの情報を全て取得
-#		worksheets = wb.worksheets()
-        
-#現在のワークシートのタイトルをリストへ格納
-#		m_comboBox1Choices = [worksheet.title for worksheet in worksheets]
-#		print(m_comboBox1Choices)        
-#		self.m_comboBox1 = wx.ComboBox( sbSizer15.GetStaticBox(), wx.ID_ANY, u"選択して下さい", wx.DefaultPosition, wx.DefaultSize, m_comboBox1Choices, wx.CB_DROPDOWN )
-#		sbSizer15.Add( self.m_comboBox1, 0, wx.ALL, 5 )
-
-#		self.m_panel17.SetSizer( sbSizer15 )
-#		self.m_panel17.Layout()
-#		sbSizer15.Fit( self.m_panel17 )
-#		gSizer5.Add( self.m_panel17, 1, wx.EXPAND |wx.ALL, 5 )
+# Connect Events
+	      self.btn3.Bind( wx.EVT_BUTTON, self.inquiry_url )
+	      self.btn31.Bind( wx.EVT_BUTTON, self.inquiry_post )
 
         
 	# Handlers for MyFrame2 events.
@@ -319,14 +310,8 @@ class MyProject1MyFrame2( app.MyFrame2 ):
 	   elif not 'chromedriver.exe' in adid.m_textCtrl111.GetValue():
 	      wx.MessageBox(u'The web driver file is not set or the file path does not pass!!', u'Setting value error', wx.ICON_ERROR)          
 	   else:
+#MyFrame2のテキストボックス及びコンボボックスの値をMyDialogに受け渡し
 	    adid = MyProject1MyDialog(self)
-        
-#MyFrame2のテキストボックス及びコンボボックスの値をMyDialogに受け渡し        
-#	    adid.import_json_file(self.m_textCtrl11.GetValue())        
-#	    adid.import_sheet_title(self.m_comboBox6.GetValue())
-#	    adid.import_webdriver_file(self.m_textCtrl111.GetValue())
-#		adid.select_sql(self.m_textCtrl1.GetValue())
-#		adid.page_list(self.m_textCtrl1.GetValue())
 	    adid.ShowModal()
 	    adid.Destroy()
 	def quit_button( self, event ):
@@ -334,7 +319,9 @@ class MyProject1MyFrame2( app.MyFrame2 ):
 		self.Destroy()
         
 	def inquiry_url( self, event ):
-		# TODO: Implement select_sql
+		adid = MyProject1MyDialog3(self)
+		credentials = ServiceAccountCredentials.from_json_keyfile_name(adid.m_textCtrl11.GetValue(), scope)
+		gc = gspread.authorize(credentials)                   
 		row1 = self.row1.GetValue()
 		row2 = self.row2.GetValue()
 
@@ -380,20 +367,17 @@ class MyProject1MyFrame2( app.MyFrame2 ):
 		 option.add_argument('--disable-dev-shm-usage')
 
 # ChromeのWebDriverオブジェクトを作成する。
-		 driver = webdriver.Chrome(self.m_textCtrl11.GetValue(),options=option)
+		 driver = webdriver.Chrome(adid.m_textCtrl111.GetValue(),options=option)
 		 driver.set_page_load_timeout(60)
-                        
-		 credentials = ServiceAccountCredentials.from_json_keyfile_name(self.m_textCtrl11.GetValue(), scope)
-		 gc = gspread.authorize(credentials)
-		 wb = gc.open_by_key(self.m_comboBox6.GetValue())            
+		 wb = gc.open_by_key(adid.m_comboBox6.GetValue())            
 		 ws3 = wb.worksheet(self.m_comboBox1.GetValue())
 		 self.row1.SetBackgroundColour('#FFFFFF')
 		 self.row2.SetBackgroundColour('#FFFFFF')
 		 self.m_comboBox1.SetBackgroundColour("#FFFFFF")
 		 adid = MyProject1MyFrame5(self)
 		 adid.grid.ClearGrid()
-		 self.m_gauge2.SetValue( 0 )         
-		 self.m_gauge2.SetRange(row2-row1)
+#		 self.m_gauge2.SetValue( 0 )
+#		 self.m_gauge2.SetRange(row2-row1)
          
 		 dlg = wx.ProgressDialog(
             title="お問い合わせページ抽出中",
@@ -662,7 +646,7 @@ class MyProject1MyFrame2( app.MyFrame2 ):
 		         for j in range(1,len(links_3)):    
 		          time.sleep(1)		        
 		          ws3.update_cell(k, 6, ws3.cell(k, 5).value + links_3[j-1])
-		          print(ws3.cell(k, 7).value)
+		          print(ws3.cell(k, 6).value)
 
 #リストlinks_4が空、リストlinks_3が空、且つリストlinks_2が空でない		      		      		          
 		      elif not links_2 == [] \
@@ -762,45 +746,1225 @@ class MyProject1MyFrame2( app.MyFrame2 ):
 		 print("所要時間：" + str(elapsed_hour).zfill(2) + "h" \
 		       + str(elapsed_minute).zfill(2) + "m" + str(elapsed_second).zfill(2) + "s")
 
-		 cell_list1 = ws3.range(row1, 1, row2, 1)
-		 cell_list2 = ws3.range(row1, 2, row2, 2)
-		 cell_list3 = ws3.range(row1, 3, row2, 3)
-		 cell_list4 = ws3.range(row1, 4, row2, 4)
-		 cell_list5 = ws3.range(row1, 5, row2, 5)
-		 cell_list6 = ws3.range(row1, 6, row2, 6)
+#MyDialogの各設定値をMyFrame5に受け渡し
+		 adid = MyProject1MyFrame5(self)
+		 adid.grid.ClearGrid()
+		 dlg = wx.ProgressDialog(
+            title="リスト取得中",
+            message="0/100",
+            maximum=100,
+            style=wx.PD_AUTO_HIDE | wx.PD_ELAPSED_TIME | wx.PD_ESTIMATED_TIME | wx.PD_REMAINING_TIME )         
          
-#		i = 0
-#		for row in range(row1, row2):
+# ダイアログ表示
+		 dlg.Show()
+		 rate = 0
+
+		 cell_list1 = ws3.range(1, 1, row2, 1)
+		 cell_list2 = ws3.range(1, 2, row2, 2)
+		 cell_list3 = ws3.range(1, 3, row2, 3)
+		 cell_list4 = ws3.range(1, 4, row2, 4)
+		 cell_list5 = ws3.range(1, 5, row2, 5)
+		 cell_list6 = ws3.range(1, 6, row2, 6)
+         
 		 i = 0
-		 for row in range((row2+1)-row1):           
+		 for row in range(row2):           
 		    adid.grid.SetCellValue(row, 0, cell_list1[i].value)
 		    adid.grid.SetCellValue(row, 1, cell_list2[i].value)
 		    adid.grid.SetCellValue(row, 2, cell_list3[i].value)
 		    adid.grid.SetCellValue(row, 3, cell_list4[i].value)
 		    adid.grid.SetCellValue(row, 4, cell_list5[i].value)
 		    adid.grid.SetCellValue(row, 5, cell_list6[i].value)
-		    print(cell_list1[i].value)
-		    print(cell_list2[i].value)
-		    print(cell_list3[i].value)
-		    print(cell_list4[i].value)
-		    print(cell_list5[i].value)
-		    print(cell_list6[i].value)
-#		    self.gridTable.SetCellValue(i, 1, ws1.cell(row1, 3).value)
-#		    am = f"{acc[i]['amount']:,}"
-#		    self.gridTable.SetCellValue(i, 2, ws1.cell(row1, 7).value)
-#		    print(ws1.cell(row1, 2).value)
-#		    print(ws1.cell(row1, 3).value)
-#		    print(ws1.cell(row1, 7).value)
+#		    print(cell_list1[i].value)
+#		    print(cell_list2[i].value)
+#		    print(cell_list3[i].value)
+#		    print(cell_list4[i].value)
+#		    print(cell_list5[i].value)
+#		    print(cell_list6[i].value)
+
 		    i += 1
-		    count = self.m_gauge2.GetValue() + 1
-		    if count > (row2+1)-row1:
-		     count = 0
-		    else:
-		     self.m_gauge2.SetValue(count)            
-#		    row1 += 1
+		    rate += 1/(row2+1)*100
+            # 値の更新
+		    dlg.Update(value=rate, newmsg="%d/100" % rate + "%")
+           
+		 dlg.Destroy()
 		 adid.grid.AutoSize()
 		 adid.Show()
-        
+
+
+	def inquiry_post( self, event ):
+		adid = MyProject1MyDialog3(self)
+		credentials = ServiceAccountCredentials.from_json_keyfile_name(adid.m_textCtrl11.GetValue(), scope)
+		gc = gspread.authorize(credentials)                   
+		row1 = self.row11.GetValue()
+		row2 = self.row21.GetValue()
+
+		if self.m_comboBox1.GetValue() == '選択して下さい':
+		 self.m_comboBox1.SetBackgroundColour("#f56cbe")
+		 wx.MessageBox(u'Please select the Worksheet title!!', u'Setting value error', wx.ICON_ERROR)
+		elif row1 == 0 and row2 == 0:
+		 self.row1.SetBackgroundColour('#f56cbe')
+		 self.row2.SetBackgroundColour('#f56cbe')
+		 self.m_comboBox1.SetBackgroundColour("#FFFFFF")
+		 wx.MessageBox(u'Please set the range!!', u'Setting value error', wx.ICON_ERROR)
+		elif row2 - row1 > 10000:
+		 self.row1.SetBackgroundColour('#f56cbe')
+		 self.row2.SetBackgroundColour('#f56cbe')
+		 self.m_comboBox1.SetBackgroundColour("#FFFFFF")
+		 wx.MessageBox(u'The value exceeds the configurable range!!', u'Setting value error', wx.ICON_ERROR)
+		elif row2 - row1 < 0:
+		 self.row1.SetBackgroundColour('#f56cbe')
+		 self.row2.SetBackgroundColour('#f56cbe')
+		 self.m_comboBox1.SetBackgroundColour("#FFFFFF")
+		 wx.MessageBox(u'Illegal range!!', u'Setting value error', wx.ICON_ERROR)
+		# Set cell values.
+		else:
+		 from selenium import webdriver
+		 from selenium.webdriver.chrome.options import Options
+
+#例外処理用のlibraryをimport
+		 from selenium.common.exceptions import NoSuchElementException
+		 from selenium.common.exceptions import WebDriverException
+		 from selenium.common.exceptions import TimeoutException
+		 from selenium.common.exceptions import ElementNotInteractableException
+
+#Selectモジュールをインポート
+		 #from selenium.webdriver.support.select import Select
+
+#オプションの作成
+		 option = Options()
+
+#起動オプション
+# ヘッドレスモードを有効にする（次の行をコメントアウトすると画面が表示される）。
+		 option.add_argument('--headless')
+
+#「unknown error: net::ERR_CONNECTION_CLOSED」の回避用
+		 option.add_argument('--disable-dev-shm-usage')
+
+# ChromeのWebDriverオブジェクトを作成する。
+		 driver = webdriver.Chrome(adid.m_textCtrl111.GetValue(),options=option)
+		 driver.set_page_load_timeout(60)
+		 wb = gc.open_by_key(adid.m_comboBox6.GetValue())            
+		 ws3 = wb.worksheet(self.m_comboBox11.GetValue())
+		 self.row1.SetBackgroundColour('#FFFFFF')
+		 self.row2.SetBackgroundColour('#FFFFFF')
+		 self.m_comboBox1.SetBackgroundColour("#FFFFFF")
+		 adid = MyProject1MyFrame5(self)
+		 adid.grid.ClearGrid()
+#		 self.m_gauge2.SetValue( 0 )
+#		 self.m_gauge2.SetRange(row2-row1)
+         
+		 dlg = wx.ProgressDialog(
+            title="自動投稿プログラム実行中",
+            message="0/100",
+            maximum=100,
+            style=wx.PD_AUTO_HIDE | wx.PD_ELAPSED_TIME | wx.PD_ESTIMATED_TIME | wx.PD_REMAINING_TIME )         
+         
+# ダイアログ表示
+		 dlg.Show()
+		 rate = 0
+
+#所要時間計測開始
+		 start = time.time()
+
+#お問い合わせフォームへの自動投稿本体プログラム
+#ws1の行数を取得
+		 lastrow = len(ws3.col_values(1))
+		 for k in tqdm(range(row1, row2)):
+    
+#シートの初期化
+ 		  lastcol = len(list(ws3.row_values(k)))
+ 		  cell_list2 = ws3.range(k, 9, k, lastcol)
+ 		  print(cell_list2)
+ 		  for cell in cell_list2:
+		    cell.value = ""
+#             time.sleep(1)
+ 		  ws3.update_cells(cell_list2)
+
+# try:
+ 		  if ws3.cell(k, 8).value == r"-" \
+ 		         or ws3.cell(k, 8).value == "" \
+ 		             or r"Time out!!" in ws3.cell(k, 8).value \
+ 		                 or r"unknown error!!" in ws3.cell(k, 8).value:
+ 		     ws3.update_cell(k, 9, "-")
+ 		  else:                
+ 		      driver.get(ws3.cell(k, 8).value)
+ 		      time.sleep(1)
+ 
+ 		      html = driver.page_source
+ 		      soup = BeautifulSoup(html, 'html.parser')
+
+#フォーム送信ＮＧ
+ 		      if "営業のご連絡" in html \
+ 		        or "営業のお問い合わせ" in html \
+ 		            or "営業を目的" in html \
+ 		                or "営業目的" in html \
+ 		                    or "営業メール" in html \
+ 		                        or "弊社への営業" in html \
+ 		                            or "広告メール" in html \
+ 		                                or "フォームからの営業" in html \
+ 		                                    or "セールスのお問い合わせ" in html:
+ 		        ws3.update_cell(k, 9, "営業お断り！！")
+ 		      elif "recaptcha" in html:
+ 		        ws3.update_cell(k, 9, "reCAPTCHA")
+     
+ 		      elif "このページはサービス" in html:
+ 		        ws3.update_cell(k, 9, "サービスに関する専用フォーム")
+
+#自動送信対象     
+ 		      elif "確認" in str(soup.find_all("form")) \
+ 		        or "送信" in str(soup.find_all("form")) \
+ 		            or "お問い合わせ" in str(soup.find_all("form")) \
+ 		                or "メールアドレス" in str(soup.find_all("form")):
+ 		        ws3.update_cell(k, 9, "フォーム要素あり")
+
+#labelタグのテキストを取得
+ 		        if "お問い合わせ" in str(soup.find_all("label")) \
+ 		                 or "メールアドレス" in str(soup.find_all("label")):
+ 		          element1 = soup.find_all("label")
+ 		          list_1 = []
+ 		          for list_ in element1:
+ 		            if "企業" in list_.getText() \
+ 		             or "社名" in list_.getText() \
+ 		             or "法人" in list_.getText() \
+ 		             or "ふりがな" in list_.getText() \
+ 		             or "フリガナ" in list_.getText() \
+ 		             or "カナ" in list_.getText() \
+ 		             or "担当者" in list_.getText() \
+ 		             or "役職" in list_.getText() \
+ 		             or "部署" in list_.getText() \
+ 		             or "郵便番号" in list_.getText() \
+ 		             or "都道府県" in list_.getText() \
+ 		             or "市区町村" in list_.getText() \
+ 		             or "番地" in list_.getText() \
+ 		             or "建物名" in list_.getText() \
+ 		             or "住所" in list_.getText() \
+ 		             or "所在地" in list_.getText() \
+ 		             or "お問い合わせ" in list_.getText() \
+ 		             or "お問合わせ" in list_.getText() \
+ 		             or "お問い合せ" in list_.getText() \
+ 		             or "お問合せ" in list_.getText() \
+ 		             or "名前" in list_.getText() \
+ 		             or "氏名" in list_.getText() \
+ 		             or "姓" in list_.getText() \
+ 		             or "名" in list_.getText() \
+ 		             or "電話" in list_.getText() \
+ 		             or "TEL" in list_.getText() \
+ 		             or "連絡先" in list_.getText() \
+ 		             or "メールアドレス" in list_.getText() \
+ 		             or "mail" in list_.getText() \
+ 		             or "URL" in list_.getText() \
+ 		             or "サイト" in list_.getText() \
+ 		             or "ホームページ" in list_.getText() \
+ 		             or "種別" in list_.getText() \
+ 		             or "業種" in list_.getText() \
+ 		             or "題名" in list_.getText() \
+ 		             or "本文" in list_.getText() \
+ 		             or "詳細" in list_.getText() \
+ 		             or "連絡方法" in list_.getText() \
+ 		             or "用件" in list_.getText() \
+ 		             or "件名" in list_.getText() \
+ 		             or "ご意見" in list_.getText() \
+ 		             or "返信方法" in list_.getText() \
+ 		             or "項目" in list_.getText():
+ 		             list_1.append(re.sub("[\n]", "", list_.getText(), 3))
+ 		          print(list_1)
+
+#tdタグのテキストを取得
+ 		        if "お問い合わせ" in str(soup.find_all("td")) \
+ 		                 or "メールアドレス" in str(soup.find_all("td")):
+ 		          element1 = soup.find_all("td")
+ 		          list_1 = []
+ 		          for list_ in element1:
+ 		            if "企業" in list_.getText() \
+ 		             or "社名" in list_.getText() \
+ 		             or "法人" in list_.getText() \
+ 		             or "ふりがな" in list_.getText() \
+ 		             or "フリガナ" in list_.getText() \
+ 		             or "カナ" in list_.getText() \
+ 		             or "担当者" in list_.getText() \
+ 		             or "役職" in list_.getText() \
+ 		             or "部署" in list_.getText() \
+ 		             or "郵便番号" in list_.getText() \
+ 		             or "都道府県" in list_.getText() \
+ 		             or "市区町村" in list_.getText() \
+ 		             or "番地" in list_.getText() \
+ 		             or "建物名" in list_.getText() \
+ 		             or "住所" in list_.getText() \
+ 		             or "所在地" in list_.getText() \
+ 		             or "お問い合わせ" in list_.getText() \
+ 		             or "お問合わせ" in list_.getText() \
+ 		             or "お問い合せ" in list_.getText() \
+ 		             or "お問合せ" in list_.getText() \
+ 		             or "名前" in list_.getText() \
+ 		             or "氏名" in list_.getText() \
+ 		             or "姓" in list_.getText() \
+ 		             or "名" in list_.getText() \
+ 		             or "電話" in list_.getText() \
+ 		             or "TEL" in list_.getText() \
+ 		             or "連絡先" in list_.getText() \
+ 		             or "メールアドレス" in list_.getText() \
+ 		             or "mail" in list_.getText() \
+ 		             or "URL" in list_.getText() \
+ 		             or "サイト" in list_.getText() \
+ 		             or "ホームページ" in list_.getText() \
+ 		             or "種別" in list_.getText() \
+ 		             or "業種" in list_.getText() \
+ 		             or "題名" in list_.getText() \
+ 		             or "本文" in list_.getText() \
+ 		             or "詳細" in list_.getText() \
+ 		             or "連絡方法" in list_.getText() \
+ 		             or "用件" in list_.getText() \
+ 		             or "件名" in list_.getText() \
+ 		             or "ご意見" in list_.getText() \
+ 		             or "返信方法" in list_.getText() \
+ 		             or "項目" in list_.getText():
+ 		             list_1.append(re.sub("[\n]", "", list_.getText(), 3))
+ 		          print(list_1)
+
+#dtタグのテキストを取得
+ 		        if "お問い合わせ" in str(soup.find_all("dt")) \
+ 		                 or "メールアドレス" in str(soup.find_all("dt")):
+ 		          element1 = soup.find_all("dt")
+ 		          list_1 = []
+ 		          for list_ in element1:
+ 		            if "企業" in list_.getText() \
+ 		             or "社名" in list_.getText() \
+ 		             or "法人" in list_.getText() \
+ 		             or "ふりがな" in list_.getText() \
+ 		             or "フリガナ" in list_.getText() \
+ 		             or "カナ" in list_.getText() \
+ 		             or "担当者" in list_.getText() \
+ 		             or "役職" in list_.getText() \
+ 		             or "部署" in list_.getText() \
+ 		             or "郵便番号" in list_.getText() \
+ 		             or "都道府県" in list_.getText() \
+ 		             or "市区町村" in list_.getText() \
+ 		             or "番地" in list_.getText() \
+ 		             or "建物名" in list_.getText() \
+ 		             or "住所" in list_.getText() \
+ 		             or "所在地" in list_.getText() \
+ 		             or "お問い合わせ" in list_.getText() \
+ 		             or "お問合わせ" in list_.getText() \
+ 		             or "お問い合せ" in list_.getText() \
+ 		             or "お問合せ" in list_.getText() \
+ 		             or "名前" in list_.getText() \
+ 		             or "氏名" in list_.getText() \
+ 		             or "姓" in list_.getText() \
+ 		             or "名" in list_.getText() \
+ 		             or "電話" in list_.getText() \
+ 		             or "TEL" in list_.getText() \
+ 		             or "連絡先" in list_.getText() \
+ 		             or "メールアドレス" in list_.getText() \
+ 		             or "mail" in list_.getText() \
+ 		             or "URL" in list_.getText() \
+ 		             or "サイト" in list_.getText() \
+ 		             or "ホームページ" in list_.getText() \
+ 		             or "種別" in list_.getText() \
+ 		             or "業種" in list_.getText() \
+ 		             or "題名" in list_.getText() \
+ 		             or "本文" in list_.getText() \
+ 		             or "詳細" in list_.getText() \
+ 		             or "連絡方法" in list_.getText() \
+ 		             or "用件" in list_.getText() \
+ 		             or "件名" in list_.getText() \
+ 		             or "ご意見" in list_.getText() \
+ 		             or "返信方法" in list_.getText() \
+ 		             or "項目" in list_.getText():
+ 		             list_1.append(re.sub("[\n]", "", list_.getText(), 3))
+ 		          print(list_1)
+
+#pタグのテキストを取得
+ 		        if "お問い合わせ" in str(soup.find_all("p")) \
+ 		                 or "メールアドレス" in str(soup.find_all("p")):
+ 		          element1 = soup.find_all("p")
+ 		          list_1 = []
+ 		          for list_ in element1:
+ 		            if "企業" in list_.getText() \
+ 		             or "社名" in list_.getText() \
+ 		             or "法人" in list_.getText() \
+ 		             or "ふりがな" in list_.getText() \
+ 		             or "フリガナ" in list_.getText() \
+ 		             or "カナ" in list_.getText() \
+ 		             or "担当者" in list_.getText() \
+ 		             or "役職" in list_.getText() \
+ 		             or "部署" in list_.getText() \
+ 		             or "郵便番号" in list_.getText() \
+ 		             or "都道府県" in list_.getText() \
+ 		             or "市区町村" in list_.getText() \
+ 		             or "番地" in list_.getText() \
+ 		             or "建物名" in list_.getText() \
+ 		             or "住所" in list_.getText() \
+ 		             or "所在地" in list_.getText() \
+ 		             or "お問い合わせ" in list_.getText() \
+ 		             or "お問合わせ" in list_.getText() \
+ 		             or "お問い合せ" in list_.getText() \
+ 		             or "お問合せ" in list_.getText() \
+ 		             or "名前" in list_.getText() \
+ 		             or "氏名" in list_.getText() \
+ 		             or "姓" in list_.getText() \
+ 		             or "名" in list_.getText() \
+ 		             or "電話" in list_.getText() \
+ 		             or "TEL" in list_.getText() \
+ 		             or "連絡先" in list_.getText() \
+ 		             or "メールアドレス" in list_.getText() \
+ 		             or "mail" in list_.getText() \
+ 		             or "URL" in list_.getText() \
+ 		             or "サイト" in list_.getText() \
+ 		             or "ホームページ" in list_.getText() \
+ 		             or "種別" in list_.getText() \
+ 		             or "業種" in list_.getText() \
+ 		             or "題名" in list_.getText() \
+ 		             or "本文" in list_.getText() \
+ 		             or "詳細" in list_.getText() \
+ 		             or "連絡方法" in list_.getText() \
+ 		             or "用件" in list_.getText() \
+ 		             or "件名" in list_.getText() \
+ 		             or "ご意見" in list_.getText() \
+ 		             or "返信方法" in list_.getText() \
+ 		             or "項目" in list_.getText():
+ 		             list_1.append(re.sub("[\n]", "", list_.getText(), 3))
+ 		          print(list_1)
+
+#thタグのテキストを取得
+ 		        if "お問い合わせ" in str(soup.find_all("th")) \
+ 		                 or "メールアドレス" in str(soup.find_all("th")):
+ 		          element1 = soup.find_all("th")
+ 		          list_1 = []
+ 		          for list_ in element1:
+ 		            if "企業" in list_.getText() \
+ 		             or "社名" in list_.getText() \
+ 		             or "法人" in list_.getText() \
+ 		             or "ふりがな" in list_.getText() \
+ 		             or "フリガナ" in list_.getText() \
+ 		             or "カナ" in list_.getText() \
+ 		             or "担当者" in list_.getText() \
+ 		             or "役職" in list_.getText() \
+ 		             or "部署" in list_.getText() \
+ 		             or "郵便番号" in list_.getText() \
+ 		             or "都道府県" in list_.getText() \
+ 		             or "市区町村" in list_.getText() \
+ 		             or "番地" in list_.getText() \
+ 		             or "建物名" in list_.getText() \
+ 		             or "住所" in list_.getText() \
+ 		             or "所在地" in list_.getText() \
+ 		             or "お問い合わせ" in list_.getText() \
+ 		             or "お問合わせ" in list_.getText() \
+ 		             or "お問い合せ" in list_.getText() \
+ 		             or "お問合せ" in list_.getText() \
+ 		             or "名前" in list_.getText() \
+ 		             or "氏名" in list_.getText() \
+ 		             or "姓" in list_.getText() \
+ 		             or "名" in list_.getText() \
+ 		             or "電話" in list_.getText() \
+ 		             or "TEL" in list_.getText() \
+ 		             or "連絡先" in list_.getText() \
+ 		             or "メールアドレス" in list_.getText() \
+ 		             or "mail" in list_.getText() \
+ 		             or "URL" in list_.getText() \
+ 		             or "サイト" in list_.getText() \
+ 		             or "ホームページ" in list_.getText() \
+ 		             or "種別" in list_.getText() \
+ 		             or "業種" in list_.getText() \
+ 		             or "題名" in list_.getText() \
+ 		             or "本文" in list_.getText() \
+ 		             or "詳細" in list_.getText() \
+ 		             or "連絡方法" in list_.getText() \
+ 		             or "用件" in list_.getText() \
+ 		             or "件名" in list_.getText() \
+ 		             or "ご意見" in list_.getText() \
+ 		             or "返信方法" in list_.getText() \
+ 		             or "項目" in list_.getText():
+ 		             list_1.append(re.sub("[\n]", "", list_.getText(), 3))
+ 		          print(list_1)
+
+#指定のタグからテキストを取得しない場合
+ 		        else:
+ 		          element1 = soup.find_all("form")
+ 		          list_1 = []
+ 		          for list_ in element1:
+ 		            if "企業" in list_.getText() \
+ 		             or "社名" in list_.getText() \
+ 		             or "法人" in list_.getText() \
+ 		             or "ふりがな" in list_.getText() \
+ 		             or "フリガナ" in list_.getText() \
+ 		             or "カナ" in list_.getText() \
+ 		             or "担当者" in list_.getText() \
+ 		             or "役職" in list_.getText() \
+ 		             or "部署" in list_.getText() \
+ 		             or "郵便番号" in list_.getText() \
+ 		             or "都道府県" in list_.getText() \
+ 		             or "市区町村" in list_.getText() \
+ 		             or "番地" in list_.getText() \
+ 		             or "建物名" in list_.getText() \
+ 		             or "住所" in list_.getText() \
+ 		             or "所在地" in list_.getText() \
+ 		             or "お問い合わせ" in list_.getText() \
+ 		             or "お問合わせ" in list_.getText() \
+ 		             or "お問い合せ" in list_.getText() \
+ 		             or "お問合せ" in list_.getText() \
+ 		             or "名前" in list_.getText() \
+ 		             or "氏名" in list_.getText() \
+ 		             or "姓" in list_.getText() \
+ 		             or "名" in list_.getText() \
+ 		             or "電話" in list_.getText() \
+ 		             or "TEL" in list_.getText() \
+ 		             or "連絡先" in list_.getText() \
+ 		             or "メールアドレス" in list_.getText() \
+ 		             or "mail" in list_.getText() \
+ 		             or "URL" in list_.getText() \
+ 		             or "サイト" in list_.getText() \
+ 		             or "ホームページ" in list_.getText() \
+ 		             or "種別" in list_.getText() \
+ 		             or "業種" in list_.getText() \
+ 		             or "題名" in list_.getText() \
+ 		             or "本文" in list_.getText() \
+ 		             or "詳細" in list_.getText() \
+ 		             or "連絡方法" in list_.getText() \
+ 		             or "用件" in list_.getText() \
+ 		             or "件名" in list_.getText() \
+ 		             or "ご意見" in list_.getText() \
+ 		             or "返信方法" in list_.getText() \
+ 		             or "項目" in list_.getText():
+ 		             list_1.append(re.sub("[\n]", "", list_.getText(), 3))
+ 		          print(list_1)
+
+ 		        items_1 =[i.replace("必須", "") \
+                     .replace("半角英数字", "") \
+                         .replace("全角漢字", "") \
+                             .replace("携帯電話可", "") \
+                                 .replace("携帯可", "") \
+                                     .replace("全角", "") \
+                                         .replace(r"()","") \
+                                             .replace(r"（）","") \
+                                                 .replace(" ","") \
+                                                     .replace(r"*","") \
+                                                         .replace(r"※","") \
+                                                             .split(r"・")[0] \
+                                                                 for i in list_1]                  
+#     print(items_1)
+
+#inputタグの各要素を取得
+ 		        element2 = soup.find_all("input")
+# 		         print(element2)
+ 		        list_2 = []
+ 		        list_2c = []
+ 		        list_2d = []
+ 		        list_2t = []
+ 		        list_2v = []
+
+#inputタグの各要素を取得
+ 		        element3 = soup.find_all("button")
+# 		         print(element2)
+ 		        list_3t = []
+
+#各属性値
+ 		        for name in element2:
+ 		          list_2.append(name.get("name"))
+# 		        print(list_2)
+ 		        print(len(list_2))
+ 		         		           
+ 		        for elem in element2:
+# 		          items_1.append(name.get("placeholder"))
+ 		          list_2d.append(elem.get("id"))
+# 		          print(items_2)
+
+
+ 		        for elem in element2:
+# 		          items_1.append(name.get("placeholder"))
+ 		          list_2c.append(elem.get("class"))
+# 		        print(list_2c)
+
+ 		        for elem in element2:
+# 		          items_1.append(name.get("placeholder"))
+ 		          list_2t.append(elem.get("type"))
+ 		        print(list_2t)
+
+ 		        for elem in element3:
+# 		          items_1.append(name.get("placeholder"))
+ 		          list_3t.append(elem.get("type"))
+ 		        print(list_3t)
+
+ 		        for elem in element2:
+# 		          items_1.append(name.get("placeholder"))
+ 		          list_2v.append(elem.get("value"))
+ 		        print(list_2v)
+
+#リストにNoneが含まれていると「TypeError: argument of type 'NoneType' is not iterable」
+#が発生するので、リスト内包表記で処理
+
+#name値
+# 		        if not len(list_2) == 0:
+ 		        list_2 = [i for i in list_2 if i is not None]
+ 		        print(list_2)
+ 		          
+#id値
+# 		        if not len(list_2d) == 0:
+ 		        list_2d = [i for i in list_2d if i is not None]
+# 		        print(list_2d)
+
+#class値
+# 		        if not len(list_2c) == 0:
+ 		        list_2c = [i for i in list_2c if i is not None]
+ 		        print(list_2c)
+
+#value値
+ 		        list_2v = [i for i in list_2v if i is not None]
+ 		        print(list_2v)
+
+#ラジオボタン
+ 		        element5 = soup.find_all("input",type="radio")
+# 		        print(element5)
+ 		        element6 = soup.find_all("input",class_="questionTypeRadio")
+# 		        print(element6)
+ 		        element7 = soup.find_all("input",attrs={"name":"questioner_type","type":"radio"})
+# 		        print(element7)
+ 		         
+ 		        SELECT_list1 = []
+ 		        SELECT_list2 = []
+ 		        SELECT_list3 = []
+ 		        SELECT_list4 = []
+ 		        SELECT_list5 = []
+
+ 		        for elem in element5: 
+ 		           SELECT_list1.append(elem.get("value"))
+ 		           SELECT_list1 = [i for i in SELECT_list1 if i is not None]
+ 		        print(SELECT_list1)
+
+ 		        for elem in element5:
+ 		           SELECT_list2.append(elem.get("id"))
+ 		           SELECT_list2 = [i for i in SELECT_list2 if i is not None]
+ 		        print(SELECT_list2)
+
+ 		        for elem in element6: 
+ 		           SELECT_list3.append(elem.get("id"))
+ 		           SELECT_list3 = [i for i in SELECT_list3 if i is not None]
+# 		           print(SELECT_list3)
+
+ 		        for elem in element7: 
+ 		           SELECT_list4.append(elem.get("id"))
+ 		           SELECT_list4 = [i for i in SELECT_list4 if i is not None]
+ 		        print(SELECT_list4)
+
+ 		        for elem in element5:
+ 		           SELECT_list5.append(elem.get("name"))
+ 		           SELECT_list5 = [i for i in SELECT_list5 if i is not None]
+ 		        print(SELECT_list5)
+
+#value値のみ、id値なしの場合
+ 		        if len(SELECT_list1) > 0 \
+                     and len(SELECT_list2) == 0 \
+                         and len(SELECT_list3) == 0 \
+                             and len(SELECT_list4) == 0 \
+                                 and len(SELECT_list5) == 0:
+ 		          print(len(SELECT_list1))
+ 		          print(len(SELECT_list2))
+ 		          print(len(SELECT_list3))
+ 		          print(len(SELECT_list4))
+ 		          print(len(SELECT_list5))
+
+#（区別）
+ 		          if len([i for i in SELECT_list1 if "法人" in i]) == 1:
+ 		            radiobutton = driver.find_element_by_css_selector("[value='法人']")
+ 		            driver.execute_script("arguments[0].click();", radiobutton)
+ 		            print(radiobutton.is_selected())
+ 		            if radiobutton.is_selected() is True:
+ 		         		         lastcol = len(list(ws3.row_values(k)))    
+ 		         		         time.sleep(1) 		         		           
+ 		         		         ws3.update_cell(k, lastcol+1, "法人")
+ 		         		         print(radiobutton.is_selected())
+
+#（種別）
+ 		          if len([i for i in SELECT_list1 if "その他" == i]) == 1:
+ 		            radiobutton = driver.find_element_by_css_selector("[value='その他']")
+ 		            driver.execute_script("arguments[0].click();", radiobutton)
+ 		            print(radiobutton.is_selected())
+ 		            if radiobutton.is_selected() is True:
+ 		         		         lastcol = len(list(ws3.row_values(k)))    
+ 		         		         time.sleep(1) 		         		           
+ 		         		         ws3.update_cell(k, lastcol+1, "その他")
+ 		         		         print(radiobutton.is_selected())
+ 		         		         
+#（アンケート:後で反映させる予定）
+# 		          if "知りましたか" in str(soup.find_all("form")) \
+# 		         		         and len([i for i in list_2 if "知りましたか" in i]) > 0:
+# 		           radiobutton = driver.find_element_by_name(SELECT_list5[0])
+# 		           print(SELECT_list5[0])
+# 		           driver.execute_script("arguments[0].click();", radiobutton)
+# 		           print(radiobutton.is_selected())
+# 		           lastcol = len(list(ws3.row_values(k)))
+# 		           time.sleep(1) 		         		           
+# 		           ws3.update_cell(k, lastcol+1, SELECT_list5[0])
+# 		           Cell_list9 = [i for i in list_2 if "知りましたか" in i]
+# 		           print(Cell_list9)
+# 		           driver.find_element_by_name(Cell_list9[0]).send_keys(ws2.cell(1, 3).value)
+# 		           lastcol = len(list(ws3.row_values(k)))
+# 		           time.sleep(1) 		         		           
+# 		           ws3.update_cell(k, lastcol+1, ws2.cell(1, 3).value)
+ 		         		          
+#（連絡方法）
+ 		          if len([i for i in SELECT_list1 if "メール" in i]) > 0:
+ 		            radiobutton = driver.find_element_by_css_selector("[value='メール']")
+ 		            driver.execute_script("arguments[0].click();", radiobutton)
+ 		            print(radiobutton.is_selected())
+ 		            if radiobutton.is_selected() is True:
+ 		         		         lastcol = len(list(ws3.row_values(k)))    
+ 		         		         time.sleep(1) 		         		           
+ 		         		         ws3.update_cell(k, lastcol+1, "メール")
+ 		         		         print(radiobutton.is_selected())
+
+
+#value値及びid値有りの場合
+ 		        elif len(SELECT_list1) > 0 \
+                     and len(SELECT_list2) > 0 \
+                         and len(SELECT_list3) == 0 \
+                             and len(SELECT_list4) == 0:
+ 		          print(len(SELECT_list1))
+ 		          print(len(SELECT_list2))
+ 		          print(len(SELECT_list3))
+ 		          print(len(SELECT_list4))
+
+#（区別）
+ 		          if len([i for i in SELECT_list1 if "法人" in i]) == 1:
+ 		            radiobutton = driver.find_element_by_css_selector("[value='法人']")
+ 		            driver.execute_script("arguments[0].click();", radiobutton)
+ 		            print(radiobutton.is_selected())
+ 		            if radiobutton.is_selected() is True:
+ 		         		         lastcol = len(list(ws3.row_values(k)))    
+ 		         		         time.sleep(1) 		         		           
+ 		         		         ws3.update_cell(k, lastcol+1, "法人")
+ 		         		         print(radiobutton.is_selected())
+
+#（種別）
+ 		          if "種別" in str(soup.find_all("form")) \
+                       or "項目" in str(soup.find_all("form")) \
+                           or "内容" in str(soup.find_all("form")):
+ 		           try:
+ 		            radiobutton = driver.find_elements_by_name(SELECT_list5[len(SELECT_list5)-1])[len(SELECT_list5)-1]
+ 		            driver.execute_script("arguments[0].click();", radiobutton)
+ 		            print(radiobutton.is_selected())
+ 		            lastcol = len(list(ws3.row_values(k))) 		         		         		         
+ 		            ws3.update_cell(k, lastcol+1, "その他")
+
+#操作できない要素の回避
+ 		           except NoSuchElementException:
+ 		            try:   
+ 		         		        radiobutton = driver.find_element_by_css_selector("[value='その他']")
+ 		         		        driver.execute_script("arguments[0].click();", radiobutton)
+ 		         		        print(radiobutton.is_selected())
+ 		         		        lastcol = len(list(ws3.row_values(k))) 		         		         		         
+ 		         		        ws3.update_cell(k, lastcol+1, "その他")
+
+#操作できない要素の回避
+ 		            except NoSuchElementException:
+ 		         		         pass
+
+#value値及びname値有りの場合
+ 		        elif len(SELECT_list1) > 0 \
+                     and len(SELECT_list2) == 0 \
+                         and len(SELECT_list3) == 0 \
+                             and len(SELECT_list4) == 0 \
+                                 and len(SELECT_list5) > 0:
+ 		          print(len(SELECT_list1))
+ 		          print(len(SELECT_list2))
+ 		          print(len(SELECT_list3))
+ 		          print(len(SELECT_list4))
+ 		          print(len(SELECT_list5))
+
+#（区別）
+ 		          if len([i for i in SELECT_list1 if "法人" in i]) == 1:
+ 		            radiobutton = driver.find_element_by_css_selector("[value='法人']")
+ 		            driver.execute_script("arguments[0].click();", radiobutton)
+ 		            print(radiobutton.is_selected())
+ 		            if radiobutton.is_selected() is True:
+ 		         		         lastcol = len(list(ws3.row_values(k)))    
+ 		         		         time.sleep(1) 		         		           
+ 		         		         ws3.update_cell(k, lastcol+1, "法人")
+ 		         		         print(radiobutton.is_selected())
+
+#（種別）
+ 		          if "種別" in str(soup.find_all("form")) \
+                       or "項目" in str(soup.find_all("form")) \
+                           or "内容" in str(soup.find_all("form")) \
+                               or "件名" in str(soup.find_all("form")):
+# 		           radiobutton = driver.find_elements_by_name(SELECT_list5[len(SELECT_list5)-1])[len(SELECT_list5)-1]
+ 		           try:
+ 		         		        radiobutton = driver.find_element_by_css_selector("[value='other']")
+ 		         		        driver.execute_script("arguments[0].click();", radiobutton)
+ 		         		        print(radiobutton.is_selected())
+ 		         		        if radiobutton.is_selected() is True: 		           
+ 		         		          lastcol = len(list(ws3.row_values(k)))
+ 		         		          time.sleep(1)
+ 		         		          ws3.update_cell(k, lastcol+1, "その他")
+ 		           except NoSuchElementException:
+ 		         		        radiobutton = driver.find_element_by_css_selector("[value='その他のお問い合わせ']")
+ 		         		        driver.execute_script("arguments[0].click();", radiobutton)
+ 		         		        print(radiobutton.is_selected())
+ 		         		        if radiobutton.is_selected() is True: 		           
+ 		         		          lastcol = len(list(ws3.row_values(k)))
+ 		         		          time.sleep(1)
+ 		         		          ws3.update_cell(k, lastcol+1, "その他")
+
+
+#id値有りの場合（パターン注意）
+ 		        elif len(SELECT_list3) > 0 \
+                     and len(SELECT_list4) > 0:
+ 		          print(len(SELECT_list3))
+ 		          print(len(SELECT_list4))
+
+#（種別）
+ 		          if len([i for i in items_1 if "種別" in i]) == 1:
+ 		            radiobutton = driver.find_element_by_id(SELECT_list3[len(SELECT_list3)-1])
+ 		            driver.execute_script("arguments[0].click();", radiobutton)
+ 		            print(radiobutton.is_selected())
+ 		            if radiobutton.is_selected() is True:
+ 		         		         lastcol = len(list(ws3.row_values(k)))    
+ 		         		         time.sleep(1) 		         		           
+ 		         		         ws3.update_cell(k, lastcol+1, SELECT_list3[len(SELECT_list3)-1])
+ 		         		         print(radiobutton.is_selected())
+
+#（法人／個人）
+ 		        if len([i for i in items_1 if "法人" in i]) == 1 \
+ 		            and len(SELECT_list4) > 0:
+ 		            radiobutton = driver.find_element_by_id(SELECT_list4[0])
+ 		            driver.execute_script("arguments[0].click();", radiobutton)
+ 		            print(radiobutton.is_selected())
+ 		            if radiobutton.is_selected() is True:
+ 		         		         lastcol = len(list(ws3.row_values(k)))    
+ 		         		         time.sleep(1) 		         		           
+ 		         		         ws3.update_cell(k, lastcol+1, SELECT_list4[0])
+ 		         		         print(radiobutton.is_selected())
+
+
+#会社名
+ 		        adid = MyProject1MyDialog4(self)
+ 		        if len([i for i in items_1 if "社名" in i \
+ 		         		         		        or "企業" in i \
+ 		         		         		            or "法人" in i]) == 0 \
+ 		            and len([i for i in list_2 if "社名" in i \
+ 		         		         		        or "企業" in i \
+ 		         		         		            or "法人" in i]) == 0:
+ 		           lastcol = len(list(ws3.row_values(k)))
+ 		           time.sleep(1) 
+ 		           ws3.update_cell(k, lastcol+1, "会社名入力欄なし")
+
+#（Googleフォーム）
+ 		        elif not len([i for i in list_2c if "exportInput" in i]) == 0:
+ 		         driver.find_elements_by_css_selector(".quantumWizTextinputPaperinputInput.exportInput")[1].send_keys(adid.m_textCtrl11.GetValue())
+ 		         lastcol = len(list(ws3.row_values(k)))
+ 		         time.sleep(3)
+ 		         ws3.update_cell(k, lastcol+1, "会社名")
+
+ 		        elif not len([i for i in items_1 if "社名" in i \
+ 		         		         		        or "企業" in i \
+ 		         		         		            or "法人" in i]) == 0:
+ 		           Cell_list1 = [i for i in list_2 if "facility" in i \
+                            or "organization" in i \
+                                or "your-company" in i \
+                                    or "company-name" in i \
+                                        or "kaisha-name" in i \
+                                            or "company" == i \
+                                                or "contact_company" == i \
+                                                    or "campany" in i \
+                                                        or "your-corp" in i \
+                                                            or "corporate" in i \
+                                                                or "企業" in i \
+                                                                    or "社名" in i \
+                                                                        or "text-978" == i \
+                                                                            or "Company" in i \
+                                                                                or "company3" == i \
+                                                                                    or "form_fields[company]" in i \
+                                                                                        or "text-819" == i]
+ 		           driver.find_element_by_name(Cell_list1[0]).send_keys(adid.m_textCtrl11.GetValue() + "　")
+ 		           lastcol = len(list(ws3.row_values(k)))
+ 		           time.sleep(1)
+ 		           ws3.update_cell(k, lastcol+1, "会社名")
+ 		           print(Cell_list1)
+
+ 		        elif not len([i for i in list_2 if "facility" in i \
+ 		         		         		        or "organization" in i \
+                                                       or "your-company" in i \
+                                                           or "company-name" in i \
+                                                               or "company" == i \
+                                                                   or "contact_company" == i \
+                                                                       or "campany" in i \
+                                                                           or "your-corp" in i \
+                                                                               or "corporate" in i \
+                                                                                   or "name" in i \
+                                                                                       or "企業" in i \
+                                                                                           or "社名" in i \
+                                                                                               or "text-978" == i \
+                                                                                                   or "Company" in i \
+                                                                                                       or "company3" == i \
+                                                                                                           or "form_fields[company]" in i \
+                                                                                                               or "text-819" == i]) == 0:
+ 		           Cell_list1 = [i for i in list_2 if "facility" in i \
+                            or "organization" in i \
+                                or "your-company" in i \
+                                    or "company-name" in i \
+                                        or "company" == i \
+                                            or "contact_company" == i \
+                                                or "campany" in i \
+                                                    or "your-corp" in i \
+                                                        or "corporate" in i \
+                                                            or "name" in i \
+                                                                or "企業" in i \
+                                                                    or "社名" in i \
+                                                                        or "text-978" == i \
+                                                                            or "Company" in i \
+                                                                                or "company3" == i \
+                                                                                    or "form_fields[company]" in i \
+                                                                                        or "text-819" == i]
+ 		           print(Cell_list1)
+ 		           driver.find_element_by_name(Cell_list1[0]).send_keys(adid.m_textCtrl11.GetValue() + "　")
+ 		           lastcol = len(list(ws3.row_values(k)))
+ 		           time.sleep(1) 
+ 		           ws3.update_cell(k, lastcol+1, "会社名")
+
+
+ 		        elif len([i for i in list_2 if "facility" in i \
+                     or "organization" in i \
+                         or "your-company" in i \
+                             or "company-name" in i \
+                                 or "company" == i \
+                                     or "contact_company" == i \
+                                         or "campany" in i \
+                                             or "your-corp" in i \
+                                                 or "corporate" in i \
+                                                     or "name" in i \
+                                                         or "企業" in i \
+                                                             or "社名" in i \
+                                                                 or "text-978" == i \
+                                                                     or "Company" in i \
+                                                                         or "company3" == i \
+                                                                             or "form_fields[company]" in i \
+                                                                                 or "text-819" == i]) == 0:
+ 		           Cell_list1 = [i for i in list_2c if "facility" in i \
+                            or "organization" in i \
+                                or "your-company" in i \
+                                    or "company-name" in i \
+                                        or "company" == i \
+                                            or "contact_company" == i \
+                                                or "campany" in i \
+                                                    or "your-corp" in i \
+                                                        or "corporate" in i \
+                                                            or "name" in i \
+                                                                or "企業" in i \
+                                                                    or "社名" in i \
+                                                                        or "text-978" == i \
+                                                                            or "Company" in i \
+                                                                                or "company3" == i \
+                                                                                    or "form_fields[company]" in i \
+                                                                                        or "text-819" == i]
+ 		           print(Cell_list1)
+ 		           driver.find_elements_by_class_name(Cell_list1[0])[1].send_keys(adid.m_textCtrl11.GetValue())
+ 		           lastcol = len(list(ws3.row_values(k)))
+ 		           time.sleep(1) 
+ 		           ws3.update_cell(k, lastcol+1, "会社名")
+
+
+#会社名フリガナ
+ 		        if len([i for i in list_1 if "ふりがな（カナ）" in i]) == 0:
+ 		            pass
+ 		        elif len([i for i in list_1 if "ふりがな（カナ）" in i]) > 0:
+ 		          Cell_list2 = [i for i in list_2 if "企業名ふりがな（カナ）" in i]
+ 		          print(Cell_list2)
+#テキスト入力
+ 		          driver.find_element_by_name(Cell_list2[0]).send_keys(adid.m_textCtrl13.GetValue())
+ 		          lastcol = len(list(ws3.row_values(k))) 		          
+ 		          time.sleep(1) 		         		           
+ 		          ws3.update_cell(k, lastcol+1, "会社名カナ")
+
+
+#フルネーム（氏名）
+ 		           
+#（Googleフォーム）
+ 		        if not len([i for i in list_2c if "exportInput" in i]) == 0:
+ 		         driver.find_elements_by_css_selector(".quantumWizTextinputPaperinputInput.exportInput")[0].send_keys(adid.m_textCtrl15.GetValue())
+ 		         lastcol = len(list(ws3.row_values(k)))
+ 		         time.sleep(3)
+ 		         ws3.update_cell(k, lastcol+1, "氏名")
+
+ 		        elif not len([i for i in items_1 if "担当者" in i \
+                         or "名前" in i \
+                             or "氏名" in i \
+                                 or "姓" in i \
+                                     or "名" in i]) == 0 \
+                     or not len([i for i in list_2 if "担当者" in i \
+                                 or "名前" in i \
+                                     or "氏名" in i]) == 0:
+
+#フルネーム（姓＋名）
+ 		         if len([i for i in list_2 if "姓" == i \
+                    or "firstName" == i \
+                        or "first_name" == i \
+                            or "name1" == i \
+                                or "FirstName" in i \
+                                    or "firstname" in i \
+                                        or "名" == i \
+                                            or "lastName" == i \
+                                                or "name2" == i \
+                                                    or "LastName" in i \
+                                                        or "name3" in i \
+                                                            or "lastname" in i]) > 0:
+ 		            Cell_list3 = [i for i in list_2 if "姓" == i \
+                             or "firstName" == i \
+                                 or "first_name" == i \
+                                     or "name1" == i \
+                                         or "FirstName" in i \
+                                             or "firstname" in i \
+                                                 or "名" == i \
+                                                     or "lastName" == i \
+                                                         or "name2" == i \
+                                                             or "LastName" in i \
+                                                                 or "name3" in i \
+                                                                     or "lastname" in i]
+ 		            print(Cell_list3)
+ 		            for j in range(1,len(Cell_list3)+1):
+ 		         		        elemName0 = driver.find_element_by_name(Cell_list3[0])
+ 		         		        elemName1 = driver.find_element_by_name(Cell_list3[1])
+ 		         		        
+ 		         		        if len(Cell_list3) > 2:
+ 		         		         elemName2 = driver.find_element_by_name(Cell_list3[2])
+ 		         		         try:
+ 		         		          if elemName0.is_displayed() is False \
+ 		         		         		        or elemName1.is_displayed() is False \
+ 		         		         		            or elemName2.is_displayed() is False:
+ 		         		         		        print(Cell_list3[j-1])
+ 		         		         		        if "1" in Cell_list3[j-1]:
+ 		         		         		         driver.find_element_by_name(Cell_list3[j-1]).send_keys(adid.m_textCtrl16.GetValue()
+                                                                                         + adid.m_textCtrl17.GetValue())
+ 		         		         		         lastcol = len(list(ws3.row_values(k)))
+ 		         		         		         time.sleep(1) 		         		           
+ 		         		         		         ws3.update_cell(k, lastcol+1, "氏名")
+
+ 		         		         		        elif "2" in Cell_list3[j-1]:
+ 		         		         		         driver.find_element_by_name(Cell_list3[j-1]).send_keys(adid.m_textCtrl16.GetValue()
+                                                                                         + adid.m_textCtrl17.GetValue())
+ 		         		         		         lastcol = len(list(ws3.row_values(k)))
+ 		         		         		         time.sleep(1) 		         		           
+ 		         		         		         ws3.update_cell(k, lastcol+1, "氏名")
+
+ 		         		         		        elif "3" in Cell_list3[j-1]:
+ 		         		         		         driver.find_element_by_name(Cell_list3[j-1]).send_keys(adid.m_textCtrl16.GetValue()
+                                                                                         + adid.m_textCtrl17.GetValue())
+ 		         		         		         lastcol = len(list(ws3.row_values(k)))
+ 		         		         		         time.sleep(1) 		         		           
+ 		         		         		         ws3.update_cell(k, lastcol+1, "氏名")
+
+#操作できない要素の回避
+ 		         		         except ElementNotInteractableException:
+ 		         		           pass
+
+# 		         		        else:
+# 		         		         		        driver.find_element_by_name(Cell_list3[j-1]).send_keys(ws2.cell(6, 2+j).value)
+# 		         		         		        lastcol = len(list(ws3.row_values(k)))
+# 		         		         		        time.sleep(1) 
+# 		         		         		        ws3.update_cell(k, lastcol+1, ws2.cell(6, 2+j).value)
+ 		           
+#フルネーム（通常パターン）
+ 		         elif not len([i for i in list_2 if r"user_name" in i \
+                          or r"your-name" in i \
+                              or "contact_name" in i \
+                                  or "名前" in i \
+                                      or "f4a6f2b" in i \
+                                          or "担当者" in i \
+                                              or "氏名" in i \
+                                                  or "name" == i \
+                                                      or "name1" == i \
+                                                          or "text-978" == i \
+                                                              or "firstname" == i \
+                                                                  or "full_name" == i \
+                                                                      or "customer_name" == i \
+                                                                          or "namae" in i \
+                                                                              or "form_fields[name]" in i \
+                                                                                  or "NAME" == i]) == 0:
+ 		           Cell_list3 = [i for i in list_2 if r"user_name" in i \
+                            or r"your-name" in i \
+                                or "contact_name" in i \
+                                    or "名前" in i \
+                                        or "f4a6f2b" in i \
+                                            or "担当者" in i \
+                                                or "氏名" in i \
+                                                    or "name" == i \
+                                                        or "name1" == i \
+                                                            or "text-978" == i \
+                                                                or "firstname" == i \
+                                                                    or "full_name" == i \
+                                                                        or "customer_name" == i \
+                                                                            or "namae" in i \
+                                                                                or "form_fields[name]" in i \
+                                                                                    or "NAME" == i]
+ 		           print(Cell_list3)
+ 		           driver.find_element_by_name(Cell_list3[0]).send_keys(adid.m_textCtrl15.GetValue())
+ 		           lastcol = len(list(ws3.row_values(k)))
+ 		           time.sleep(1) 
+ 		           ws3.update_cell(k, lastcol+1, "氏名")
+
+ 		         elif len([i for i in list_2 if r"user_name" in i \
+                      or r"your-name" in i \
+                          or "contact_name" in i \
+                              or "名前" in i \
+                                  or "f4a6f2b" in i \
+                                      or "担当者" in i \
+                                          or "氏名" in i \
+                                              or "name" == i \
+                                                  or "name1" == i \
+                                                      or "text-978" == i \
+                                                          or "firstname" == i \
+                                                              or "full_name" == i \
+                                                                  or "customer_name" == i \
+                                                                      or "namae" in i \
+                                                                          or "form_fields[name]" in i \
+                                                                              or "NAME" == i]) == 0:
+ 		           Cell_list3 = [i for i in list_2d if r"user_name" in i \
+                            or r"your-name" in i \
+                                or "contact_name" in i \
+                                    or "名前" in i \
+                                        or "f4a6f2b" in i \
+                                            or "担当者" in i \
+                                                or "氏名" in i \
+                                                    or "name" == i \
+                                                        or "name1" == i \
+                                                            or "text-978" == i \
+                                                                or "firstname" == i \
+                                                                    or "full_name" == i \
+                                                                        or "customer_name" == i \
+                                                                            or "namae" in i \
+                                                                                or "form_fields[name]" in i \
+                                                                                    or "NAME" == i]
+ 		           print(Cell_list3)
+ 		           driver.find_element_by_id(Cell_list3[0]).send_keys(adid.m_textCtrl15.GetValue())
+ 		           lastcol = len(list(ws3.row_values(k)))
+ 		           time.sleep(1) 
+ 		           ws3.update_cell(k, lastcol+1, "氏名")
+
+ 		         elif len([i for i in list_2d if r"user_name" in i \
+                      or r"your-name" in i \
+                          or "名前" in i \
+                              or "contact_name" in i \
+                                  or "f4a6f2b" in i \
+                                      or "担当者" in i \
+                                          or "氏名" in i \
+                                              or "name" == i \
+                                                  or "name1" == i \
+                                                      or "text-978" == i \
+                                                          or "firstname" == i \
+                                                              or "full_name" == i \
+                                                                  or "customer_name" == i \
+                                                                      or "namae" in i \
+                                                                          or "form_fields[name]" in i \
+                                                                              or "NAME" == i]) == 0:
+ 		           Cell_list3 = [i for i in list_2c if r"user_name" in i \
+                            or r"your-name" in i \
+                                or "contact_name" in i \
+                                    or "名前" in i \
+                                        or "f4a6f2b" in i \
+                                            or "担当者" in i \
+                                                or "氏名" in i \
+                                                    or "name" == i \
+                                                        or "name1" == i \
+                                                            or "text-978" == i \
+                                                                or "firstname" == i \
+                                                                    or "full_name" == i \
+                                                                        or "customer_name" == i \
+                                                                            or "namae" in i \
+                                                                                or "form_fields[name]" in i \
+                                                                                    or "NAME" == i]
+ 		           print(Cell_list3)
+ 		           driver.find_elements_by_class_name(list_2c[0])[0].send_keys(adid.m_textCtrl15.GetValue())
+ 		           lastcol = len(list(ws3.row_values(k)))
+ 		           time.sleep(1)
+ 		           ws3.update_cell(k, lastcol+1, "氏名")
+
+#フルネームふりがな
+ 		        if len([i for i in list_1 if "ふりがな" in i]) == 0:
+ 		         pass
+ 		        elif not len([i for i in list_1 if "ふりがな" in i]) == 0:
+ 		          if len([i for i in list_2 if "せい" == i \
+                     or "めい" == i]) > 0:
+ 		           Cell_list5 = [i for i in list_2 if "せい" == i \
+                            or "めい" == i]
+ 		           print(Cell_list5)
+# 		           for j in range(1,len(Cell_list5)+1):
+# 		            print(Cell_list5[j-1])
+ 		           driver.find_element_by_name(Cell_list5[0]).send_keys(adid.m_textCtrl19.GetValue())
+ 		           lastcol = len(list(ws3.row_values(k)))
+ 		           time.sleep(1) 		         		           
+ 		           ws3.update_cell(k, lastcol+1, adid.m_textCtrl19.GetValue())
+ 		           driver.find_element_by_name(Cell_list5[1]).send_keys(adid.m_textCtrl20.GetValue())
+ 		           lastcol = len(list(ws3.row_values(k)))
+ 		           time.sleep(1) 		         		           
+ 		           ws3.update_cell(k, lastcol+1, adid.m_textCtrl20.GetValue())         
+ 		          elif len([i for i in list_2 if "your-kana" in i \
+                       or "userKana" in i \
+                           or "personal_kana_name" in i \
+                               or "name_ruby" in i \
+                                   or "ふりがな" in i]) > 0:
+ 		           Cell_list5 = [i for i in list_2 if "your-kana" in i \
+                            or "userKana" in i \
+                                or "personal_kana_name" in i \
+                                    or "name_ruby" in i \
+                                        or "ふりがな" in i]
+ 		           print(Cell_list5)
+ 		           driver.find_element_by_name(Cell_list5[0]).send_keys(adid.m_textCtrl18.GetValue())
+ 		           lastcol = len(list(ws3.row_values(k)))
+ 		           time.sleep(1) 		         		           
+ 		           ws3.update_cell(k, lastcol+1, "氏名ふりがな")
+
+
+#フルネームカタカナ
+ 		        if len([i for i in list_1 if "フリガナ" in i \
+                   or "名前（カナ）" in i]) == 0:
+ 		            pass
+ 		        elif not len([i for i in list_1 if "フリガナ" in i \
+                         or "名前（カナ）" in i]) == 0:
+ 		            
+#（セイ＋メイ）
+ 		          if len([i for i in list_2 if "セイ" == i \
+                     or "メイ" == i \
+                         or "firstKanaName" == i \
+                             or "lastKanaName" == i \
+                                 or "kana_first_name" in i \
+                                     or "kana_last_name" in i]) > 0:
+ 		           Cell_list5 = [i for i in list_2 if "セイ" == i \
+                            or "メイ" == i \
+                                or "firstKanaName" == i \
+                                    or "lastKanaName" == i \
+                                        or "kana_first_name" in i \
+                                            or "kana_last_name" in i]
+ 		           print(Cell_list5)
+# 		           for j in range(1,len(Cell_list5)+1):
+# 		            print(Cell_list5[j-1])
+ 		           driver.find_element_by_name(Cell_list5[0]).send_keys(adid.m_textCtrl22.GetValue())
+ 		           lastcol = len(list(ws3.row_values(k)))
+ 		           time.sleep(1) 		         		           
+ 		           ws3.update_cell(k, lastcol+1, adid.m_textCtrl22.GetValue())
+ 		           driver.find_element_by_name(Cell_list5[1]).send_keys(adid.m_textCtrl23.GetValue())
+ 		           lastcol = len(list(ws3.row_values(k)))
+ 		           time.sleep(1) 		         		           
+ 		           ws3.update_cell(k, lastcol+1, adid.m_textCtrl23.GetValue())         
+
+#（セイメイ）
+ 		          elif len([i for i in list_2 if "your-kana" in i \
+                       or "name_furi" in i \
+                           or "フリガナ" in i \
+                               or "name1-kana" == i \
+                                   or "furigana" == i \
+                                       or "kana" == i \
+                                           or "NAME_KANA" == i]) > 0:
+ 		           Cell_list5 = [i for i in list_2 if "your-kana" in i \
+                            or "name_furi" in i \
+                                or "フリガナ" in i \
+                                    or "name1-kana" == i \
+                                        or "furigana" == i \
+                                            or "kana" == i \
+                                                or "NAME_KANA" == i]
+ 		           print(Cell_list5)
+ 		           driver.find_element_by_name(Cell_list5[0]).send_keys(adid.m_textCtrl21.GetValue())
+ 		           lastcol = len(list(ws3.row_values(k)))
+ 		           time.sleep(1) 		         		           
+ 		           ws3.update_cell(k, lastcol+1, "氏名フリガナ")
+
 
 
 class MyProject1MyDialog( app.MyDialog ):
@@ -842,7 +2006,7 @@ class MyProject1MyDialog( app.MyDialog ):
         
 #現在のワークシートのタイトルをリストへ格納
         m_comboBox1Choices = [worksheet.title for worksheet in worksheets]
-        print(m_comboBox1Choices)
+#        print(m_comboBox1Choices)
         self.m_comboBox1 = wx.ComboBox( sbSizer15.GetStaticBox(), wx.ID_ANY, u"選択して下さい", wx.DefaultPosition, wx.Size( 100,-1 ), m_comboBox1Choices, wx.CB_DROPDOWN )
         
         sbSizer15.Add( self.m_comboBox1, 0, wx.ALL, 5 )
@@ -939,7 +2103,7 @@ class MyProject1MyDialog( app.MyDialog ):
 
 #現在のワークシートのタイトルをリストへ格納
         m_comboBox11Choices = [worksheet.title for worksheet in worksheets]
-        print(m_comboBox11Choices)
+#        print(m_comboBox11Choices)
         self.m_comboBox11 = wx.ComboBox( sbSizer151.GetStaticBox(), wx.ID_ANY, u"選択して下さい", wx.DefaultPosition, wx.Size( 100,-1 ), m_comboBox11Choices, wx.CB_DROPDOWN )
         sbSizer151.Add( self.m_comboBox11, 0, wx.ALL, 5 )
 
@@ -979,7 +2143,7 @@ class MyProject1MyDialog( app.MyDialog ):
 
 #現在のワークシートのタイトルをリストへ格納
         m_comboBox31Choices = [worksheet.title for worksheet in worksheets]
-        print(m_comboBox31Choices)
+#        print(m_comboBox31Choices)
         self.m_comboBox31 = wx.ComboBox( sbSizer16.GetStaticBox(), wx.ID_ANY, u"選択して下さい", wx.DefaultPosition, wx.Size( 100,-1 ), m_comboBox31Choices, 0 )
         gSizer61.Add( self.m_comboBox31, 0, wx.ALL, 5 )
 
@@ -1103,11 +2267,11 @@ class MyProject1MyDialog( app.MyDialog ):
          driver.set_page_load_timeout(60)
             
          wb = gc.open_by_key(adid.m_comboBox6.GetValue())
-         print(self.m_textCtrl3.GetValue())
+#         print(self.m_textCtrl3.GetValue())
 #         ws2 = wb.worksheet(self.m_comboBox1.GetValue())
 #         print(self.m_comboBox1.GetValue())
          ws3 = wb.worksheet(self.m_comboBox3.GetStringSelection())
-         print(self.m_comboBox3.GetStringSelection())
+#         print(self.m_comboBox3.GetStringSelection())
          self.row1.SetBackgroundColour('#FFFFFF')
          self.row2.SetBackgroundColour('#FFFFFF')
 #         self.m_comboBox1.SetBackgroundColour("#FFFFFF")
@@ -1155,7 +2319,7 @@ class MyProject1MyDialog( app.MyDialog ):
               
 #ws1の行数を取得
            lastrow1 = len(ws3.col_values(1))
-           print(lastrow1)       
+#           print(lastrow1)       
            
            if lastrow1 == 0:
             cell_list2 = ws3.range(1, 1, str(len(service_urls)), 1)
@@ -1202,11 +2366,11 @@ class MyProject1MyDialog( app.MyDialog ):
     def Get_details( self, event ):
         adid = MyProject1MyDialog3(self)
         credentials = ServiceAccountCredentials.from_json_keyfile_name(adid.m_textCtrl11.GetValue(), scope)
-        gc = gspread.authorize(credentials)        
+        gc = gspread.authorize(credentials)
         row3 = self.row3.GetValue()
         row4 = self.row4.GetValue()
-        print(row3)
-        print(row4)                
+#        print(row3)
+#        print(row4)                
 
         if self.m_comboBox31.GetValue() == '選択して下さい':
          self.m_comboBox31.SetBackgroundColour("#ff0000")      
@@ -1257,9 +2421,9 @@ class MyProject1MyDialog( app.MyDialog ):
          driver.set_page_load_timeout(60)
             
          wb = gc.open_by_key(adid.m_comboBox6.GetValue())
-         print(self.m_textCtrl3.GetValue())
+#         print(self.m_textCtrl3.GetValue())
          ws3 = wb.worksheet(self.m_comboBox31.GetStringSelection())
-         print(self.m_comboBox3.GetStringSelection())
+#         print(self.m_comboBox3.GetStringSelection())
          self.row3.SetBackgroundColour('#FFFFFF')
          self.row4.SetBackgroundColour('#FFFFFF')
          self.m_comboBox31.SetBackgroundColour("#FFFFFF")        
@@ -2126,28 +3290,9 @@ class MyProject1MyDialog( app.MyDialog ):
 	    self.Destroy()
 
     def page_list( self, event ):
-#         credentials = ServiceAccountCredentials.from_json_keyfile_name(self.m_textCtrl5.GetValue(), scope)
-#         gc = gspread.authorize(credentials)           
-        
-#         if self.m_comboBox1.GetValue() == '選択して下さい':
-#          self.m_comboBox1.SetBackgroundColour("#ff0000")
-#          wx.MessageBox(u'Please select the Worksheet title!!', u'Setting value error', wx.ICON_ERROR)
-#         elif not 'page' in self.m_comboBox1.GetValue():
-#          self.m_comboBox1.SetBackgroundColour("#ff0000")
-#          wx.MessageBox(u'The selected sheet name is not valid.!!', u'Setting value error', wx.ICON_ERROR)
-#         else:
-#          self.m_comboBox1.SetBackgroundColour("#FFFFFF")
-#          print(self.m_textCtrl3.GetValue())
-#          print(self.m_comboBox1.GetValue())          
-#          wb = gc.open_by_key(self.m_textCtrl3.GetValue())
-#          ws2 = wb.worksheet(self.m_comboBox1.GetValue())          
-#          lastrow = len(ws2.col_values(1))
-#          cell_list1 = ws2.range(1, 1, lastrow, 1)
 
 #MyDialogの各設定値をMyFrame4に受け渡し
           adid = MyProject1MyFrame4(self)
-#          adid.InitializeComponents(self.m_textCtrl3.GetValue())
-#          adid.InitializeComponents(self.m_comboBox1.GetValue())
           adid.grid.ClearGrid()
 #          i = 0
           lastrow = 391
@@ -2163,7 +3308,7 @@ class MyProject1MyDialog( app.MyDialog ):
           
           for row in range(lastrow+1):
             adid.grid.SetCellValue(row, 0, "https://imitsu.jp/ct-hp-design/search/?pn=" + str(row+1))
-            print("https://imitsu.jp/ct-hp-design/search/?pn=" + str(row+1))
+#            print("https://imitsu.jp/ct-hp-design/search/?pn=" + str(row+1))
 #            print(cell_list1[i].value)
 #            adid.grid.SetCellValue(row, 0, cell_list1[i].value)
 #            i += 1
@@ -2226,12 +3371,12 @@ class MyProject1MyDialog( app.MyDialog ):
             adid.grid.SetCellValue(row, 3, cell_list4[i].value)
             adid.grid.SetCellValue(row, 4, cell_list5[i].value)
             adid.grid.SetCellValue(row, 5, cell_list6[i].value)
-            print(cell_list1[i].value)
-            print(cell_list2[i].value)
-            print(cell_list3[i].value)
-            print(cell_list4[i].value)
-            print(cell_list5[i].value)
-            print(cell_list6[i].value)
+#            print(cell_list1[i].value)
+#            print(cell_list2[i].value)
+#            print(cell_list3[i].value)
+#            print(cell_list4[i].value)
+#            print(cell_list5[i].value)
+#            print(cell_list6[i].value)
             i += 1
             rate += 1/(lastrow+1)*100
             # 値の更新
@@ -2386,7 +3531,10 @@ class MyProject1MyDialog3( app.MyDialog3 ):
 #設定情報（json）読み込み
 #文字コードをUTF-8に変換しないとエラーが発生するため注意！！
         with codecs.open('setting.json','r',encoding='utf-8') as f:
-            j = json.load(f)
+#「JSONDecodeError: Invalid control character at」が返さないようにする。
+#strictがfalse（デフォルトはTrue）の場合、制御文字を文字列に含めることができます。
+#ここで言う制御文字とは、'\t'（タブ）、'\n'、'\r'、'\0'を含む0-31の範囲のコードを持つ文字のことです。
+            j = json.load(f,strict=False)
 #            print(j)
             f.close()
             self.m_textCtrl11.SetValue(j['verificationkey'])
@@ -2445,12 +3593,11 @@ class MyProject1MyDialog4( app.MyDialog4 ):
 
         hbox4 = wx.BoxSizer( wx.VERTICAL )
 
-        self.m_panel22 = wx.Panel( self, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, wx.TAB_TRAVERSAL )
-        self.m_panel22.SetFont( wx.Font( 10, wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_NORMAL, False, "Meiryo UI" ) )
+#Corporate_infomation
+        self.m_notebook1 = wx.Notebook( self, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, 0 )
+        self.m_notebook1.SetFont( wx.Font( 10, wx.FONTFAMILY_MODERN, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_NORMAL, False, "Meiryo UI" ) )
 
-        sbSizer151 = wx.StaticBoxSizer( wx.StaticBox( self.m_panel22, wx.ID_ANY, u"Profile" ), wx.VERTICAL )
-
-        self.m_panel46 = wx.Panel( sbSizer151.GetStaticBox(), wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, wx.TAB_TRAVERSAL )
+        self.m_panel46 = wx.Panel( self.m_notebook1, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, wx.TAB_TRAVERSAL )
         sbSizer50 = wx.StaticBoxSizer( wx.StaticBox( self.m_panel46, wx.ID_ANY, u"Corporate infomation" ), wx.VERTICAL )
 
         gSizer72 = wx.GridSizer( 0, 2, 0, 0 )
@@ -2563,7 +3710,7 @@ class MyProject1MyDialog4( app.MyDialog4 ):
                                '官公庁・自治体',
                                '政治',
                                '宗教')
-        print(m_comboBox61Choices)
+#        print(m_comboBox61Choices)
         self.m_comboBox61 = wx.ComboBox( sbSizer54.GetStaticBox(), wx.ID_ANY, u"選択して下さい", wx.DefaultPosition, wx.Size( 400,-1 ), m_comboBox61Choices, 0 )
         sbSizer54.Add( self.m_comboBox61, 0, wx.ALL, 5 )
 
@@ -2603,10 +3750,11 @@ class MyProject1MyDialog4( app.MyDialog4 ):
         self.m_panel46.SetSizer( sbSizer50 )
         self.m_panel46.Layout()
         sbSizer50.Fit( self.m_panel46 )
-        sbSizer151.Add( self.m_panel46, 1, wx.EXPAND |wx.ALL, 5 )
-
-        self.m_panel53 = wx.Panel( sbSizer151.GetStaticBox(), wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, wx.TAB_TRAVERSAL )
-        sbSizer56 = wx.StaticBoxSizer( wx.StaticBox( self.m_panel53, wx.ID_ANY, u"Sender" ), wx.VERTICAL )
+        self.m_notebook1.AddPage( self.m_panel46, u"Corporate_infomation", False )
+        
+#Sender        
+        self.m_panel531 = wx.Panel( self.m_notebook1, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, wx.TAB_TRAVERSAL )
+        sbSizer56 = wx.StaticBoxSizer( wx.StaticBox( self.m_panel531, wx.ID_ANY, u"Sender" ), wx.VERTICAL )
 
         gSizer78 = wx.GridSizer( 0, 2, 0, 0 )
 
@@ -2798,12 +3946,13 @@ class MyProject1MyDialog4( app.MyDialog4 ):
         sbSizer56.Add( gSizer84, 1, wx.EXPAND, 5 )
 
 
-        self.m_panel53.SetSizer( sbSizer56 )
-        self.m_panel53.Layout()
-        sbSizer56.Fit( self.m_panel53 )
-        sbSizer151.Add( self.m_panel53, 1, wx.EXPAND |wx.ALL, 5 )
+        self.m_panel531.SetSizer( sbSizer56 )
+        self.m_panel531.Layout()
+        sbSizer56.Fit( self.m_panel531 )
+        self.m_notebook1.AddPage( self.m_panel531, u"Sender", True )
 
-        self.m_panel65 = wx.Panel( sbSizer151.GetStaticBox(), wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, wx.TAB_TRAVERSAL )
+#Location
+        self.m_panel65 = wx.Panel( self.m_notebook1, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, wx.TAB_TRAVERSAL )
         sbSizer69 = wx.StaticBoxSizer( wx.StaticBox( self.m_panel65, wx.ID_ANY, u"Location" ), wx.VERTICAL )
 
         self.m_panel66 = wx.Panel( sbSizer69.GetStaticBox(), wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, wx.TAB_TRAVERSAL )
@@ -2924,7 +4073,7 @@ class MyProject1MyDialog4( app.MyDialog4 ):
                                '宮崎県',
                                '鹿児島県',
                                '沖縄県')
-        print(m_comboBox6Choices)
+#        print(m_comboBox6Choices)
         self.m_comboBox6 = wx.ComboBox( sbSizer75.GetStaticBox(), wx.ID_ANY, u"選択して下さい", wx.DefaultPosition, wx.Size( 400,-1 ), m_comboBox6Choices, 0 )
         sbSizer75.Add( self.m_comboBox6, 0, wx.ALL, 5 )
 
@@ -2990,10 +4139,11 @@ class MyProject1MyDialog4( app.MyDialog4 ):
 
         self.m_panel65.SetSizer( sbSizer69 )
         self.m_panel65.Layout()
-        sbSizer69.Fit( self.m_panel65 )
-        sbSizer151.Add( self.m_panel65, 1, wx.EXPAND |wx.ALL, 5 )
-
-        self.m_panel75 = wx.Panel( sbSizer151.GetStaticBox(), wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, wx.TAB_TRAVERSAL )
+        sbSizer69.Fit( self.m_panel65 )        
+        self.m_notebook1.AddPage( self.m_panel65, u"Location", False )
+        
+#Contact        
+        self.m_panel75 = wx.Panel( self.m_notebook1, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, wx.TAB_TRAVERSAL )
         self.m_panel75.SetFont( wx.Font( 10, wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_NORMAL, False, "Meiryo UI" ) )
 
         sbSizer79 = wx.StaticBoxSizer( wx.StaticBox( self.m_panel75, wx.ID_ANY, u"Contact" ), wx.VERTICAL )
@@ -3134,13 +4284,9 @@ class MyProject1MyDialog4( app.MyDialog4 ):
         self.m_panel75.SetSizer( sbSizer79 )
         self.m_panel75.Layout()
         sbSizer79.Fit( self.m_panel75 )
-        sbSizer151.Add( self.m_panel75, 1, wx.EXPAND |wx.ALL, 5 )
+        self.m_notebook1.AddPage( self.m_panel75, u"Contact", True )
 
-
-        self.m_panel22.SetSizer( sbSizer151 )
-        self.m_panel22.Layout()
-        sbSizer151.Fit( self.m_panel22 )
-        hbox4.Add( self.m_panel22, 1, wx.EXPAND |wx.ALL, 5 )
+        hbox4.Add( self.m_notebook1, 1, wx.EXPAND |wx.ALL, 5 )
 
         self.btn11 = wx.Button( self, wx.ID_ANY, u"Save", wx.DefaultPosition, wx.DefaultSize, 0 )
         self.btn11.SetFont( wx.Font( 10, wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_NORMAL, False, "Meiryo UI" ) )
@@ -3159,15 +4305,15 @@ class MyProject1MyDialog4( app.MyDialog4 ):
 
 #設定情報（json）読み込み
 #文字コードをUTF-8に変換しないとエラーが発生するため注意！！
-        with codecs.open('setting.json','r',encoding='utf-8') as f:
-            j = json.load(f)
+        with codecs.open('profile.json','r',encoding='utf-8') as f:
+            j = json.load(f,strict=False)
 #            print(j)
             f.close()
             self.m_textCtrl11.SetValue(j['companyname'])
             self.m_textCtrl12.SetValue(j['companyhiragana'])
             self.m_textCtrl13.SetValue(j['companykatakana'])
             self.m_comboBox61.SetValue(j['industry'])
-            self.m_textCtrl14.SetValue(j['bussinesscontent'])
+            self.m_textCtrl14.SetValue(j['businesscontent'])
             self.m_textCtrl15.SetValue(j['kanjifull'])
             self.m_textCtrl16.SetValue(j['kanjisei'])
             self.m_textCtrl17.SetValue(j['kanjimei'])
@@ -3294,7 +4440,7 @@ class MyProject1MyDialog4( app.MyDialog4 ):
               self.m_textCtrl39.SetBackgroundColour('#FFFFFF')
 
 #文字コードをUTF-8に変換しないとエラー発生がするため注意！！
-              with open('setting.json','w',encoding='utf-8') as f:
+              with open('profile.json','w',encoding='utf-8') as f:
                 w_data = {}
                 w_data['prefecture'] = self.m_comboBox6.GetValue()
                 w_data['industry'] = self.m_comboBox61.GetValue()
@@ -3336,13 +4482,191 @@ class MyProject1MyDialog4( app.MyDialog4 ):
 # TODO: Implement quit_button
     def quit_button( self, event ):
         self.Destroy()
-        
+
+#Email_body_creation        
 class MyProject1MyDialog5( app.MyDialog5 ):
     def __init__(self, parent):
         app.MyDialog5.__init__(self, parent)
         self.parent = parent
 
-                     
+        hbox4 = wx.BoxSizer( wx.VERTICAL )
+
+        self.m_panel22 = wx.Panel( self, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, wx.TAB_TRAVERSAL )
+        self.m_panel22.SetFont( wx.Font( 10, wx.FONTFAMILY_MODERN, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_NORMAL, False, "Meiryo UI" ) )
+
+        sbSizer17 = wx.StaticBoxSizer( wx.StaticBox( self.m_panel22, wx.ID_ANY, u"Tittle" ), wx.VERTICAL )
+
+        self.m_textCtrl6 = wx.TextCtrl( sbSizer17.GetStaticBox(), wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.Size( 400,-1 ), 0 )
+        self.m_textCtrl6.SetMaxLength(100)
+        sbSizer17.Add( self.m_textCtrl6, 0, wx.ALL, 5 )
+
+
+        self.m_panel22.SetSizer( sbSizer17 )
+        self.m_panel22.Layout()
+        sbSizer17.Fit( self.m_panel22 )
+        hbox4.Add( self.m_panel22, 1, wx.EXPAND |wx.ALL, 5 )
+
+        self.m_panel23 = wx.Panel( self, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, wx.TAB_TRAVERSAL )
+        self.m_panel23.SetFont( wx.Font( 10, wx.FONTFAMILY_MODERN, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_NORMAL, False, "Meiryo UI" ) )
+
+        sbSizer18 = wx.StaticBoxSizer( wx.StaticBox( self.m_panel23, wx.ID_ANY, u"Url" ), wx.VERTICAL )
+
+        self.m_textCtrl7 = wx.TextCtrl( sbSizer18.GetStaticBox(), wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.Size( 400,-1 ), 0 )
+        self.m_textCtrl7.SetMaxLength(100)
+        sbSizer18.Add( self.m_textCtrl7, 0, wx.ALL, 5 )
+
+
+        self.m_panel23.SetSizer( sbSizer18 )
+        self.m_panel23.Layout()
+        sbSizer18.Fit( self.m_panel23 )
+        hbox4.Add( self.m_panel23, 1, wx.EXPAND |wx.ALL, 5 )
+
+        gSizer89 = wx.GridSizer( 0, 2, 0, 0 )
+
+        self.m_panel24 = wx.Panel( self, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, wx.TAB_TRAVERSAL )
+        self.m_panel24.SetFont( wx.Font( 10, wx.FONTFAMILY_MODERN, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_NORMAL, False, "Meiryo UI" ) )
+
+        sbSizer19 = wx.StaticBoxSizer( wx.StaticBox( self.m_panel24, wx.ID_ANY, u"Normal transmission" ), wx.VERTICAL )
+
+        self.m_textCtrl8 = wx.TextCtrl( sbSizer19.GetStaticBox(), wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.Size( 400,200 ), wx.TE_MULTILINE )
+#        self.m_textCtrl8.SetMaxLength(2000)
+        sbSizer19.Add( self.m_textCtrl8, 0, wx.ALL, 5 )
+
+
+        self.m_panel24.SetSizer( sbSizer19 )
+        self.m_panel24.Layout()
+        sbSizer19.Fit( self.m_panel24 )
+        gSizer89.Add( self.m_panel24, 1, wx.EXPAND |wx.ALL, 5 )
+
+        self.m_panel25 = wx.Panel( self, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, wx.TAB_TRAVERSAL )
+        self.m_panel25.SetFont( wx.Font( 10, wx.FONTFAMILY_MODERN, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_NORMAL, False, "Meiryo UI" ) )
+
+        sbSizer20 = wx.StaticBoxSizer( wx.StaticBox( self.m_panel25, wx.ID_ANY, u"Within 1000 characters" ), wx.VERTICAL )
+
+        self.m_textCtrl9 = wx.TextCtrl( sbSizer20.GetStaticBox(), wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.Size( 400,200 ), wx.TE_MULTILINE )
+        self.m_textCtrl9.SetMaxLength(1000)
+        sbSizer20.Add( self.m_textCtrl9, 0, wx.ALL, 5 )
+
+
+        self.m_panel25.SetSizer( sbSizer20 )
+        self.m_panel25.Layout()
+        sbSizer20.Fit( self.m_panel25 )
+        gSizer89.Add( self.m_panel25, 1, wx.EXPAND |wx.ALL, 5 )
+
+        self.m_panel241 = wx.Panel( self, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, wx.TAB_TRAVERSAL )
+        self.m_panel241.SetFont( wx.Font( 10, wx.FONTFAMILY_MODERN, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_NORMAL, False, "Meiryo UI" ) )
+
+        sbSizer191 = wx.StaticBoxSizer( wx.StaticBox( self.m_panel241, wx.ID_ANY, u"Within 500 characters" ), wx.VERTICAL )
+
+        self.m_textCtrl10 = wx.TextCtrl( sbSizer191.GetStaticBox(), wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.Size( 400,200 ), wx.TE_MULTILINE )
+        self.m_textCtrl10.SetMaxLength(500)
+        sbSizer191.Add( self.m_textCtrl10, 0, wx.ALL, 5 )
+
+
+        self.m_panel241.SetSizer( sbSizer191 )
+        self.m_panel241.Layout()
+        sbSizer191.Fit( self.m_panel241 )
+        gSizer89.Add( self.m_panel241, 1, wx.EXPAND |wx.ALL, 5 )
+
+        self.m_panel242 = wx.Panel( self, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, wx.TAB_TRAVERSAL )
+        self.m_panel242.SetFont( wx.Font( 10, wx.FONTFAMILY_MODERN, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_NORMAL, False, "Meiryo UI" ) )
+
+        sbSizer192 = wx.StaticBoxSizer( wx.StaticBox( self.m_panel242, wx.ID_ANY, u"Other" ), wx.VERTICAL )
+
+        self.m_textCtrl11 = wx.TextCtrl( sbSizer192.GetStaticBox(), wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.Size( 400,200 ), wx.TE_MULTILINE )
+        self.m_textCtrl11.SetMaxLength(300)
+        self.m_textCtrl11.Disable()
+        sbSizer192.Add( self.m_textCtrl11, 0, wx.ALL, 5 )
+
+
+        self.m_panel242.SetSizer( sbSizer192 )
+        self.m_panel242.Layout()
+        sbSizer192.Fit( self.m_panel242 )
+        gSizer89.Add( self.m_panel242, 1, wx.EXPAND |wx.ALL, 5 )
+
+
+        hbox4.Add( gSizer89, 1, wx.EXPAND, 5 )
+
+        self.btn11 = wx.Button( self, wx.ID_ANY, u"Save", wx.DefaultPosition, wx.DefaultSize, 0 )
+        self.btn11.SetFont( wx.Font( 10, wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_NORMAL, False, "Meiryo UI" ) )
+
+        hbox4.Add( self.btn11, 0, wx.ALL, 5 )
+
+
+        self.SetSizer( hbox4 )
+        self.Layout()
+
+        self.Centre( wx.BOTH )
+
+# Connect Events
+        self.btn11.Bind( wx.EVT_BUTTON, self.write )
+        self.Bind( wx.EVT_CLOSE, self.quit_button )
+
+#設定情報（json）読み込み
+#文字コードをUTF-8に変換しないとエラーが発生するため注意！！
+        with codecs.open('textarea.json','r',encoding='utf-8') as f:
+            j = json.load(f,strict=False)
+#            print(j)
+            f.close()
+            self.m_textCtrl6.SetValue(j['title'])
+            self.m_textCtrl7.SetValue(j['url'])
+            self.m_textCtrl8.SetValue(j['body1'])
+            self.m_textCtrl9.SetValue(j['body2'])
+            self.m_textCtrl10.SetValue(j['body3'])
+            self.m_textCtrl11.SetValue(j['body4'])
+
+#設定情報（json）書き出し
+    def write(self, event):
+            if self.m_textCtrl6.GetValue() == '' \
+                    or self.m_textCtrl7.GetValue() == '' \
+                        or self.m_textCtrl8.GetValue() == '' \
+                            or self.m_textCtrl9.GetValue() == '' \
+                                or self.m_textCtrl10.GetValue() == '' \
+                                    or self.m_textCtrl11.GetValue() == '':
+              self.m_textCtrl6.SetBackgroundColour('#f56cbe')
+              self.m_textCtrl7.SetBackgroundColour('#f56cbe')
+              self.m_textCtrl8.SetBackgroundColour('#f56cbe')
+              self.m_textCtrl9.SetBackgroundColour('#f56cbe')
+              self.m_textCtrl10.SetBackgroundColour('#f56cbe')
+              self.m_textCtrl11.SetBackgroundColour('#f56cbe')
+              wx.MessageBox(u'There are unselected or blank areas!!', u'Setting value error', wx.ICON_ERROR)
+            elif "http" in self.m_textCtrl8.GetValue() \
+                or "http" in self.m_textCtrl9.GetValue() \
+                    or "http" in self.m_textCtrl10.GetValue() \
+                        or "http" in self.m_textCtrl11.GetValue():
+              self.m_textCtrl8.SetBackgroundColour('#f56cbe')
+              self.m_textCtrl9.SetBackgroundColour('#f56cbe')
+              self.m_textCtrl10.SetBackgroundColour('#f56cbe')
+              self.m_textCtrl11.SetBackgroundColour('#f56cbe')
+              wx.MessageBox(u'You cannot include the url in the body of the transmission!!', u'Setting value error', wx.ICON_ERROR)
+            else:
+              self.m_textCtrl6.SetBackgroundColour('#FFFFFF')
+              self.m_textCtrl7.SetBackgroundColour('#FFFFFF')
+              self.m_textCtrl8.SetBackgroundColour('#FFFFFF')
+              self.m_textCtrl9.SetBackgroundColour('#FFFFFF')
+              self.m_textCtrl10.SetBackgroundColour('#FFFFFF')
+              self.m_textCtrl11.SetBackgroundColour('#FFFFFF')
+
+#文字コードをUTF-8に変換しないとエラー発生がするため注意！！
+              with open('textarea.json','w',encoding='utf-8') as f:
+                w_data = {}
+                w_data['title'] = self.m_textCtrl6.GetValue()
+                w_data['url'] = self.m_textCtrl7.GetValue()
+                w_data['body1'] = self.m_textCtrl8.GetValue()
+                w_data['body2'] = self.m_textCtrl9.GetValue()
+                w_data['body3'] = self.m_textCtrl10.GetValue()
+                w_data['body4'] = self.m_textCtrl11.GetValue()
+
+                json.dump(w_data, f, ensure_ascii=False, indent=1, sort_keys=True, separators=(',', ': '))
+                print('WRITE:')
+ #               print(w_data)
+                self.Destroy()
+
+# TODO: Implement quit_button
+    def quit_button( self, event ):
+        self.Destroy()
+
+#page_index                     
 class MyProject1MyFrame4( app.MyFrame4 ):
 	def __init__( self, parent ):
 		app.MyFrame4.__init__( self, parent )
