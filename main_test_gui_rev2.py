@@ -6,13 +6,16 @@ Created on Mon Aug  9 22:14:04 2021
 """
 
 import wx
+import json
+import codecs
 #import app
-from MyProject1MyFrame2Child import MyProject1MyFrame2
+from MyProject1MyFrame2Child_rev3 import MyProject1MyFrame2
+from MyProject1MyFrame2Child_rev3 import MyProject1MyDialog3
 
 # Implementing MyDialog2
 class MyProject1MyDialog2( wx.Dialog ):
 	def __init__( self, parent ):
-		wx.Dialog.__init__ ( self, parent, id = wx.ID_ANY, title = u"User Authentication", pos = wx.DefaultPosition, size = wx.Size( 417,319 ), style = wx.DEFAULT_DIALOG_STYLE )
+		wx.Dialog.__init__ ( self, parent, id = wx.ID_ANY, title = u"User Authentication", pos = wx.DefaultPosition, size = wx.Size( 400,300 ), style = wx.DEFAULT_DIALOG_STYLE )
 
 		self.SetSizeHints( wx.DefaultSize, wx.DefaultSize )
 
@@ -76,11 +79,33 @@ class MyProject1MyDialog2( wx.Dialog ):
 		gSizer7.Fit( self.m_panel24 )
 		bSizer17.Add( self.m_panel24, 1, wx.EXPAND |wx.ALL, 5 )
 
+#		bSizer21 = wx.BoxSizer( wx.VERTICAL )
+
+#		self.m_checkBox1 = wx.CheckBox( self, wx.ID_ANY, u"Remember Me", wx.DefaultPosition, wx.DefaultSize, 0 )
+#		bSizer21.Add( self.m_checkBox1, 0, wx.ALL, 5 )
+
+
+#		bSizer17.Add( bSizer21, 1, wx.EXPAND, 5 )
 
 		self.SetSizer( bSizer17 )
 		self.Layout()
 
 		self.Centre( wx.BOTH )
+
+
+#設定情報（json）読み込み
+#文字コードをUTF-8に変換しないとエラーが発生するため注意！！
+		with codecs.open('setting.json','r',encoding='utf-8') as f:
+#「JSONDecodeError: Invalid control character at」が返さないようにする。
+#strictがfalse（デフォルトはTrue）の場合、制御文字を文字列に含めることができます。
+#ここで言う制御文字とは、'\t'（タブ）、'\n'、'\r'、'\0'を含む0-31の範囲のコードを持つ文字のことです。
+		    j = json.load(f,strict=False)
+#            print(j)
+		    f.close()
+		    if j['remember'] == True:
+		      self.m_textCtrl4.SetValue(j['user'])
+		      self.m_textCtrl5.SetValue(j['password'])
+
 
 	def GetUser(self):
 		return self.m_textCtrl4.GetValue()
@@ -100,16 +125,20 @@ class MyApp(wx.App):
             if dlg == wx.ID_OK:
                 uname = login.GetUser()
                 passwd = login.GetPasswd()
-                if (uname, passwd) == ("tansas", "sales4649"):
+                adid = MyProject1MyDialog3(None)
+                if (uname, passwd) == (adid.m_textCtrl4.GetValue(), adid.m_textCtrl5.GetValue()):
                     loggedIn = True
                 else:
-                  wx.MessageBox(u'Please enter the correct account information!!', u'Login error', wx.ICON_ERROR)
+                  wx.MessageBox(u'Please enter the correct account information!!'
+                                , u'Login error', wx.ICON_ERROR)
                     
             elif dlg == wx.ID_CANCEL:
                 self.Destroy()
                 return False
 
 #        self.frm.Show()
+
+#ログインに成功した後の画面遷移
         frame = MyProject1MyFrame2(None)
         frame.Show(True)
         return True
