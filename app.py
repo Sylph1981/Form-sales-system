@@ -9,6 +9,7 @@
 
 import wx
 import wx.xrc
+import wx.adv
 
 ###########################################################################
 ## Class MyFrame1
@@ -96,7 +97,7 @@ class MyFrame1 ( wx.Frame ):
 class MyFrame2 ( wx.Frame ):
 
 	def __init__( self, parent ):
-		wx.Frame.__init__ ( self, parent, id = wx.ID_ANY, title = u"お問い合わせフォーム投稿アプリ update 3.0.1", pos = wx.DefaultPosition, size = wx.Size( 697,441 ), style = wx.DEFAULT_FRAME_STYLE|wx.TAB_TRAVERSAL )
+		wx.Frame.__init__ ( self, parent, id = wx.ID_ANY, title = u"お問い合わせフォーム投稿アプリ", pos = wx.DefaultPosition, size = wx.Size( 600,550 ), style = wx.DEFAULT_FRAME_STYLE|wx.TAB_TRAVERSAL )
 
 		self.SetSizeHints( wx.DefaultSize, wx.DefaultSize )
 
@@ -261,7 +262,7 @@ class MyFrame4 ( wx.Frame ):
 class MyDialog2 ( wx.Dialog ):
 
 	def __init__( self, parent ):
-		wx.Dialog.__init__ ( self, parent, id = wx.ID_ANY, title = u"User Authentication", pos = wx.DefaultPosition, size = wx.Size( 417,319 ), style = wx.DEFAULT_DIALOG_STYLE )
+		wx.Dialog.__init__ ( self, parent, id = wx.ID_ANY, title = u"User Authentication", pos = wx.DefaultPosition, size = wx.Size( 417,361 ), style = wx.DEFAULT_DIALOG_STYLE )
 
 		self.SetSizeHints( wx.DefaultSize, wx.DefaultSize )
 
@@ -389,3 +390,93 @@ class MyDialog5 ( wx.Dialog ):
 		pass
 
 
+###########################################################################
+## Class MyDialog7
+###########################################################################
+
+class MyDialog7 ( wx.Dialog ):
+
+	def __init__( self, parent ):
+		wx.Dialog.__init__ ( self, parent, id = wx.ID_ANY, title = wx.EmptyString, pos = wx.DefaultPosition, size = wx.DefaultSize, style = wx.DEFAULT_DIALOG_STYLE )
+
+		self.SetSizeHints( wx.DefaultSize, wx.DefaultSize )
+
+		bSizer21 = wx.BoxSizer( wx.VERTICAL )
+
+		self.m_bitmap1 = wx.StaticBitmap( self, wx.ID_ANY, wx.Bitmap( u"metro_directmail_11415.ico", wx.BITMAP_TYPE_ANY ), wx.DefaultPosition, wx.DefaultSize, 0 )
+		bSizer21.Add( self.m_bitmap1, 0, wx.ALL|wx.ALIGN_CENTER_HORIZONTAL, 5 )
+
+		self.m_staticText13 = wx.StaticText( self, wx.ID_ANY, u"Sales support tool", wx.DefaultPosition, wx.DefaultSize, 0 )
+		self.m_staticText13.Wrap( -1 )
+
+		self.m_staticText13.SetFont( wx.Font( 16, wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_BOLD, False, "メイリオ" ) )
+
+		bSizer21.Add( self.m_staticText13, 0, wx.ALL, 5 )
+
+		self.m_staticText14 = wx.StaticText( self, wx.ID_ANY, u"for Lancers", wx.DefaultPosition, wx.DefaultSize, 0 )
+		self.m_staticText14.Wrap( -1 )
+
+		self.m_staticText14.SetFont( wx.Font( 12, wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_BOLD, False, "メイリオ" ) )
+
+		bSizer21.Add( self.m_staticText14, 0, wx.ALL|wx.ALIGN_CENTER_HORIZONTAL, 5 )
+
+		self.m_staticText15 = wx.StaticText( self, wx.ID_ANY, u"Revision 4.0.0", wx.DefaultPosition, wx.DefaultSize, 0 )
+		self.m_staticText15.Wrap( -1 )
+
+		self.m_staticText15.SetFont( wx.Font( 10, wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_NORMAL, False, "メイリオ" ) )
+
+		bSizer21.Add( self.m_staticText15, 0, wx.ALL|wx.ALIGN_CENTER_HORIZONTAL, 5 )
+
+		gSizer44 = wx.GridSizer( 0, 2, 0, 0 )
+
+		self.m_staticText16 = wx.StaticText( self, wx.ID_ANY, u"Creator", wx.DefaultPosition, wx.DefaultSize, 0 )
+		self.m_staticText16.Wrap( -1 )
+
+		self.m_staticText16.SetFont( wx.Font( 10, wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_NORMAL, False, "Meiryo UI" ) )
+
+		gSizer44.Add( self.m_staticText16, 0, wx.ALL, 5 )
+
+		self.m_hyperlink1 = wx.adv.HyperlinkCtrl( self, wx.ID_ANY, u"Iori Ota", u"https://www.lancers.jp/profile/Sylph1981", wx.DefaultPosition, wx.DefaultSize, wx.adv.HL_DEFAULT_STYLE )
+		self.m_hyperlink1.SetFont( wx.Font( 10, wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_NORMAL, False, "Meiryo UI" ) )
+
+		gSizer44.Add( self.m_hyperlink1, 0, wx.ALL, 5 )
+
+		self.m_staticText17 = wx.StaticText( self, wx.ID_ANY, u"User", wx.DefaultPosition, wx.DefaultSize, 0 )
+		self.m_staticText17.Wrap( -1 )
+
+		self.m_staticText17.SetFont( wx.Font( 10, wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_NORMAL, False, "Meiryo UI" ) )
+
+		gSizer44.Add( self.m_staticText17, 0, wx.ALL, 5 )
+
+		self.m_hyperlink11 = wx.adv.HyperlinkCtrl( self, wx.ID_ANY, u"tansas", u"https://www.lancers.jp/profile/tansas", wx.DefaultPosition, wx.DefaultSize, wx.adv.HL_DEFAULT_STYLE )
+		self.m_hyperlink11.SetFont( wx.Font( 10, wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_NORMAL, False, "Meiryo UI" ) )
+
+		gSizer44.Add( self.m_hyperlink11, 0, wx.ALL, 5 )
+
+
+		bSizer21.Add( gSizer44, 1, wx.EXPAND, 5 )
+
+		bSizer22 = wx.BoxSizer( wx.VERTICAL )
+
+		self.m_staticText23 = wx.StaticText( self, wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.DefaultSize, 0 )
+		self.m_staticText23.Wrap( -1 )
+
+		bSizer22.Add( self.m_staticText23, 0, wx.ALL, 5 )
+
+		self.m_hyperlink12 = wx.adv.HyperlinkCtrl( self, wx.ID_ANY, u"Please send me your feedback!!", u"https://www.lancers.jp/mypage/message/?boardId=5604422", wx.DefaultPosition, wx.DefaultSize, wx.adv.HL_DEFAULT_STYLE )
+		self.m_hyperlink12.SetFont( wx.Font( 10, wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_NORMAL, False, "Meiryo UI" ) )
+
+		bSizer22.Add( self.m_hyperlink12, 0, wx.ALL|wx.ALIGN_CENTER_HORIZONTAL, 5 )
+
+
+		bSizer21.Add( bSizer22, 1, wx.EXPAND, 5 )
+
+
+		self.SetSizer( bSizer21 )
+		self.Layout()
+		bSizer21.Fit( self )
+
+		self.Centre( wx.BOTH )
+
+	def __del__( self ):
+		pass
