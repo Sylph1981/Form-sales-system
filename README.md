@@ -2,7 +2,7 @@
 System to automatically send emails from the inquiry form.
 
 
-About "inquiry_extraction.py"
+About "form_post_rev11.py"
 
 ・Google account is required to use Google Spreadsheets.
 
