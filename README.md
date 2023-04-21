@@ -1,6 +1,16 @@
-# private
-System to automatically send emails from the inquiry form.
+# [Sakura VPS] API for obtaining server status and operating power
 
+# Get server information list
+PS C:\Users\*****> curl.exe -X GET 'https://secure.sakura.ad.jp/vps/api/v7/servers' -H 'Authorization: Bearer {API key}'
+
+# Get sever power state
+PS C:\Users\*****> curl.exe -X GET 'https://secure.sakura.ad.jp/vps/api/v7/servers/{sever_id}/power_status' -H 'Authorization: Bearer {API key}'
+
+# Start the sever
+PS C:\Users\*****> curl.exe -X POST 'https://secure.sakura.ad.jp/vps/api/v7/servers/{sever_id}/power_on' -H 'Authorization: Bearer {API key}'
+
+
+# System to automatically send emails from the inquiry form.
 
 About "form_post_rev12.py"
 
