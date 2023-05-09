@@ -60,6 +60,36 @@ PS C:\Users\*****> curl.exe -X GET 'https://secure.sakura.ad.jp/vps/api/v7/serve
 # Start the sever
 PS C:\Users\*****> curl.exe -X POST 'https://secure.sakura.ad.jp/vps/api/v7/servers/{sever_id}/power_on' -H 'Authorization: Bearer {API key}'
 
+# Don't forget to start Gunicorn (application server)!!
+$ sudo systemctl start formsales.socket
+$ sudo systemctl start formsales.service
+$ sudo systemctl status formsales
+formsales.service - gunicorn daemon
+     Loaded: loaded (/etc/systemd/system/formsales.service; disab>
+     Active: active (running) since Wed 2023-05-10 00:32:47 JST; >
+TriggeredBy: ● formsales.socket
+   Main PID: 25290 (gunicorn)
+      Tasks: 4 (limit: 1026)
+     Memory: 97.3M
+        CPU: 6.105s
+     CGroup: /system.slice/formsales.service
+             ├─25290 /var/www/winbridge.biz/html/djangovenv/bin/p>
+             ├─25337 /var/www/winbridge.biz/html/djangovenv/bin/p>
+             ├─25345 /var/www/winbridge.biz/html/djangovenv/bin/p>
+             └─25346 /var/www/winbridge.biz/html/djangovenv/bin/p>
+
+May 10 00:33:28 os3-365-15569 gunicorn[25311]: [2023-05-10 00:33:>
+May 10 00:33:29 os3-365-15569 gunicorn[25290]: [2023-05-10 00:33:>
+May 10 00:33:29 os3-365-15569 gunicorn[25290]: [2023-05-10 00:33:>
+May 10 00:33:29 os3-365-15569 gunicorn[25309]: [2023-05-10 00:33:>
+May 10 00:33:29 os3-365-15569 gunicorn[25310]: [2023-05-10 00:33:>
+May 10 00:33:29 os3-365-15569 gunicorn[25337]: [2023-05-10 00:33:>
+May 10 00:33:29 os3-365-15569 gunicorn[25345]: [2023-05-10 00:33:>
+May 10 00:33:29 os3-365-15569 gunicorn[25346]: [2023-05-10 00:33:>
+May 10 00:34:47 os3-365-15569 systemd[1]: /etc/systemd/system/for>
+lines 1-23
+
+* If you forget it, you will get an error "502 bad gateway"!!
 
 # System to automatically send emails from the inquiry form.
 
