@@ -1,4 +1,146 @@
-# Attention
+# About Django admin screen
+## Error "django.db.utils.OperationalError: (1054, "Unknown column 'hello_user.date_joined' in 'field list'")." when trying to edit a Users model.
+
+**Solved by adding a field when defining a custom user.**
+
+```python
+class User(AbstractBaseUser, PermissionsMixin):
+    from .py_app import Choices
+    Industry_Choices = Choices.Industry_Choices
+    Prefecture_Choices = Choices.Prefecture_Choices
+    Prefcode_Choices = Choices.Prefcode_Choices
+    username = models.CharField(max_length=50, unique=True)
+    email = models.EmailField(max_length=50, unique=True)
+    first_name = models.CharField("姓名", max_length=15, blank=True)
+    last_name = models.CharField("名前", max_length=15, blank=True)
+    # gendar = models.CharField("性別", max_length=2, choices=GENDER_CHOICES, blank=True)
+    firstname_hira = models.CharField("姓名ひらがな", max_length=15, blank=True)
+    lastname_hira = models.CharField("名前ひらがな", max_length=15, blank=True)
+    firstname_kata = models.CharField("姓名カタカナ", max_length=15, blank=True)
+    lastname_kata = models.CharField("名前カタカナ", max_length=15, blank=True)
+    companyname = models.CharField("会社名", max_length=30, blank=True)
+    company_hira = models.CharField("会社名ひらがな", max_length=30, blank=True)
+    company_kata = models.CharField("会社名カタカナ", max_length=30, blank=True)
+    industry = models.CharField("業種", max_length=30, choices = Industry_Choices, blank=True)
+    bussiness_content = models.CharField("事業内容", max_length=30, blank=True)
+    department = models.CharField("部署", max_length=15, blank=True)
+    position = models.CharField("役職", max_length=15, blank=True)
+    postal_code_1 = models.CharField("〒（地域番号）", max_length=3, blank=True, null=True)
+    postal_code_2 = models.CharField("〒（局番号）", max_length=4, blank=True, null=True)
+    prefecture = models.CharField("都道府県", max_length=15, choices=Prefecture_Choices, blank=True)
+    pref_code = models.IntegerField("都道府県番号", blank=True, null=True)
+    municipality = models.CharField("市区町村", max_length=30, blank=True)
+    street_name = models.CharField("番地名", max_length=15, blank=True)
+    build = models.CharField("建物名", max_length=30, blank=True)
+    account = models.CharField("メールアカウント", max_length=100, blank=True)
+    domain = models.CharField("ドメイン", max_length=100, blank=True)
+    phone_1 = models.CharField("市外局番", max_length=3, blank=True, null=True)
+    phone_2 = models.CharField("市内局番", max_length=4, blank=True, null=True)
+    phone_3 = models.CharField("加入者番号", max_length=4, blank=True, null=True)
+    url = models.URLField("ホームページ", max_length=255, blank=True)
+    is_active = models.BooleanField(default=True)
+    is_staff = models.BooleanField(default=False)
+
+# Add here
+    date_joined = models.DateTimeField("date joined", default=timezone.now)
+
+    icon = models.ImageField(blank=True, null=True)  
+    EMAIL_FIELD = 'email'
+    USERNAME_FIELD = 'username'
+    REQUIRED_FIELDS = ['email'] 
+
+    objects = UserManager()
+   
+    def get_absolute_url(self):
+        return reverse_lazy('accounts:home')
+```
+```sql
+mysql> show columns from hello_user;
++-------------------+--------------+------+-----+---------+----------------+
+| Field             | Type         | Null | Key | Default | Extra          |
++-------------------+--------------+------+-----+---------+----------------+
+| id                | bigint       | NO   | PRI | NULL    | auto_increment |
+| password          | varchar(128) | YES  |     | NULL    |                |
+| is_superuser      | int          | YES  |     | NULL    |                |
+| username          | varchar(50)  | YES  |     | NULL    |                |
+| email             | varchar(50)  | YES  |     | NULL    |                |
+| is_active         | int          | YES  |     | NULL    |                |
+| is_staff          | int          | YES  |     | NULL    |                |
+| icon              | varchar(50)  | YES  |     | NULL    |                |
+| account           | varchar(50)  | YES  |     | NULL    |                |
+| build             | varchar(50)  | YES  |     | NULL    |                |
+| bussiness_content | varchar(50)  | YES  |     | NULL    |                |
+| company_hira      | varchar(50)  | YES  |     | NULL    |                |
+| company_kata      | varchar(50)  | YES  |     | NULL    |                |
+| companyname       | varchar(50)  | YES  |     | NULL    |                |
+| department        | varchar(50)  | YES  |     | NULL    |                |
+| domain            | varchar(50)  | YES  |     | NULL    |                |
+| firstname_hira    | varchar(50)  | YES  |     | NULL    |                |
+| firstname_kata    | varchar(50)  | YES  |     | NULL    |                |
+| industry          | varchar(50)  | YES  |     | NULL    |                |
+| lastname_hira     | varchar(50)  | YES  |     | NULL    |                |
+| lastname_kata     | varchar(50)  | YES  |     | NULL    |                |
+| municipality      | varchar(50)  | YES  |     | NULL    |                |
+| phone_1           | varchar(3)   | YES  |     | NULL    |                |
+| phone_2           | varchar(4)   | YES  |     | NULL    |                |
+| phone_3           | varchar(4)   | YES  |     | NULL    |                |
+| position          | varchar(50)  | YES  |     | NULL    |                |
+| postal_code_1     | varchar(3)   | YES  |     | NULL    |                |
+| pref_code         | int          | YES  |     | NULL    |                |
+| prefecture        | varchar(50)  | YES  |     | NULL    |                |
+| street_name       | varchar(50)  | YES  |     | NULL    |                |
+| first_name        | varchar(50)  | YES  |     | NULL    |                |
+| last_name         | varchar(50)  | YES  |     | NULL    |                |
+| url               | varchar(50)  | YES  |     | NULL    |                |
+| postal_code_2     | varchar(4)   | YES  |     | NULL    |                |
+| last_login        | datetime     | YES  |     | NULL    |                |
+| date_joined       | datetime     | YES  |     | NULL    |                |
++-------------------+--------------+------+-----+---------+----------------+
+36 rows in set (0.00 sec)
+```
+### Since the error is still displayed, add the missing table.
+```bash
+1146, "Table 'test_db.hello_user_groups' doesn't exist"
+```
+```sql
+mysql> create table test_db.hello_user_groups(id bigint auto_increment not null primary key);
+Query OK, 0 rows affected (4.28 sec)
+```
+```bash
+Unknown column 'hello_user_groups.user_id' in 'where clause'
+```
+```bash
+Unknown column 'hello_user_groups.group_id' in 'on clause'
+```
+```sql
+mysql> show columns from test_db.hello_user_groups;
++----------+--------+------+-----+---------+----------------+
+| Field    | Type   | Null | Key | Default | Extra          |
++----------+--------+------+-----+---------+----------------+
+| id       | bigint | NO   | PRI | NULL    | auto_increment |
+| user_id  | bigint | NO   |     | NULL    |                |
+| group_id | bigint | NO   |     | NULL    |                |
++----------+--------+------+-----+---------+----------------+
+3 rows in set (0.30 sec)
+```
+```sql
+mysql> create table test_db.hello_user_user_permissions(id bigint auto_increment not null primary key);
+Query OK, 0 rows affected (3.14 sec)
+
+mysql> show columns from test_db.hello_user_user_permissions;
++---------------+--------+------+-----+---------+----------------+
+| Field         | Type   | Null | Key | Default | Extra          |
++---------------+--------+------+-----+---------+----------------+
+| id            | bigint | NO   | PRI | NULL    | auto_increment |
+| user_id       | bigint | NO   |     | NULL    |                |
+| permission_id | bigint | NO   |     | NULL    |                |
++---------------+--------+------+-----+---------+----------------+
+3 rows in set (0.02 sec)
+```
+## For your reference
+**[【Django】カスタムユーザー（独自のユーザー）の作り方【AbstractBaseUser編】](https://daeudaeu.com/django-abstractbaseuser/)**
+
+# Precautions when installing MySQL
 *Before installing MySQL (version 8.0), you need to uninstall the mysql dependency package and remove the mysql deployment file.*
 *If you do not follow this order, socket errors and apt-get dependencies will not be resolved!!*
 
