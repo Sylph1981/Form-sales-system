@@ -500,7 +500,7 @@ INSTALLED_APPS = [
 SESSION_ENGINE = "django.contrib.sessions.backends.cache"
 ```
 
-## For your reference
+### For your reference
 
 **・[【決定版】爆速でDjangoソーシャル認証を実装する(Google認証）](https://sinyblog.com/django/social-auth-app-django/)**
 
@@ -512,6 +512,109 @@ SESSION_ENGINE = "django.contrib.sessions.backends.cache"
 
 **・[djangoのキャッシュを使ったセッションの設定](https://torajirousan.hatenadiary.jp/entry/2020/12/27/005409)**
 
+# Enabling SSL for Django Projects
+```shell
+vi /etc/nginx/sites-available/form_marketing.conf
+```
+```conf
+server {
+        # Override port number to 443.
+		listen 443 ssl;
+        server_name domain-name.jp;
+
+        # Key file storage location required for SSL settings.
+        ssl_certificate /etc/letsencrypt/live/domain-name.jp/fullchain.pem;
+        ssl_certificate_key /etc/letsencrypt/live/domain-name.jp/privkey.pem;
+...
+}
+```
+```shell
+systemctl restart nginx
+```
+**・Let's take measures against cross-site request forgery (CSRF) verification!!**
+```py
+ALLOWED_HOSTS = ['domain-name', '***.***.**.**', 'localhost', '127.0.0.1']
+
+# add this
+CSRF_TRUSTED_ORIGINS = ['https://domain-name']
+```
+# How to start Gunicorn without sockets (without systemd service file)
+**1. Show systemd service file status.**
+```shell
+systemctl status formsales
+● formsales.service - gunicorn daemon
+     Loaded: loaded (/etc/systemd/system/formsales.service; enabled; vendor preset: enabled)
+     Active: active (exited) since Tue 2023-06-27 00:23:22 JST; 1min 6s ago
+TriggeredBy: ● formsales.socket
+    Process: 490 ExecStart=/usr/share/nginx/html/djangovenv/bin/gunicorn --config /usr/share/nginx/html/djang>
+   Main PID: 490 (code=exited, status=0/SUCCESS)
+      Tasks: 6 (limit: 1011)
+     Memory: 184.5M
+        CPU: 2.539s
+     CGroup: /system.slice/formsales.service
+             ├─593 /usr/share/nginx/html/djangovenv/bin/python3 /usr/share/nginx/html/djangovenv/bin/gunicorn>
+             ├─594 /usr/share/nginx/html/djangovenv/bin/python3 /usr/share/nginx/html/djangovenv/bin/gunicorn>
+             ├─595 /usr/share/nginx/html/djangovenv/bin/python3 /usr/share/nginx/html/djangovenv/bin/gunicorn>
+             ├─596 /usr/share/nginx/html/djangovenv/bin/python3 /usr/share/nginx/html/djangovenv/bin/gunicorn>
+             ├─597 /usr/share/nginx/html/djangovenv/bin/python3 /usr/share/nginx/html/djangovenv/bin/gunicorn>
+             └─598 /usr/share/nginx/html/djangovenv/bin/python3 /usr/share/nginx/html/djangovenv/bin/gunicorn>
+```
+**2. Show all services at system startup.**
+```shell             
+systemctl list-unit-files -t service | grep formsales
+formsales.service                          enabled         enabled
+```
+**3. Disable automatic startup of systemd service file.**
+```shell
+systemctl disable formsales
+Removed /etc/systemd/system/multi-user.target.wants/formsales.service.
+```
+**4. Check autostart disable in systemd service file.**
+```shell
+systemctl list-unit-files -t service | grep formsales
+formsales.service                          disabled         enabled
+```
+**5. Stop starting systemd service file.**
+```shell
+systemctl stop formsales
+Warning: Stopping formsales.service, but it can still be activated by:
+  formsales.socket
+```
+**6. Check systemd service file status.**
+```shell
+systemctl status formsales
+○ formsales.service - gunicorn daemon
+     Loaded: loaded (/etc/systemd/system/formsales.service; disabled; vendor preset: enabled)
+     Active: inactive (dead) since Tue 2023-06-27 01:17:38 JST; 56s ago
+TriggeredBy: ● formsales.socket
+   Main PID: 490 (code=exited, status=0/SUCCESS)
+        CPU: 3.746s
+
+Jun 27 00:23:22 os3-365-15569 systemd[1]: Started gunicorn daemon.
+Jun 27 01:17:38 os3-365-15569 systemd[1]: Stopping gunicorn daemon...
+Jun 27 01:17:38 os3-365-15569 systemd[1]: formsales.service: Deactivated successfully.
+Jun 27 01:17:38 os3-365-15569 systemd[1]: Stopped gunicorn daemon.
+Jun 27 01:17:38 os3-365-15569 systemd[1]: formsales.service: Consumed 3.746s CPU time.
+```
+**7. After switching to the virtual environment, move to the directory where "manage.py" is located and run gunicorn in daemon mode.**
+```shell
+gunicorn --bind 127.0.0.1:8000 test_app.wsgi -D
+```
+**8. Check if the gunicorn process is running.**
+```shell
+ps ax | grep gunicorn
+   1047 ?        S      0:00 /usr/share/nginx/html/djangovenv/bin/python3 /usr/share/nginx/html/djangovenv/bin/gunicorn --bind 127.0.0.1:8000 test_app.wsgi -D
+   1048 ?        S      0:00 /usr/share/nginx/html/djangovenv/bin/python3 /usr/share/nginx/html/djangovenv/bin/gunicorn --bind 127.0.0.1:8000 test_app.wsgi -D
+   1049 ?        S      0:00 /usr/share/nginx/html/djangovenv/bin/python3 /usr/share/nginx/html/djangovenv/bin/gunicorn --bind 127.0.0.1:8000 test_app.wsgi -D
+   1050 ?        S      0:00 /usr/share/nginx/html/djangovenv/bin/python3 /usr/share/nginx/html/djangovenv/bin/gunicorn --bind 127.0.0.1:8000 test_app.wsgi -D
+   1051 ?        S      0:00 /usr/share/nginx/html/djangovenv/bin/python3 /usr/share/nginx/html/djangovenv/bin/gunicorn --bind 127.0.0.1:8000 test_app.wsgi -D
+   1052 ?        S      0:00 /usr/share/nginx/html/djangovenv/bin/python3 /usr/share/nginx/html/djangovenv/bin/gunicorn --bind 127.0.0.1:8000 test_app.wsgi -D
+   1055 pts/1    S+     0:00 grep --color=auto gunicorn
+```
+### For your reference
+**・[DjangoプロジェクトのSSL化](https://view-s.co.jp/product/webapp/ssl/)**
+
+**・[【AmazonLinux2でDjangoの本番環境構築】Python3.8,Nginx,Gunicorn,PostgreSQL](https://tomato-develop.com/amazon-linux-2-django-python-nginx-gunicorn-postgresql/)**
 
 # [Sakura VPS] API for obtaining server status and operating power
 
@@ -530,39 +633,6 @@ PS C:\Users\*****> curl.exe -X GET 'https://secure.sakura.ad.jp/vps/api/v7/serve
 PS C:\Users\*****> curl.exe -X POST 'https://secure.sakura.ad.jp/vps/api/v7/servers/{sever_id}/power_on' -H 'Authorization: Bearer {API key}'
 ```
 
-# Don't forget to start Gunicorn (application server)!!
-```shell
-$ sudo systemctl start formsales.socket
-$ sudo systemctl start formsales.service
-$ sudo systemctl status formsales
-formsales.service - gunicorn daemon
-     Loaded: loaded (/etc/systemd/system/formsales.service; disab>
-     Active: active (running) since Wed 2023-05-10 00:32:47 JST; >
-TriggeredBy: ● formsales.socket
-   Main PID: 25290 (gunicorn)
-      Tasks: 4 (limit: 1026)
-     Memory: 97.3M
-        CPU: 6.105s
-     CGroup: /system.slice/formsales.service
-             ├─25290 /var/www/winbridge.biz/html/djangovenv/bin/p>
-             ├─25337 /var/www/winbridge.biz/html/djangovenv/bin/p>
-             ├─25345 /var/www/winbridge.biz/html/djangovenv/bin/p>
-             └─25346 /var/www/winbridge.biz/html/djangovenv/bin/p>
-
-May 10 00:33:28 os3-365-15569 gunicorn[25311]: [2023-05-10 00:33:>
-May 10 00:33:29 os3-365-15569 gunicorn[25290]: [2023-05-10 00:33:>
-May 10 00:33:29 os3-365-15569 gunicorn[25290]: [2023-05-10 00:33:>
-May 10 00:33:29 os3-365-15569 gunicorn[25309]: [2023-05-10 00:33:>
-May 10 00:33:29 os3-365-15569 gunicorn[25310]: [2023-05-10 00:33:>
-May 10 00:33:29 os3-365-15569 gunicorn[25337]: [2023-05-10 00:33:>
-May 10 00:33:29 os3-365-15569 gunicorn[25345]: [2023-05-10 00:33:>
-May 10 00:33:29 os3-365-15569 gunicorn[25346]: [2023-05-10 00:33:>
-May 10 00:34:47 os3-365-15569 systemd[1]: /etc/systemd/system/for>
-lines 1-23
-```
-
-*If you forget it, you will get an error "502 bad gateway"!!*
- 
 # System to automatically send emails from the inquiry form.
 
 **・Only older versions of Python Selenium (3.141.0) are supported.**
