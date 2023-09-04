@@ -618,22 +618,27 @@ ps ax | grep gunicorn
 
 # [Sakura VPS] API for obtaining server status and operating power
 
-# Get server information list
+### Get server information list
 ```shell
 PS C:\Users\*****> curl.exe -X GET 'https://secure.sakura.ad.jp/vps/api/v7/servers' -H 'Authorization: Bearer {API key}'
 ```
 
-# Get sever power state
+### Get sever power state
 ```shell
 PS C:\Users\*****> curl.exe -X GET 'https://secure.sakura.ad.jp/vps/api/v7/servers/{sever_id}/power_status' -H 'Authorization: Bearer {API key}'
 ```
 
-# Start the sever
+### Start the sever
 ```shell
 PS C:\Users\*****> curl.exe -X POST 'https://secure.sakura.ad.jp/vps/api/v7/servers/{sever_id}/power_on' -H 'Authorization: Bearer {API key}'
 ```
 
-# System to automatically send emails from the inquiry form.
+# [Sakura VPS] How to use public key authentication
+
+
+
+# Windows Desktop app version
+**[Bad news!!] The system was rendered unusable by a malicious party, so development will end at the end of the year...**
 
 **・Only older versions of Python Selenium (3.141.0) are supported.**
 
@@ -661,6 +666,3 @@ PS C:\Users\*****> curl.exe -X POST 'https://secure.sakura.ad.jp/vps/api/v7/serv
 # **・Other error handling**
 **"Grid.SetCellValue(): arguments did not match any overloaded call:"**
 **The cells used in the spreadsheet don't have any values filled in and need to be populated with data. (A hyphen is also acceptable)**
-
- 
-*Unauthorized reproduction of this code is strictly prohibited!!*
