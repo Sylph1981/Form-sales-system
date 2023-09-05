@@ -620,21 +620,168 @@ ps ax | grep gunicorn
 
 ### Get server information list
 ```shell
-PS C:\Users\*****> curl.exe -X GET 'https://secure.sakura.ad.jp/vps/api/v7/servers' -H 'Authorization: Bearer {API key}'
+PS C:\Users\****> curl.exe -X GET 'https://secure.sakura.ad.jp/vps/api/v7/servers' -H 'Authorization: Bearer {API key}'
 ```
 
 ### Get sever power state
 ```shell
-PS C:\Users\*****> curl.exe -X GET 'https://secure.sakura.ad.jp/vps/api/v7/servers/{sever_id}/power_status' -H 'Authorization: Bearer {API key}'
+PS C:\Users\****> curl.exe -X GET 'https://secure.sakura.ad.jp/vps/api/v7/servers/{sever_id}/power_status' -H 'Authorization: Bearer {API key}'
 ```
 
 ### Start the sever
 ```shell
-PS C:\Users\*****> curl.exe -X POST 'https://secure.sakura.ad.jp/vps/api/v7/servers/{sever_id}/power_on' -H 'Authorization: Bearer {API key}'
+PS C:\Users\****> curl.exe -X POST 'https://secure.sakura.ad.jp/vps/api/v7/servers/{sever_id}/power_on' -H 'Authorization: Bearer {API key}'
 ```
 
 # [Sakura VPS] How to use public key authentication
+<details>
+<summary><b>What to do on the client side</b></summary>
 
+- **Issuance of SSH key**
+
+```shell
+PS C:\Users\****> cd .ssh
+PS C:\Users\****\.ssh> ssh-keygen
+Generating public/private rsa key pair.
+Enter file in which to save the key (C:\Users\****/.ssh/id_rsa): private_key_name
+```
+- **config modification(Standard port numbers have also been changed to avoid being targeted by server attacks.)**
+`C:\Users\****\.ssh\config`
+
+```config
+Host username
+  HostName ****.vs.sakura.ne.jp
+  IdentityFile ~/.ssh/private_key_name
+  Port 3822
+  User username
+  PreferredAuthentications publickey
+  IdentitiesOnly yes
+  ServerAliveInterval 60
+```
+</details>
+
+<details>
+<summary><b>What to do on a vps server</b></summary>
+
+- **Preparing to deploy the public key.**
+`/home/username/.ssh/authorized_keys`
+
+```shell
+$ mkdir .ssh
+$ cd .ssh
+$ touch authorized_keys
+```
+
+**Fill in the content of the public key.**
+
+`$ vim authorized_keys`
+
+**Send the created public key to the server.(This method is also possible)**
+
+`$ scp id_rsa.pub ****.vs.sakura.ne.jp:~/.ssh/authorized_keys`
+
+- **sshd settings**
+`/etc/ssh/sshd_config`
+
+```config
+Port 3822
+PubkeyAuthentication yes
+PasswordAuthentication no
+ChallengeResponseAuthentication no
+PermitEmptyPasswords no
+UsePAM no
+PermitRootLogin no
+X11Forwarding no
+```
+
+- **Transfer credentials to Windows(Because "Could not open a connection to your authentication agent.")**
+
+```shell
+eval `ssh-agent`
+ssh-add ~/.ssh/[your ssh-key]
+Enter passphrase for key 'C:\Users\iorin/.ssh/[your ssh-key]:
+```
+
+**Reflection of settings**
+
+```shell
+$ sudo systemctl restart sshd
+$ sudo systemctl status sshd
+● ssh.service - OpenBSD Secure Shell server
+     Loaded: loaded (/lib/systemd/system/ssh.service; enabled; vendor preset: enabled)
+     Active: active (running) since Tue 2023-09-05 04:59:12 JST; 23h ago
+       Docs: man:sshd(8)
+             man:sshd_config(5)
+    Process: 575 ExecStartPre=/usr/sbin/sshd -t (code=exited, status=0/SUCCESS)
+   Main PID: 579 (sshd)
+      Tasks: 15 (limit: 1012)
+     Memory: 24.2M
+        CPU: 664ms
+     CGroup: /system.slice/ssh.service
+             ├─ 579 "sshd: /usr/sbin/sshd -D [listener] 0 of 10-100 startups"
+             ├─3421 ssh-agent
+             ├─3422 "sshd: username [priv]"
+             ├─3424 "sshd: username@notty"
+             ├─3425 /usr/lib/openssh/sftp-server
+             ├─3516 "sshd: username [priv]"
+             ├─3518 "sshd: username@notty"
+             ├─3519 /usr/lib/openssh/sftp-server
+             ├─3521 "sshd: username [priv]"
+             ├─3523 "sshd: username@pts/0"
+             ├─3524 -bash
+             ├─3534 sudo systemctl status sshd
+             ├─3535 sudo systemctl status sshd
+             ├─3536 systemctl status sshd
+             └─3537 less
+
+Sep 06 02:54:42 **** sshd[3422]: Accepted publickey for username from XXX.XX.XXX.XXX port 49790 ssh2: RSA...
+Sep 06 03:41:33 **** sudo[3505]: adminvps : TTY=pts/0 ; PWD=/home/username ; USER=root ; COMMAND=/usr/bin/chmod 755 /etc/ssh
+Sep 06 03:41:33 **** sudo[3505]: pam_unix(sudo:session): session opened for user root(uid=0) by username(uid=1001)
+Sep 06 03:41:33 **** sudo[3505]: pam_unix(sudo:session): session closed for user root
+Sep 06 04:00:41 **** sshd[3516]: Accepted publickey for adminvps from XXX.XX.XXX.XXX port 50773 ssh2: RSA...
+Sep 06 04:01:37 **** sshd[3412]: Received disconnect from XXX.XX.XXX.XXX port 49772:11: disconnected by user
+Sep 06 04:01:37 **** sshd[3412]: Disconnected from user adminvps XXX.XX.XXX.XXX port 49772
+Sep 06 04:01:45 **** sshd[3521]: Accepted publickey for adminvps from XXX.XX.XXX.XXX port 50791 ssh2: RSA...
+Sep 06 04:05:53 **** sudo[3534]: username : TTY=pts/0 ; PWD=/home/username ; USER=root ; COMMAND=/usr/bin/systemctl status sshd
+Sep 06 04:05:53 **** sudo[3534]: pam_unix(sudo:session): session opened for user root(uid=0) by username(uid=1001)
+```
+
+- **Check permission settings(Because "Permission denied (publickey)")**
+
+```shell
+$ chmod 700 ~/.ssh/
+$ chmod 600 ~/.ssh/authorized_keys
+```
+
+- **Firewall settings**
+
+**[Sakura VPS] A fixed port number of 22 (default) when the packet filter is enabled, so you must disable it.**
+
+`$ sudo vi /usr/lib/firewalld/services/ssh.xml`
+
+```xml
+<?xml version="1.0" encoding="utf-8"?>
+<service>
+  <short>SSH</short>
+  <description>Secure Shell (SSH) is a protocol for logging into and executing commands on remote machines. It provides secure encrypted communications. If you plan on accessing your machine remotely via SSH over a firewalled interface, enable this option. You need the openssh-server package installed for this option to be useful.</description>
+  <port protocol="tcp" port="3843"/>
+</service>
+```
+```shell
+$ sudo firewall-cmd --reload
+$ sudo systemctl list-unit-files -t service | grep enabled
+firewalld.service                          enabled         enabled
+```
+</details>
+
+### For your reference
+
+- **[さくらのVPSにsshで接続 & 初期設定](https://zenn.dev/techstart/articles/932b59ffddb8ef)**
+- **[【さくらVPS】SSH接続し、必要なセキュリティ対策を行う手順 _ Miyachi Labo](https://labo.kon-ruri.co.jp/sakura-vps-ssh-security-protection/)**
+- **[sshのセキュリティを高める方法 - セキュリティ](https://kaworu.jpn.org/security/ssh%E3%81%AE%E3%82%BB%E3%82%AD%E3%83%A5%E3%83%AA%E3%83%86%E3%82%A3%E3%82%92%E9%AB%98%E3%82%81%E3%82%8B%E6%96%B9%E6%B3%95)**
+- **[【Windows】OpenSSH Authentication Agentを使用する - Tech.CMD08.COM](https://tech.cmd08.com/windows-ssh-client)**
+- **[VPSへSSH接続したときにPermission denied (publickey)が出た時の対処 - Qiita](https://qiita.com/ytakegawa/items/0f874387be8a451fcf63)**
+- **[【解決】WSL2(Ubuntu)でsshキーの追加時にエラーが起きた時の対処法(Could not open a connection to your authentication agent.) _ Inno-Tech-Life](https://inno-tech-life.com/dev/infra/wsl2-ssh-agent/)**
 
 
 # Windows Desktop app version
