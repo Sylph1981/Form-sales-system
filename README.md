@@ -782,3 +782,35 @@ firewalld.service                          enabled         enabled
 - **[【Windows】OpenSSH Authentication Agentを使用する - Tech.CMD08.COM](https://tech.cmd08.com/windows-ssh-client)**
 - **[VPSへSSH接続したときにPermission denied (publickey)が出た時の対処 - Qiita](https://qiita.com/ytakegawa/items/0f874387be8a451fcf63)**
 - **[【解決】WSL2(Ubuntu)でsshキーの追加時にエラーが起きた時の対処法(Could not open a connection to your authentication agent.) _ Inno-Tech-Life](https://inno-tech-life.com/dev/infra/wsl2-ssh-agent/)**
+
+**Solved by adding a field when defining a custom user.**
+
+# Windows Desktop app version
+**[Bad news!!] The system was rendered unusable by a malicious party, so development will end at the end of the year...**
+
+**・Only older versions of Python Selenium (3.141.0) are supported.**
+
+**・Google account is required to use Google Spreadsheets.**
+
+**・Please set up the private key generation etc. on "Google Cloud Platform".**
+
+**・If you import the library with the latest version of pandas, an error will occur in matplotlib, so be sure to downgrade to "1.2.4" before using pandas!!**
+*https://github.com/pyinstaller/pyinstaller/issues/5994#issuecomment-877765057*
+
+# **・PyInstaller uses version 4.1.0.**
+**Don't upgrade to the latest version!!**
+*https://pypi.org/project/pyinstaller/4.10/*
+
+**Cause:**
+**1.Because the size of the executable file becomes large**
+**2.When trying to display the graph, it will be "UserWarning: Matplotlib is currently using agg, which is a non-GUI backend, so cannot show the figure."**
+
+# **・wxPython uses version 4.1.1(No update required:pip install -U wxPython)**
+
+**Cause:**
+**1."UnicodeEncodeError: 'locale' codec can't encode character '\u5e74' in position 2: encoding error"**
+**2.Repeated processing is not possible. (ends only once)**
+ 
+# **・Other error handling**
+**"Grid.SetCellValue(): arguments did not match any overloaded call:"**
+**The cells used in the spreadsheet don't have any values filled in and need to be populated with data. (A hyphen is also acceptable)**
