@@ -1,7 +1,7 @@
 # Windows Desktop app version
 **[Bad news!!] The system was rendered unusable by a malicious party, so development will end at the end of the year...**
 
-# Change log
+### Change log
 
 ### 5.2.4
 - **We have taken measures such as displaying a message when the following error occurs after pressing the "Posting" button.**
@@ -38,7 +38,7 @@ Installing collected packages: webdriver-manager
 Successfully installed webdriver-manager-4.0.0
 ```
 
-# Other points to note
+### Other points to note
 
 - **Only older versions of Python Selenium (3.141.0) are supported.**
 
